@@ -1,30 +1,62 @@
 <!DOCTYPE html>
-<html land="en">
+<html lang="en">
 
 <head>
-    <link rel="stylesheet" href="/stylesheet/Global.css">
-    <link rel="stylesheet" href="/stylesheet/Login.css">
-    
+    <meta charset="UTF-8">
+    <title>Signup Page</title>
+    <link rel="stylesheet" href="Signup.css">
+    <link rel="stylesheet" href="Stylesheet/Global.css">
+
 </head>
 <body>
-    <div id="Login">
-        <header></header>
-        <main>
-            <h1>Signup Page</h1>
-            <form id="login-signup-form">
-                <label for="login-signup-email">Email:</label>
-                <input type="text" id="login-signup-form" name="login-signup-form" required>
-                <br />
-                <br />
-                <label for="login-signup-password">Password:</label>
-                <input type="text" id="login-signup-password" name="login-signup-password" required>                
-                <br />
-                <br />
-                <button id="login--signup-submit" type="button">Signup</button>           
-            </form>
-        </main>
-        <footer></footer>
-    </div>
-</body>
+    <div class="container">
+        <div class="form-side">
+            <main>
+                <h1>Sign Up Page</h1>
+                <form id="login-signup-form"> 
+                    <div class="form-group">
+                        <label for="login-signup-first-name">First Name:</label>
+                        <br />
+                        <input type="text" id="login-signup-first-name" name="login-signup-first-name" placeholder="First Name" required>
+                        <br /><br />
+                    </div>
 
+                    <div class="form-group">
+                        <label for="login-signup-last-name">Last Name:</label>
+                        <br />
+                        <input type="text" id="login-signup-last-name" name="login-signup-last-name" placeholder="Last Name" required>
+                        <br /><br />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="login-signup-email">Email:</label>
+                        <br />
+                        <input type="text" id="login-signup-email" name="login-signup-email" placeholder="example@example.com" required>
+                        <br /><br />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="login-signup-password">Password:</label>
+                        <br />
+                        <input type="password" id="login-signup-password" name="login-signup-password" required>                
+                        <br /><br />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="login-signup-repeat-password">Repeat Password:</label>
+                        <br />
+                        <input type="password" id="login-signup-repeat-password" name="login-signup-repeat-password" required>                
+                        <br /><br />
+                    </div>
+                    <button type="submit">Submit</button>           
+                </form>
+                <p>Already have an Account? <a href="login.html">Login</a></p>
+            </main>
+        </div>
+        <div class="image-side">
+            <img src="People-Happy.jpg" alt="Signup Illistration">
+        </div>
+    </div>
+    <script src="signup.js"></script>
+</body>
 </html>
