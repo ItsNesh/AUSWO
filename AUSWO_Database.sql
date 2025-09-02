@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS UserRoles (
     roleID int,
     FOREIGN KEY (userID) REFERENCES Users(userID),
     FOREIGN KEY (roleID) REFERENCES Roles(roleID),
-    UNIQUE(userID, roleID).
+    UNIQUE(userID, roleID)
 );
 
 CREATE TABLE IF NOT EXISTS QuickNews (
