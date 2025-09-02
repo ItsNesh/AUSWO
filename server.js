@@ -64,7 +64,7 @@ app.post('/api/users', async (req, res) => {
 app.get('/api/quick-news', async (req, res) => {
   try {
     const [rows] = await pool.query(
-      'SELECT newsID, title, datePublished FROM QuickNews ORDER BY datePublished DESC LIMIT 5'
+      'SELECT newsID, title, body, datePublished FROM QuickNews ORDER BY datePublished DESC LIMIT 5'
     );
     res.json(rows);
   } catch (err) {

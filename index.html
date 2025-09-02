@@ -93,6 +93,11 @@
           const li = document.createElement('li');
           li.textContent = `${n.title}`;
           ul.appendChild(li);
+          li.style.fontWeight = 'bold';
+          li.style.textDecoration = 'underline';
+          const li_body = document.createElement('p');
+          li_body.textContent = `${n.body}`;
+          ul.appendChild(li_body);
         });
         container.appendChild(ul);
       })
