@@ -21,3 +21,21 @@ INSERT INTO QuickNews (title, body, authorID)
 VALUES
 ('Server Maintenance Tonight', 'The system will be down for maintenance tonight from 10 PM to 12 AM.', 1),
 ('New Feature Released', 'We have launched the new dashboard feature for all users.', 1);
+
+INSERT INTO Occupations (anzsco, name, authority, skillLevel, listID)
+VALUES (254422, 'Registered Nurse (Mental Health)', 'VETASSESS', 1, 
+(SELECT listID FROM OccupationLists WHERE listName = 'MLTSSL'));
+
+INSERT INTO Occupations (anzsco, name, authority, skillLevel, listID)
+VALUES (234711, 'Veterinarian', 'TRA', 2, 
+(SELECT listID FROM OccupationLists WHERE listName = 'STSOL'));
+
+INSERT INTO Occupations (anzsco, name, authority, skillLevel, listID)
+VALUES (249311, 'Teacher of English to Speakers of Other Languages', 'ADC', 1, 
+(SELECT listID FROM OccupationLists WHERE listName = 'ROL'));
+
+INSERT INTO Pages (pageName, pageTitle, pageContent)
+VALUES 
+('home', 'Welcome to AUSWO', 'This is the homepage content...'),
+('about', 'About Us', 'This page describes the company and mission...'),
+('occupation_list', 'Occupation List', 'This page contains the lists of occupations...');
