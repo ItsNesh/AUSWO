@@ -1,0 +1,13 @@
+{
+  "name": "AUSWO",
+  "version": "1.0.0",
+  "description": "IT Industry Project for AUSWO",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "mysql2": "^3.8.0"
+  }
+}

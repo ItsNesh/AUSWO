@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width+device-width, initial-scale1.0">
+    <title>User Profile</title>
+    <link rel="stylesheet" href="../Stylesheets/Global.css">
+    <link rel="stylesheet" href="Profile.css">
+
+</head>
+<body>
+    <nav class="navbar">
+        <a class="brand" href="/index.html">AUSWO</a>
+        <div class="nav-links">
+            <a href="/points-calculator.html">Points Calculator</a>
+            <a href="/Login/Login.html">Login</a>
+            <a href="/Login/Signup.html">Sign Up</a>
+            <a href="/account.html">Account</a>
+        </div>
+    </nav>
+
+    <main class="page-container">
+        <h1>User Profile</h1>
+        <header class="header">
+            <div class="profile-pic" onclick="document.getElementById('uploadPic').click()">
+                <span id="picText">Profile Picture</span>
+                <img id="profileImage" src="" alt="" style="display: none;">
+            </div>
+            <input type="file" id="uploadPic" accept="image/*" style="display: none" onchange="uploadProfilePic(event)">
+
+            <div class="info-area">
+                <div class="basic-info" id="basic-info">
+                    <h3 id="userName">Placer Holder</h3>
+                    <p id="userEmail">Place.Holder@gmail.com</p>
+                </div>
+
+                <div class="points-box" id="points-box">
+                    <p id="points-display">No Result Yet</p>
+                </div>
+
+                <button class="button" onclick="editProfile()">Edit</button>
+                <a href="../points-calculator.html"><button class="button">Points Calculator</button></a>
+                <a href="../visa-options.html"><button class="button">Visa Options</button></a>
+                <a href="../visa-points.html"><button class="button">Visa Points</button></a>
+            </div>
+
+            <div class="dropdown">
+                <button onclick="toggleDropdown()">☰</button>
+                <div id="dropdownMenu" class="dropdown-content">
+                    <a href="#">Settings</a>
+                    <a href="#">Logout</a>
+                </div>
+            </div>
+        </header>
+
+        <section class="content-area" id="main-content">
+            Welcome to your New Profile Page!
+        </section>
+    </main>
+    <script src="Profile.js"></script>
+</body>
+</html>
