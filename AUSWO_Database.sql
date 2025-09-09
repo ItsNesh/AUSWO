@@ -9,7 +9,9 @@ CREATE TABLE IF NOT EXISTS Users (
     phoneNumber VARCHAR(15) UNIQUE,
     email VARCHAR(28) UNIQUE,
     userName VARCHAR(50) UNIQUE,
-    passwordHash VARCHAR(255) 
+    passwordHash VARCHAR(255),
+    visaOption VARCHAR(128),
+    visaPoints INT
 );
 
 -- Added API Login support (Should work based on previous Web and Database assignment but we'll see)

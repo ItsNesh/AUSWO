@@ -45,7 +45,10 @@
         return;
       }
 
-      setMessage('Login successful!', 'success');;
+      setMessage('Login successful!', 'success');
+      if (data && typeof data.userID !== 'undefined') {
+        try { localStorage.setItem('userID', String(data.userID)); } catch {}
+      }
     } catch (err) {
       setMessage('Network error during login.', 'error');
       console.error(err);
