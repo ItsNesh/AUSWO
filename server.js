@@ -1,5 +1,6 @@
 const express = require('express');
 const path = require('path');
+const fs = require('fs');
 const mysql = require('mysql2/promise');
 
 const app = express();
@@ -7,6 +8,54 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname)));
+app.use('/Dashboard', express.static(path.join(__dirname, 'Dashboard')));
+
+// Redirects
+const friendlyRedirects = {
+  '/dashboard': '/Dashboard/Dashboard.html',
+  '/Dashboard': '/Dashboard/Dashboard.html',
+  '/immigration': '/Dashboard/Immigration.html',
+  '/Immigration': '/Dashboard/Immigration.html',
+  '/profile': '/Profile/Profile.html',
+  '/Profile': '/Profile/Profile.html',
+  '/login': '/Login/Login.html',
+  '/Login': '/Login/Login.html',
+  '/signup': '/Login/Signup.html',
+  '/Signup': '/Login/Signup.html',
+  '/home': '/index.html',
+  '/index': '/index.html',
+};
+
+Object.entries(friendlyRedirects).forEach(([from, to]) => {
+  app.get(from, (req, res) => res.redirect(to));
+  app.get(from + '/', (req, res) => res.redirect(to));
+});
+
+// Extensionless redirects for root pages, eg. /account -> /account.html
+function tryRedirectToHtml(req, res, next) {
+  const p = req.path;
+  if (p.startsWith('/api/') || path.extname(p)) return next();
+
+  const candidate = path.join(__dirname, `${p}.html`); // eg. /points-calculator -> /points-calculator.html
+  fs.access(candidate, fs.constants.F_OK, (err) => {
+    if (!err) {
+      return res.redirect(`${p}.html`);
+    }
+
+    // Support for pages inside folders (Dashboard/Dashboard.html)
+    const name = p.replace(/^\//, '');
+    if (!name) return next();
+    const cap = name.charAt(0).toUpperCase() + name.slice(1);
+    const dirFile = path.join(__dirname, cap, `${cap}.html`);
+    fs.access(dirFile, fs.constants.F_OK, (err2) => {
+      if (!err2) return res.redirect(`/${cap}/${cap}.html`);
+      return next();
+    });
+  });
+}
+
+app.get('/:page', tryRedirectToHtml);
+app.get('/:page/', tryRedirectToHtml);
 
 const pool = mysql.createPool({
   host: process.env.DB_HOST || 'localhost',
@@ -91,6 +140,47 @@ app.post('/api/users', async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Failed to create user' });
+  }
+});
+
+// Edit user profile fields
+app.put('/api/users/:userID', async (req, res) => {
+  const { userID } = req.params;
+  const { firstName, lastName, email, userName, phoneNumber } = req.body || {};
+
+  // Update only provided fields
+  const fields = [];
+  const values = [];
+  const toNullable = (v) => (typeof v === 'string' && v.trim() === '' ? null : v);
+  if (typeof firstName === 'string') { fields.push('firstName = ?'); values.push(toNullable(firstName)); }
+  if (typeof lastName === 'string')  { fields.push('lastName = ?');  values.push(toNullable(lastName)); }
+  if (typeof email === 'string')     { fields.push('email = ?');     values.push(toNullable(email)); }
+  if (typeof userName === 'string')  { fields.push('userName = ?');  values.push(toNullable(userName)); }
+  if (typeof phoneNumber === 'string') { fields.push('phoneNumber = ?'); values.push(toNullable(phoneNumber)); }
+
+  if (fields.length === 0) {
+    return res.status(400).json({ error: 'No valid fields to update' });
+  }
+
+  try {
+    const sql = `UPDATE Users SET ${fields.join(', ')} WHERE userID = ?`;
+    values.push(userID);
+    const [result] = await pool.query(sql, values);
+    if (result.affectedRows === 0) return res.status(404).json({ error: 'User not found' });
+
+    // Return the updated user
+    const [rows] = await pool.query(
+      'SELECT userID, firstName, lastName, email, userName, phoneNumber, visaOption, visaPoints FROM Users WHERE userID = ? LIMIT 1',
+      [userID]
+    );
+    res.json(rows[0] || { ok: true });
+  } catch (err) {
+    // Handle duplicate key errors (unique constraints for email/phone/userName)
+    if (err && (err.code === 'ER_DUP_ENTRY' || err.errno === 1062)) {
+      return res.status(409).json({ error: 'Duplicate value for a unique field' });
+    }
+    console.error(err);
+    res.status(500).json({ error: 'Failed to update user' });
   }
 });
 

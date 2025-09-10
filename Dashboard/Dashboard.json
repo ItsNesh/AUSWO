@@ -1,0 +1,7 @@
+{
+    "items": [
+        {"text": "Welcome to the dashboard!", "link": "Immigration.html"},
+        {"text": "Here is the new news!"},
+        {"text": "You have 3 new notifications, click here to check them out"}
+    ]
+}
