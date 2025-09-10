@@ -11,15 +11,57 @@
     <a class="brand" href="/index.html">AUSWO</a>
     <div class="nav-links">
       <a href="/points-calculator.html">Points Calculator</a>
+      <a href="/Dashboard/Dashboard.html">Dashboard</a>
       <a href="/Login/Login.html">Login</a>
       <a href="/Login/Signup.html">Sign Up</a>
+      <a href="/Profile/Profile.html">Profile</a>
       <a href="/account.html">Account</a>
     </div>
   </nav>
   <main class="page-container">
     <h1>Account</h1>
+    <section id="account-points" style="margin-top:16px;">
+      <h2>Your Visa Points</h2>
+      <div id="points-content">Loading...</div>
+    </section>
   </main>
+  <script>
+    async function resolveVisaName(value) {
+      if (!value) return 'N/A';
+      if (!/^\d+$/.test(value)) return value;
+      const code = String(value);
+      try {
+        const res = await fetch('/points_calculator_logic.json', { headers: { 'Accept': 'application/json' } });
+        if (!res.ok) return `Subclass ${code}`;
+        const data = await res.json();
+        const visas = Array.isArray(data?.visas) ? data.visas : [];
+        const found = visas.find(v => String(v.id) === code);
+        return found?.name || `Subclass ${code}`;
+      } catch {
+        return `Subclass ${code}`;
+      }
+    }
+
+    (async function(){
+      const el = document.getElementById('points-content');
+      try {
+        const userID = localStorage.getItem('userID');
+        if (!userID) { el.textContent = 'Not logged in.'; return; }
+        const res = await fetch(`/api/users/${encodeURIComponent(userID)}`);
+        if (!res.ok) { el.textContent = 'Failed to load account data.'; return; }
+        const u = await res.json();
+        const pts = (typeof u.visaPoints === 'number') ? u.visaPoints : 'N/A';
+        const visaName = await resolveVisaName(u.visaOption);
+        el.innerHTML = `
+          <p>Visa Option: <strong>${visaName}</strong></p>
+          <p>Total Points: <strong>${pts}</strong></p>
+          <a href="/points-calculator.html">Update your points</a>
+        `;
+      } catch (e) {
+        console.error(e);
+        el.textContent = 'Error loading account information';
+      }
+    })();
+  </script>
 </body>
 </html>
-
-

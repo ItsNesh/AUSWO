@@ -1,0 +1,413 @@
+{
+  "visas": [
+    {
+      "id": "188",
+      "name": "Business Innovation and Investment (Provisional) visa (subclass 188)",
+      "categories": [
+        {
+          "name": "Special endorsement",
+          "description": "The nominating State or Territory government agency has determined that your proposed business is of unique and important benefit to the State or Territory where the nominating government agency is located",
+          "options": [
+            { "label": "Yes", "points": 10 },
+            { "label": "No", "points": 0 }
+          ]
+        },
+        {
+          "name": "Financial assets",
+          "description": "Net business and personal assets of you, your partner or you and your partner combined in each of the preceding 2 fiscal years of at least:",
+          "options": [
+            { "label": "Not less than AUD1.25 million", "points": 5 },
+            { "label": "Not less than AUD1.75 million", "points": 15 },
+            { "label": "Not less than AUD2.25 million", "points": 25 },
+            { "label": "Not less than AUD2.75 million", "points": 35 },
+            { "label": "Not applicable", "points": 0 }
+          ]
+        },
+        {
+          "name": "Business turnover",
+          "description": "You had an ownership interest in one or more main businesses that had an annual turnover in at least 2 of the 4 fiscal years immediately before the time of invitation to apply for the visa",
+          "options": [
+            { "label": "Not less than AUD750,000", "points": 5 },
+            { "label": "Not less than AUD1.25 million", "points": 15 },
+            { "label": "Not less than AUD1.75 million", "points": 25 },
+            { "label": "Not less than AUD2.25 million", "points": 35 },
+            { "label": "Not applicable", "points": 0 }
+          ]
+        },
+        {
+          "name": "Business Innovation stream only - Business experience",
+          "description": "You have held one or more main businesses before you were invited to apply for the visa for",
+          "options": [
+            { "label": "Not less than 4 years within the preceding 5 years", "points": 10 },
+            { "label": "Not less than 7 years within the preceding 8 years", "points": 15 },
+            { "label": "Not applicable", "points": 0 }
+          ]
+        },
+        {
+          "name": "Investor stream only - Investor experience",
+          "description": "Immediately before the time of application you held eligible investments of at least AUD250,000 held for",
+          "options": [
+            { "label": "Not less than 4 years before the invitation time", "points": 10 },
+            { "label": "Not less than 7 years before the invitation time", "points": 15 },
+            { "label": "Not applicable", "points": 0 }
+          ]
+        },
+        {
+          "name": "Business innovation qualifications",
+          "description": "Select your business qualifications",
+          "options": [
+            { "label": "Patents or designs registered not less than 1 year before that time and used in the day to day activities of the main business", "points": 15 },
+            { "label": "Trademarks registered not less than 1 year before that time and used in the day to day activities of the main business", "points": 10 },
+            { "label": "Ownership and day to day participation in a main business operated under a formal joint venture agreement entered into no less than 1 year before the time", "points": 5 },
+            { "label": "Ownership interest in a main business that derives no less than 50% of its annual turnover from export trade", "points": 15 },
+            { "label": "Ownership in a main business with average annualised growth in turnover greater than 20% per annum over 3 continuous fiscal years and employing 10+ FTE in at least one of those years", "points": 10 },
+            { "label": "Ownership in a main business that received a government grant of at least AUD10,000 for early phase startup, product commercialisation, business development or expansion", "points": 10 },
+            { "label": "Ownership in a main business that received venture capital funding of at least AUD100,000 not more than 4 years before the time of invitation for startup/commercialisation/development/expansion", "points": 10 },
+            { "label": "Not applicable", "points": 0 }
+          ]
+        },
+        {
+          "name": "Age",
+          "description": "Which age band do you fit into?",
+          "options": [
+            { "label": "18-24 years", "points": 20 },
+            { "label": "25-32 years", "points": 30 },
+            { "label": "33-39 years", "points": 25 },
+            { "label": "40-44 years", "points": 20 },
+            { "label": "45-54 years", "points": 15 },
+            { "label": "55 and older", "points": 0 }
+          ]
+        },
+        {
+          "name": "English language requirements",
+          "description": "How would you rate your English language ability?",
+          "options": [
+            { "label": "Vocational English", "points": 5 },
+            { "label": "Proficient English", "points": 10 },
+            { "label": "Not applicable", "points": 0 }
+          ]
+        },
+        {
+          "name": "Educational Qualifications",
+          "description": "What is your highest qualification?",
+          "options": [
+            { "label": "Trade certificate, diploma or bachelor degree by an Australian education institute; or a bachelor qualification recognised by an educational institution of a recognised standard", "points": 5 },
+            { "label": "Bachelor degree in business, science or technology by an Australian institution; or a bachelor qualification in business, science or technology by a recognised institution", "points": 10 },
+            { "label": "Not applicable", "points": 0 }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "189",
+      "name": "Skilled Independent Visa (Subclass 189) Permanent visa for skilled workers without sponsorship.",
+      "categories": [
+        {
+          "name": "Age",
+          "description": "Which age band do you fit into?",
+          "options": [
+            { "label": "at least 18 but less than 25 years", "points": 25 },
+            { "label": "at least 25 but less than 33 years", "points": 30 },
+            { "label": "at least 33 but less than 40 years", "points": 25 },
+            { "label": "at least 40 but less than 45 years", "points": 15 },
+            { "label": "over 45 years", "points": 0 }
+          ]
+        },
+        {
+          "name": "English language requirements",
+          "description": "How would you rate your English language ability?",
+          "options": [
+            { "label": "Competent English", "points": 0 },
+            { "label": "Proficient English", "points": 10 },
+            { "label": "Superior English", "points": 20 }
+          ]
+        },
+        {
+          "name": "Skilled employment outside Australia",
+          "description": "Skilled employment outside Australia",
+          "options": [
+            { "label": "Less than 3 years", "points": 0 },
+            { "label": "At least 3 but less than 5 years", "points": 5 },
+            { "label": "At least 5 but less than 8 years", "points": 10 },
+            { "label": "At least 8 years", "points": 15 }
+          ]
+        },
+        {
+          "name": "Australian skilled employment",
+          "description": "Skilled employment in Australia",
+          "options": [
+            { "label": "Less than 1 year", "points": 0 },
+            { "label": "At least 1 but less than 3 years", "points": 5 },
+            { "label": "At least 3 but less than 5 years", "points": 10 },
+            { "label": "At least 5 but less than 8 years", "points": 15 },
+            { "label": "At least 8 years", "points": 20 }
+          ]
+        },
+        {
+          "name": "Educational qualifications",
+          "description": "What is your highest educational qualification?",
+          "options": [
+            { "label": "A Doctorate from an Australian educational institution or a Doctorate from another educational institution, that is of a recognised standard.", "points": 20 },
+            { "label": "At least a Bachelor degree from an Australian educational institution or at least a Bachelor qualification, from another educational institution, that is of a recognised standard.", "points": 15 },
+            { "label": "A diploma or trade qualification from an Australian educational institution.", "points": 10 },
+            { "label": "Attained a qualification or award recognised by the relevant assessing authority for your nominated skilled occupation as being suitable for that occupation.", "points": 10 },
+            { "label": "No Recognised Qualifications.", "points": 0 }
+          ]
+        },
+        {
+          "name": "Specialist education qualification",
+          "description": "Do you have a Masters degree by research or a Doctorate degree from an Australian educational institution that included at least 2 academic years study in a relevant field?",
+          "options": [
+            { "label": "Yes", "points": 10 },
+            { "label": "No", "points": 0 }
+          ]
+        },
+        {
+          "name": "Australian study requirement",
+          "description": "Do you have at least 1 degree, diploma or trade qualification from an Australian educational institution that meets the Australian study requirement?",
+          "options": [
+            { "label": "Yes", "points": 5 },
+            { "label": "No", "points": 0 }
+          ]
+        },
+        {
+          "name": "Professional Year in Australia",
+          "description": "Did you complete a professional year in Australia?",
+          "options": [
+            { "label": "Yes", "points": 5 },
+            { "label": "No", "points": 0 }
+          ]
+        },
+        {
+          "name": "Credentialed community language",
+          "description": "Have you been accredited at the paraprofessional level or above, certified at the certified provisional level or above, or have a community language credential for interpreting or translating by NAATI?",
+          "options": [
+            { "label": "Yes", "points": 5 },
+            { "label": "No", "points": 0 }
+          ]
+        },
+        {
+          "name": "Study in regional Australia",
+          "description": "Do you have at least 1 degree, diploma or trade qualification from an Australian educational institution that satisfies the Australian study requirement obtained while living and studying in an eligible area of regional Australia?",
+          "options": [
+            { "label": "Yes", "points": 5 },
+            { "label": "No", "points": 0 }
+          ]
+        },
+        {
+          "name": "Partner skills",
+          "description": "Select the relevant partner skills qualifications",
+          "options": [
+            { "label": "Your spouse or de facto partner is also an applicant for this visa and meets age, English and skill criteria.", "points": 10 },
+            { "label": "Your spouse or de facto partner is also an applicant for this visa and has competent English.", "points": 5 },
+            { "label": "You are single or your partner is an Australian citizen or permanent resident.", "points": 10 }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "190",
+      "name": "Skilled Nominated Visa (Subclass 190) Permanent visa for skilled workers nominated by a state or territory.",
+      "categories": [
+        { "name": "Age", "description": "Which age band do you fit into?", "options": [
+          { "label": "at least 18 but less than 25 years", "points": 25 },
+          { "label": "at least 25 but less than 33 years", "points": 30 },
+          { "label": "at least 33 but less than 40 years", "points": 25 },
+          { "label": "at least 40 but less than 45 years", "points": 15 },
+          { "label": "over 45 years", "points": 0 }
+        ]},
+        { "name": "English language requirements", "description": "How would you rate your English language ability?", "options": [
+          { "label": "Competent English", "points": 0 },
+          { "label": "Proficient English", "points": 10 },
+          { "label": "Superior English", "points": 20 }
+        ]},
+        { "name": "Skilled employment outside Australia", "description": "Skilled employment outside Australia", "options": [
+          { "label": "Less than 3 years", "points": 0 },
+          { "label": "At least 3 but less than 5 years", "points": 5 },
+          { "label": "At least 5 but less than 8 years", "points": 10 },
+          { "label": "At least 8 years", "points": 15 }
+        ]},
+        { "name": "Australian skilled employment", "description": "Skilled employment in Australia", "options": [
+          { "label": "Less than 1 year", "points": 0 },
+          { "label": "At least 1 but less than 3 years", "points": 5 },
+          { "label": "At least 3 but less than 5 years", "points": 10 },
+          { "label": "At least 5 but less than 8 years", "points": 15 },
+          { "label": "At least 8 years", "points": 20 }
+        ]},
+        { "name": "Educational qualifications", "description": "What is your highest educational qualification?", "options": [
+          { "label": "A Doctorate from an Australian educational institution or a Doctorate from another educational institution, that is of a recognised standard.", "points": 20 },
+          { "label": "At least a Bachelor degree from an Australian educational institution or at least a Bachelor qualification, from another educational institution, that is of a recognised standard.", "points": 15 },
+          { "label": "A diploma or trade qualification from an Australian educational institution.", "points": 10 },
+          { "label": "Attained a qualification or award recognised by the relevant assessing authority for your nominated skilled occupation as being suitable for that occupation.", "points": 10 },
+          { "label": "No Recognised Qualifications.", "points": 0 }
+        ]},
+        { "name": "Specialist education qualification", "description": "Do you have a Masters degree by research or a Doctorate degree from an Australian educational institution that included at least 2 academic years study in a relevant field?", "options": [
+          { "label": "Yes", "points": 10 },
+          { "label": "No", "points": 0 }
+        ]},
+        { "name": "Australian study requirement", "description": "Do you have at least 1 degree, diploma or trade qualification from an Australian educational institution that meets the Australian study requirement?", "options": [
+          { "label": "Yes", "points": 5 },
+          { "label": "No", "points": 0 }
+        ]},
+        { "name": "Professional Year in Australia", "description": "Did you complete a professional year in Australia?", "options": [
+          { "label": "Yes", "points": 5 },
+          { "label": "No", "points": 0 }
+        ]},
+        { "name": "Credentialed community language", "description": "Have you been accredited at the paraprofessional level or above, certified at the certified provisional level or above, or have a community language credential by NAATI?", "options": [
+          { "label": "Yes", "points": 5 },
+          { "label": "No", "points": 0 }
+        ]},
+        { "name": "Study in regional Australia", "description": "Do you have a degree/diploma/trade qualification obtained while living and studying in an eligible regional area?", "options": [
+          { "label": "Yes", "points": 5 },
+          { "label": "No", "points": 0 }
+        ]},
+        { "name": "Partner skills", "description": "Select the relevant partner skills qualifications", "options": [
+          { "label": "Partner meets age, English and skill criteria.", "points": 10 },
+          { "label": "Partner has competent English.", "points": 5 },
+          { "label": "Single or partner is an Australian citizen/permanent resident.", "points": 10 }
+        ]},
+        { "name": "Nomination", "description": "Have you been invited for a Skilled Nominated visa (subclass 190) and the nominating State/Territory has not withdrawn the nomination?", "options": [
+          { "label": "Yes", "points": 5 },
+          { "label": "No", "points": 0 }
+        ]}
+      ]
+    },
+    {
+      "id": "489",
+      "name": "Skilled Regional (Provisional) visa (subclass 489)",
+      "categories": [
+        { "name": "Age", "description": "Which age band do you fit into?", "options": [
+          { "label": "at least 18 but less than 25 years", "points": 25 },
+          { "label": "at least 25 but less than 33 years", "points": 30 },
+          { "label": "at least 33 but less than 40 years", "points": 25 },
+          { "label": "at least 40 but less than 45 years", "points": 15 },
+          { "label": "over 45 years", "points": 0 }
+        ]},
+        { "name": "English language requirements", "description": "How would you rate your English language ability?", "options": [
+          { "label": "Competent English", "points": 0 },
+          { "label": "Proficient English", "points": 10 },
+          { "label": "Superior English", "points": 20 }
+        ]},
+        { "name": "Skilled employment outside Australia", "description": "Skilled employment outside Australia", "options": [
+          { "label": "Less than 3 years", "points": 0 },
+          { "label": "At least 3 but less than 5 years", "points": 5 },
+          { "label": "At least 5 but less than 8 years", "points": 10 },
+          { "label": "At least 8 years", "points": 15 }
+        ]},
+        { "name": "Australian skilled employment", "description": "Skilled employment in Australia", "options": [
+          { "label": "Less than 1 year", "points": 0 },
+          { "label": "At least 1 but less than 3 years", "points": 5 },
+          { "label": "At least 3 but less than 5 years", "points": 10 },
+          { "label": "At least 5 but less than 8 years", "points": 15 },
+          { "label": "At least 8 years", "points": 20 }
+        ]},
+        { "name": "Educational qualifications", "description": "What is your highest educational qualification?", "options": [
+          { "label": "A Doctorate from an Australian educational institution or a Doctorate from another educational institution, that is of a recognised standard.", "points": 20 },
+          { "label": "At least a Bachelor degree from an Australian educational institution or at least a Bachelor qualification, from another educational institution, that is of a recognised standard.", "points": 15 },
+          { "label": "A diploma or trade qualification from an Australian educational institution.", "points": 10 },
+          { "label": "Attained a qualification or award recognised by the relevant assessing authority for your nominated skilled occupation as being suitable for that occupation.", "points": 10 },
+          { "label": "No Recognised Qualifications.", "points": 0 }
+        ]},
+        { "name": "Specialist education qualification", "description": "Do you have a Masters degree by research or a Doctorate degree from an Australian educational institution that included at least 2 academic years study in a relevant field?", "options": [
+          { "label": "Yes", "points": 10 },
+          { "label": "No", "points": 0 }
+        ]},
+        { "name": "Australian study requirement", "description": "Do you have at least 1 degree, diploma or trade qualification from an Australian educational institution that meets the Australian study requirement?", "options": [
+          { "label": "Yes", "points": 5 },
+          { "label": "No", "points": 0 }
+        ]},
+        { "name": "Professional Year in Australia", "description": "Did you complete a professional year in Australia?", "options": [
+          { "label": "Yes", "points": 5 },
+          { "label": "No", "points": 0 }
+        ]},
+        { "name": "Credentialed community language", "description": "Have you been accredited at the paraprofessional level or above, certified at the certified provisional level or above, or have a community language credential by NAATI?", "options": [
+          { "label": "Yes", "points": 5 },
+          { "label": "No", "points": 0 }
+        ]},
+        { "name": "Study in regional Australia", "description": "Do you have a degree/diploma/trade qualification obtained while living and studying in an eligible regional area?", "options": [
+          { "label": "Yes", "points": 5 },
+          { "label": "No", "points": 0 }
+        ]},
+        { "name": "Partner skills", "description": "Select the relevant partner skills qualifications", "options": [
+          { "label": "Partner meets age, English and skill criteria.", "points": 10 },
+          { "label": "Partner has competent English.", "points": 5 },
+          { "label": "Single or partner is an Australian citizen/permanent resident.", "points": 10 }
+        ]},
+        { "name": "Nomination or sponsorship", "description": "Have you been nominated or sponsored to apply for this visa?", "options": [
+          { "label": "Nominated by a State/Territory government agency", "points": 15 },
+          { "label": "Sponsored by an eligible family member", "points": 15 },
+          { "label": "Not applicable", "points": 0 }
+        ]}
+      ]
+    },
+    {
+      "id": "491",
+      "name": "Skilled Work Regional (Provisional) Visa (Subclass 491) Provisional visa for skilled workers nominated by a state or sponsored by a family member.",
+      "categories": [
+        { "name": "Age", "description": "Which age band do you fit into?", "options": [
+          { "label": "at least 18 but less than 25 years", "points": 25 },
+          { "label": "at least 25 but less than 33 years", "points": 30 },
+          { "label": "at least 33 but less than 40 years", "points": 25 },
+          { "label": "at least 40 but less than 45 years", "points": 15 },
+          { "label": "over 45 years", "points": 0 }
+        ]},
+        { "name": "English language requirements", "description": "How would you rate your English language ability?", "options": [
+          { "label": "Competent English", "points": 0 },
+          { "label": "Proficient English", "points": 10 },
+          { "label": "Superior English", "points": 20 }
+        ]},
+        { "name": "Skilled employment outside Australia", "description": "Skilled employment outside Australia", "options": [
+          { "label": "Less than 3 years", "points": 0 },
+          { "label": "At least 3 but less than 5 years", "points": 5 },
+          { "label": "At least 5 but less than 8 years", "points": 10 },
+          { "label": "At least 8 years", "points": 15 }
+        ]},
+        { "name": "Australian skilled employment", "description": "Skilled employment in Australia", "options": [
+          { "label": "Less than 1 year", "points": 0 },
+          { "label": "At least 1 but less than 3 years", "points": 5 },
+          { "label": "At least 3 but less than 5 years", "points": 10 },
+          { "label": "At least 5 but less than 8 years", "points": 15 },
+          { "label": "At least 8 years", "points": 20 }
+        ]},
+        { "name": "Educational qualifications", "description": "What is your highest educational qualification?", "options": [
+          { "label": "A Doctorate from an Australian educational institution or a Doctorate from another educational institution, that is of a recognised standard.", "points": 20 },
+          { "label": "At least a Bachelor degree from an Australian educational institution or at least a Bachelor qualification, from another educational institution, that is of a recognised standard.", "points": 15 },
+          { "label": "A diploma or trade qualification from an Australian educational institution.", "points": 10 },
+          { "label": "Attained a qualification or award recognised by the relevant assessing authority for your nominated skilled occupation as being suitable for that occupation.", "points": 10 },
+          { "label": "No Recognised Qualifications.", "points": 0 }
+        ]},
+        { "name": "Specialist education qualification", "description": "Do you have a Masters degree by research or a Doctorate degree from an Australian educational institution that included at least 2 academic years study in a relevant field?", "options": [
+          { "label": "Yes", "points": 10 },
+          { "label": "No", "points": 0 }
+        ]},
+        { "name": "Australian study requirement", "description": "Do you have at least 1 degree, diploma or trade qualification from an Australian educational institution that meets the Australian study requirement?", "options": [
+          { "label": "Yes", "points": 5 },
+          { "label": "No", "points": 0 }
+        ]},
+        { "name": "Professional Year in Australia", "description": "Did you complete a professional year in Australia?", "options": [
+          { "label": "Yes", "points": 5 },
+          { "label": "No", "points": 0 }
+        ]},
+        { "name": "Credentialed community language", "description": "Have you been accredited at the paraprofessional level or above, certified at the certified provisional level or above, or have a community language credential by NAATI?", "options": [
+          { "label": "Yes", "points": 5 },
+          { "label": "No", "points": 0 }
+        ]},
+        { "name": "Study in regional Australia", "description": "Do you have a degree/diploma/trade qualification obtained while living and studying in an eligible regional area?", "options": [
+          { "label": "Yes", "points": 5 },
+          { "label": "No", "points": 0 }
+        ]},
+        { "name": "Partner skills", "description": "Select the relevant partner skills qualifications", "options": [
+          { "label": "Partner meets age, English and skill criteria.", "points": 10 },
+          { "label": "Partner has competent English.", "points": 5 },
+          { "label": "Single or partner is an Australian citizen/permanent resident.", "points": 10 }
+        ]},
+        { "name": "Nomination or sponsorship", "description": "Have you been nominated or sponsored to apply for this visa?", "options": [
+          { "label": "Nominated by a State/Territory government agency", "points": 15 },
+          { "label": "Sponsored by an eligible family member", "points": 15 },
+          { "label": "Not applicable", "points": 0 }
+        ]}
+      ]
+    }
+  ]
+}
+
