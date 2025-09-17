@@ -1,0 +1,159 @@
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f9f9f9;
+    color: #333;
+}
+
+h1, h2 {
+    margin-bottom: 15px;
+    font-weight: bold;
+}
+
+p {
+    margin-bottom: 20px;
+    color: #555;
+}
+
+.btn {
+    background: #111;
+    color: #fff;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 4px;
+    text-decoration: none;
+    cursor: pointer;
+    margin-right: 8px;
+    transition: background 0.3s;
+}
+
+.btn:hover {
+    background: teal;
+}
+
+.btn-outline {
+    background: transparent;
+    border: 2px solid #111;
+    color: #111;
+    padding: 8px 16px;
+    border-radius: 4px;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.btn-outline:hover {
+    background: teal;
+    color: #fff;
+    border-color: teal;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #111;
+    color: #fff;
+    padding: 15px 30px;
+}
+
+.navbar .nav-links a {
+    margin: 0 8px;
+    color: #fff;
+    text-decoration: none;
+}
+
+.hero {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 60px 10%;
+    background: #fff;
+}
+
+.hero-content {
+    flex: 1;
+    padding-right: 20px;
+}
+
+.hero-image img {
+    max-width: 100%;
+    border-radius: 8px;
+}
+
+.login-section {
+    background: #333;
+    color: #fff;
+    padding: 40px;
+    text-align: center;
+}
+
+.login-section form {
+    margin-top: 20px;
+}
+
+.login-section input {
+    padding: 10px;
+    width: 250px;
+    margin-right: 10px;
+    border-radius: 4px;
+    border: none;
+}
+
+.reset-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 60px 10%;
+    background: #f5f5f5;
+}
+
+.reset-content {
+    flex: 1;
+    padding-right: 20px;
+}
+
+.reset-image img {
+    max-width: 100%;
+    border-radius: 8px;
+}
+
+.join-section {
+    text-align: center;
+    padding: 60px 20px;
+    background: #fff;
+}
+
+.join-buttons {
+    margin-top: 20px;
+}
+
+footer {
+    background: #111;
+    color: #ddd;
+    text-align: center;
+    padding: 20px;
+}
+
+.footer-top form {
+    margin-bottom: 10px;
+}
+
+.footer-top input {
+    padding: 10px;
+    border: none;
+    border-radius: 4px 0 0 4px;
+}
+
+.footer-top button {
+    border-radius: 0 4px 4px 0;
+}
+
+.footer-links a {
+    margin: 0 8px;
+    color: #bbb;
+    text-decoration: none;
+}
+.footer-links a:hover {
+    text-decoration: underline;
+}
+
