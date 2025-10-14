@@ -3,25 +3,49 @@ const path = require('path');
 const fs = require('fs');
 const mysql = require('mysql2/promise');
 
+// Added for this Git branch
+const cookieParser = require('cookie-parser');
+const passport = require('passport');
+const session = require('express-session');
+const { body } = require('express-validator');
+
+var authRouter = require('./routes/auth');
+var dashboardRouter = require('./routes/Dashboard');
+var immigrationRouter = require('./routes/Immigration');
+var loginRouter = require('./routes/Login');
+var profileRouter = require('./routes/Profile');
+var signupRouter = require('./routes/Signup');
+
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
-app.use(express.static(path.join(__dirname)));
-app.use('/Dashboard', express.static(path.join(__dirname, 'Dashboard')));
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.urlencoded({ extended: true }));
+app,use(express.json());
+app.use(session({
+  secret: 'GOCSPX-3p0mYH8m7VfX5d4h8j9kL0qJz9W',
+  resave: false,
+  saveUninitialized: false,
+  cookie: { maxAge: 60000} // 10 Minutes
+}));
+app.use('./routes/Dashboard', express.static(path.join(__dirname, 'Dashboard')));
 
 // Redirects
 const friendlyRedirects = {
-  '/dashboard': '/Dashboard/Dashboard.html',
-  '/Dashboard': '/Dashboard/Dashboard.html',
-  '/immigration': '/Dashboard/Immigration.html',
-  '/Immigration': '/Dashboard/Immigration.html',
-  '/profile': '/Profile/Profile.html',
-  '/Profile': '/Profile/Profile.html',
-  '/login': '/Login/Login.html',
-  '/Login': '/Login/Login.html',
-  '/signup': '/Login/Signup.html',
-  '/Signup': '/Login/Signup.html',
+  '/dashboard': './public/Dashboard.html',
+  '/Dashboard': './public/Dashboard.html',
+  '/immigration': './public/Immigration.html',
+  '/Immigration': './public/Immigration.html',
+  '/profile': './public/Profile.html',
+  '/Profile': './public/Profile.html',
+  '/login': './public/Login.html',
+  '/Login': './public/Login.html',
+  '/signup': './public/Signup.html',
+  '/Signup': './public/Signup.html',
   '/home': '/index.html',
   '/index': '/index.html',
 };
@@ -60,7 +84,7 @@ app.get('/:page/', tryRedirectToHtml);
 const pool = mysql.createPool({
   host: process.env.DB_HOST || 'localhost',
   user: process.env.DB_USER || 'root',
-  password: process.env.DB_PASSWORD || '',
+  password: process.env.DB_PASSWORD || 'AUSWO2025',
   database: process.env.DB_NAME || 'AUSWO',
   waitForConnections: true,
   connectionLimit: 10,
