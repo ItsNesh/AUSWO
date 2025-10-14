@@ -67,8 +67,8 @@
               sessionInfo: null
           },
           mounted() {
-              // Check if the user is logged in (e.g., check for a token in localStorage)
-              this.isLoggedIn = !!localStorage.getItem('token');
+              // Check if the user is logged in (check for userID in localStorage)
+              this.isLoggedIn = !!localStorage.getItem('userID');
               this.fetchSessionInfo();
           },
           methods: {
@@ -89,9 +89,9 @@
                       }
 
                       const data = await response.json();
-                      localStorage.setItem('token', data.token); // Save the token in local storage or cookie
+                      localStorage.setItem('userID', data.userID); // Save the userID in local storage
                       this.isLoggedIn = true; // Update the login state
-                      window.location.href = '/index.html'; // Redirect after login
+                      window.location.href = data.redirect || '/index.html'; // Redirect after login
                   } catch (error) {
                       alert('Login failed');
                   }
@@ -100,8 +100,8 @@
                   window.location.href = '/auth/google';
               },
               logout() {
-                  // Remove the token from localStorage
-                  localStorage.removeItem('token');
+                  // Remove the userID from localStorage
+                  localStorage.removeItem('userID');
                   // Set the logged-in state to false
                   this.isLoggedIn = false;
                   // Redirect to the homepage or login page

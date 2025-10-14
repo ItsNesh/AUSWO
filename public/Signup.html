@@ -67,7 +67,8 @@
         <div class="form-side">
             <main>
                 <h1>Sign Up Page</h1>
-                <form id="login-signup-form"> 
+                <ul id="errorList" style="color: red; margin-bottom: 20px;"></ul>
+                <form id="login-signup-form" onsubmit="return validateForm(event)"> 
                     <div class="form-group">
                         <label for="login-signup-first-name">First Name:</label>
                         <br />
@@ -153,7 +154,7 @@
                     fetch('/auth/logout')
                         .then(response => {
                             if (response.ok) {
-                                localStorage.removeItem('token');
+                                localStorage.removeItem('userID');
                                 this.isLoggedIn = false;
                                 window.location.href = '/Login.html';
                             } else {

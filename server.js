@@ -1,13 +1,15 @@
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
-const mysql = require('mysql2/promise');
 
 // Added for this Git branch
 const cookieParser = require('cookie-parser');
 const passport = require('passport');
 const session = require('express-session');
 const { body } = require('express-validator');
+
+// Database Setup
+const pool = require('./db');
 
 // Route Handlers
 var authRouter = require('./routes/auth');
@@ -25,23 +27,17 @@ app.use(cookieParser());
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({
-  secret: 'GOCSPX-3p0mYH8m7VfX5d4h8j9kL0qJz9W', // Use an environment variable in production
+  secret: process.env.SESSION_SECRET || 'GOCSPX-3p0mYH8m7VfX5d4h8j9kL0qJz9W', // Use an environment variable in production
   resave: false,
   saveUninitialized: false,
-  cookie: { maxAge: 60000} // 10 Minutes
+  cookie: { maxAge: 7 * 24 * 60 * 60 * 1000 } // 7 days
 }));
-app.use('/Dashboard', express.static(path.join(__dirname, 'Dashboard')));
 
-// Database Setup
-const pool = mysql.createPool({
-  host: process.env.DB_HOST || 'localhost',
-  user: process.env.DB_USER || 'root',
-  password: process.env.DB_PASSWORD || 'AUSWO2025',
-  database: process.env.DB_NAME || 'AUSWO',
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0,
-});
+// Passport middleware - must be after session and before routes
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.use('/Dashboard', express.static(path.join(__dirname, 'Dashboard')));
 
 // Helper to wait for DB to be ready
 
@@ -282,22 +278,24 @@ app.use(async (req, res, next) => {
     if (req.session.isLoggedIn && req.session.userId) {
         try {
             const [userRows] = await pool.query('SELECT userID, userName, email, firstName, lastName FROM Users WHERE userID = ?', [req.session.userId]);
-            const user = userRows[0];
 
-            if (user) {
-                const [roleRows] = await pool.query(
-                    `SELECT Roles.roleName FROM UserRoles
-                    JOIN Roles ON UserRoles.roleID = Roles.roleID
-                    WHERE UserRoles.userID = ?`, [req.session.userId]
-                );
-                const roles = roleRows.map(row => row.roleName);
-                const isAdmin = roles.includes('Admin');
-                console.log('User roles:', roles);
-
-                req.userRoles = { user, roles, isAdmin };
-            } else {
+            if (!userRows || userRows.length === 0) {
+                req.session.destroy();
                 req.userRoles = { roles: [], isAdmin: false };
+                return next();
             }
+
+            const user = userRows[0];
+            const [roleRows] = await pool.query(
+                `SELECT Roles.roleName FROM UserRoles
+                JOIN Roles ON UserRoles.roleID = Roles.roleID
+                WHERE UserRoles.userID = ?`, [req.session.userId]
+            );
+            const roles = roleRows.map(row => row.roleName);
+            const isAdmin = roles.includes('Admin');
+            console.log('User roles:', roles);
+
+            req.userRoles = { user, roles, isAdmin };
         } catch (error) {
             console.error('Error obtaining user roles and/or admin status', error);
             req.userRoles = { roles: [], isAdmin: false };
@@ -307,26 +305,6 @@ app.use(async (req, res, next) => {
     }
     next();
 });
-
-// Session info route
-app.get('/auth/session-info', (req, res) => {
-    if (req.session.isLoggedIn) {
-        res.json({
-            isLoggedIn: req.session.isLoggedIn,
-            userId: req.session.userId,
-            isAdmin: req.userRoles.isAdmin,
-            firstName: req.userRoles.user.firstName,
-            lastName: req.userRoles.user.lastName
-        });
-    } else {
-        res.status(401).json({ isLoggedIn: false });
-    }
-});
-
-// Passport middleware
-app.use(passport.initialize());
-app.use(passport.session());
-app.use(express.static('public'));
 
 // Routers
 app.use('/auth', authRouter);

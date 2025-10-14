@@ -2,30 +2,21 @@ var express = require('express');
 var router = express.Router();
 var argon2 = require('argon2');
 var { body, validationResult } = require('express-validator');
-var mysql = require('mysql2/promise');
 var passport = require('passport');
 var GoogleStrategy = require('passport-google-oauth2').Strategy;
 
-// MySQL connection configuration
-var pool = mysql.createPool({
-    host: 'localhost',
-    user: 'root',
-    password: 'AUSWO2025',
-    database: 'AUSWO',
-    waitForConnections: true,
-    connectionLimit: 10,
-    queueLimit: 0
-});
+// MySQL connection pool (shared)
+var pool = require('../db');
 
 // Registration route
 router.post('/register', [
     // Validate and sanitize inputs
-    body('firstName').notEmpty().withMessage('First name is required').trim().escape(),
-    body('lastName').notEmpty().withMessage('Last name is required').trim().escape(),
-    body('phoneNumber').notEmpty().withMessage('Phone number is required').trim().escape(),
+    body('firstName').notEmpty().withMessage('First name is required').trim(),
+    body('lastName').notEmpty().withMessage('Last name is required').trim(),
+    body('phoneNumber').notEmpty().withMessage('Phone number is required').trim(),
     body('email').isEmail().withMessage('Invalid email address').normalizeEmail(),
-    body('userName').notEmpty().withMessage('Username is required').trim().escape(),
-    body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters long').trim().escape(),
+    body('userName').notEmpty().withMessage('Username is required').trim(),
+    body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters long'),
     body('confirmPassword').custom((value, { req }) => {
         if (value !== req.body.password) {
             throw new Error('Password confirmation does not match password');
@@ -69,7 +60,17 @@ router.post('/register', [
 });
 
 // Login route
-router.post('/login', async (req, res) => {
+router.post('/login', [
+    // Validate inputs
+    body('userName').notEmpty().withMessage('Username is required').trim(),
+    body('password').notEmpty().withMessage('Password is required')
+], async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        console.error('Validation errors:', errors.array());
+        return res.status(400).json({ errors: errors.array() });
+    }
+
     const { userName, password } = req.body;
 
     try {
@@ -90,7 +91,11 @@ router.post('/login', async (req, res) => {
         // Create session
         req.session.userId = user.userID;
         req.session.isLoggedIn = true;
-        res.status(200).json({ redirect: '/Profile.html' });
+        res.status(200).json({
+            redirect: '/index.html',
+            userID: user.userID,
+            userName: user.userName
+        });
     } catch (error) {
         console.error('Error logging in user:', error);
         res.status(500).json({ errors: [{ msg: 'Error logging in user' }] });
@@ -115,6 +120,13 @@ router.get('/session-info', async (req, res, next) => {
 
     try {
         const [userRows] = await pool.query('SELECT userID, userName, email, firstName, lastName FROM Users WHERE userID = ?', [req.session.userId]);
+
+        if (!userRows || userRows.length === 0) {
+            // User has been deleted but session still exists
+            req.session.destroy();
+            return res.status(401).json({ isLoggedIn: false, message: 'User not found' });
+        }
+
         const user = userRows[0];
 
         const [roleRows] = await pool.query(
@@ -149,15 +161,14 @@ router.get('/session-info', async (req, res, next) => {
 });
 
 // Google Passport
-const GOOGLE_CLIENT_ID = '227608984263-fqq6iudhv9c71aaf61mao6t8td9m7oh7.routers.googleusercontent.com';
-const GOOGLE_CLIENT_SECRET = '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';
+const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || '227608984263-fqq6iudhv9c71aaf61mao6t8td9m7oh7.apps.googleusercontent.com';
+const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET || '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';
 
-// Might need to add authorised redirect URIs in Google Cloud Console once its understood what page we want to be redirected to. (If not completed, message Nicholas)
-
+const PORT = process.env.PORT || 3000;
 passport.use(new GoogleStrategy({
     clientID: GOOGLE_CLIENT_ID,
     clientSecret: GOOGLE_CLIENT_SECRET,
-    callbackURL: "http://localhost:8080/auth/google/callback",
+    callbackURL: `http://localhost:${PORT}/auth/google/callback`,
     passReqToCallback: true
 },
     async (req, accessToken, refreshToken, profile, done) => {
