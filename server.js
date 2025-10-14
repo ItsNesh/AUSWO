@@ -28,19 +28,20 @@ app.use(session({
   secret: 'GOCSPX-3p0mYH8m7VfX5d4h8j9kL0qJz9W', // Use an environment variable in production
   resave: false,
   saveUninitialized: false,
-  cookie: { maxAge: 60000} // 10 Minutes
+  cookie: { maxAge: 6000000} 
 }));
 app.use('/Dashboard', express.static(path.join(__dirname, 'Dashboard')));
 
 // Database Setup
-const pool = mysql.createPool({
+var mysql = require('mysql');
+var dbConnectionPool = mysql.createPool({
   host: process.env.DB_HOST || 'localhost',
-  user: process.env.DB_USER || 'root',
-  password: process.env.DB_PASSWORD || 'AUSWO2025',
   database: process.env.DB_NAME || 'AUSWO',
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0,
+});
+
+app.use(function(req, res, next) {
+  req.pool = dbConnectionPool;
+  next();
 });
 
 // Helper to wait for DB to be ready

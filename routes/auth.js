@@ -8,10 +8,10 @@ var GoogleStrategy = require('passport-google-oauth2').Strategy;
 
 // MySQL connection configuration
 var pool = mysql.createPool({
-    host: 'localhost',
-    user: 'root',
-    password: 'AUSWO2025',
-    database: 'AUSWO',
+    host: process.env.DB_HOST || 'localhost',
+    user: process.env.DB_USER || 'root',
+    password: process.env.DB_PASSWORD || 'AUSWO2025',
+    database: process.env.DB_NAME || 'AUSWO',
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0
