@@ -24,6 +24,7 @@ router.post('/register', [
     body('lastName').notEmpty().withMessage('Last name is required').trim().escape(),
     body('phoneNumber').notEmpty().withMessage('Phone number is required').trim().escape(),
     body('email').isEmail().withMessage('Invalid email address').normalizeEmail(),
+    body('userName').notEmpty().withMessage('Username is required').trim().escape(),
     body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters long').trim().escape(),
     body('confirmPassword').custom((value, { req }) => {
         if (value !== req.body.password) {

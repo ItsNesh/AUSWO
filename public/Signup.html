@@ -6,18 +6,61 @@
     <title>Signup Page</title>
     <link rel="stylesheet" href="/stylesheets/Signup.css">
     <link rel="stylesheet" href="/stylesheets/Global.css">
+    <script>
+        async function validateForm(event) {
+            event.preventDefault();
 
+            const firstName = document.getElementById('firstName').value;
+            const lastName = document.getElementById('lastName').value;
+            const phoneNumber = document.getElementById('phoneNumber').value;
+            const email = document.getElementById('email').value;
+            const userName = document.getElementById('userName').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            const errorList = document.getElementById('errorList');
+            errorList.innerHTML = ''; // Clear existing errors
+
+            if (password !== confirmPassword) {
+                const li = document.createElement('li');
+                li.textContent = 'Passwords do not match!';
+                errorList.appendChild(li);
+                return;
+            }
+
+            const response = await fetch('/auth/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ firstName, lastName, phoneNumber, email, userName, password, confirmPassword })
+            });
+
+            const result = await response.json();
+            if (response.status !== 201) {
+                displayErrors(result.errors);
+            } else {
+                window.location.href = result.redirect; // Redirect to the login page
+            }
+        }
+
+        function displayErrors(errors) {
+            const errorList = document.getElementById('errorList');
+            errors.forEach(error => {
+                const li = document.createElement('li');
+                li.textContent = error.msg;
+                errorList.appendChild(li);
+            });
+        }
+    </script>
 </head>
 <body>
     <nav class="navbar">
         <a class="brand" href="/index.html">AUSWO</a>
         <div class="nav-links">
             <a href="/points-calculator.html">Points Calculator</a>
-            <a href="/Dashboard/Dashboard.html">Dashboard</a>
-            <a href="/Login/Login.html">Login</a>
-            <a href="/Login/Signup.html">Sign Up</a>
-            <a href="/Profile/Profile.html">Profile</a>
+            <a href="/Dashboard.html">Dashboard</a>
+            <a href="/Profile.html">Profile</a>
             <a href="/account.html">Account</a>
+            <a href="/Login.html" v-if="!isLoggedIn">Log In</a>
         </div>
     </nav>
     <div class="container">
@@ -54,6 +97,13 @@
                     </div>
 
                     <div class="form-group">
+                        <label for="login-signup-username">Username:</label>
+                        <br />
+                        <input type="text" id="login-signup-username" name="login-signup-username" placeholder="John_B" required>
+                        <br /><br />
+                    </div>
+
+                    <div class="form-group">
                         <label for="login-signup-password">Password:</label>
                         <br />
                         <input type="password" id="login-signup-password" name="login-signup-password" required>                
@@ -75,6 +125,47 @@
             <img src="/images/People-Happy.jpg" alt="Signup Illistration">
         </div>
     </div>
-    <script src="Signup.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                isLoggedIn: false,
+                sessionInfo: null
+            },
+            mounted() {
+                this.checkLoginState();
+            },
+            methods: {
+                async checkLoginState() {
+                    try {
+                        const response = await fetch('/auth/session-info');
+                        if (!response.ok) throw new Error('Failed to fetch session info');
+                        const data = await response.json();
+                        this.isLoggedIn = data.isLoggedIn;
+                        this.sessionInfo = data;
+                    } catch (error) {
+                        console.error('Error fetching session info:', error);
+                        this.sessionInfo = 'No session information available';
+                    }
+                },
+                logout() {
+                    fetch('/auth/logout')
+                        .then(response => {
+                            if (response.ok) {
+                                localStorage.removeItem('token');
+                                this.isLoggedIn = false;
+                                window.location.href = '/Login.html';
+                            } else {
+                                throw new Error('Logout failed');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error logging out:', error);
+                         });
+                }
+            }
+        });
+    </script>
 </body>
 </html>

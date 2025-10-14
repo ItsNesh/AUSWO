@@ -9,78 +9,27 @@ const passport = require('passport');
 const session = require('express-session');
 const { body } = require('express-validator');
 
+// Route Handlers
 var authRouter = require('./routes/auth');
-var dashboardRouter = require('./routes/Dashboard');
-var immigrationRouter = require('./routes/Immigration');
-var loginRouter = require('./routes/Login');
-var profileRouter = require('./routes/Profile');
-var signupRouter = require('./routes/Signup');
-
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Middleware Setup
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: true }));
-app,use(express.json());
+app.use(cookieParser());
+
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({
-  secret: 'GOCSPX-3p0mYH8m7VfX5d4h8j9kL0qJz9W',
+  secret: 'GOCSPX-3p0mYH8m7VfX5d4h8j9kL0qJz9W', // Use an environment variable in production
   resave: false,
   saveUninitialized: false,
   cookie: { maxAge: 60000} // 10 Minutes
 }));
-app.use('./routes/Dashboard', express.static(path.join(__dirname, 'Dashboard')));
+app.use('/Dashboard', express.static(path.join(__dirname, 'Dashboard')));
 
-// Redirects
-const friendlyRedirects = {
-  '/dashboard': './public/Dashboard.html',
-  '/Dashboard': './public/Dashboard.html',
-  '/immigration': './public/Immigration.html',
-  '/Immigration': './public/Immigration.html',
-  '/profile': './public/Profile.html',
-  '/Profile': './public/Profile.html',
-  '/login': './public/Login.html',
-  '/Login': './public/Login.html',
-  '/signup': './public/Signup.html',
-  '/Signup': './public/Signup.html',
-  '/home': '/index.html',
-  '/index': '/index.html',
-};
-
-Object.entries(friendlyRedirects).forEach(([from, to]) => {
-  app.get(from, (req, res) => res.redirect(to));
-  app.get(from + '/', (req, res) => res.redirect(to));
-});
-
-// Extensionless redirects for root pages, eg. /account -> /account.html
-function tryRedirectToHtml(req, res, next) {
-  const p = req.path;
-  if (p.startsWith('/api/') || path.extname(p)) return next();
-
-  const candidate = path.join(__dirname, `${p}.html`); // eg. /points-calculator -> /points-calculator.html
-  fs.access(candidate, fs.constants.F_OK, (err) => {
-    if (!err) {
-      return res.redirect(`${p}.html`);
-    }
-
-    // Support for pages inside folders (Dashboard/Dashboard.html)
-    const name = p.replace(/^\//, '');
-    if (!name) return next();
-    const cap = name.charAt(0).toUpperCase() + name.slice(1);
-    const dirFile = path.join(__dirname, cap, `${cap}.html`);
-    fs.access(dirFile, fs.constants.F_OK, (err2) => {
-      if (!err2) return res.redirect(`/${cap}/${cap}.html`);
-      return next();
-    });
-  });
-}
-
-app.get('/:page', tryRedirectToHtml);
-app.get('/:page/', tryRedirectToHtml);
-
+// Database Setup
 const pool = mysql.createPool({
   host: process.env.DB_HOST || 'localhost',
   user: process.env.DB_USER || 'root',
@@ -91,7 +40,9 @@ const pool = mysql.createPool({
   queueLimit: 0,
 });
 
-async function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+// Helper to wait for DB to be ready
+
+async function sleep(ms) { return new Promise(r => setTimeout(r, ms)); } 
 
 async function waitForDB(retries = 30, delayMs = 1000) {
   for (let i = 0; i < retries; i++) {
@@ -142,6 +93,10 @@ async function ensureUserVisaColumns() {
     console.error('DB init check failed:', e);
   }
 })();
+
+// -----------------
+// API Routes
+// -----------------
 
 app.get('/api/users', async (req, res) => {
   try {
@@ -270,27 +225,114 @@ app.get('/api/quick-news', async (req, res) => {
   }
 });
 
-// Simple login for now
-app.post('/api/login', async (req, res) => {
-  const { email, password } = req.body || {};
-  if (!email || !password) {
-    return res.status(400).json({ error: 'Email and password are required' });
-  }
-  try {
-    const [rows] = await pool.query(
-      'SELECT userID FROM Users WHERE email = ? AND passwordHash = ? LIMIT 1',
-      [email, password]
-    );
-    if (rows.length === 0) {
-      return res.status(401).json({ error: 'Invalid credentials' });
-    }
-    res.json({ userID: rows[0].userID });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Login failed' });
-  }
+// -----------------------
+
+// Redirects
+const friendlyRedirects = {
+  '/dashboard': './public/Dashboard.html',
+  '/Dashboard': './public/Dashboard.html',
+  '/immigration': './public/Immigration.html',
+  '/Immigration': './public/Immigration.html',
+  '/profile': './public/Profile.html',
+  '/Profile': './public/Profile.html',
+  '/login': './public/Login.html',
+  '/Login': './public/Login.html',
+  '/signup': './public/Signup.html',
+  '/Signup': './public/Signup.html',
+  '/home': '/index.html',
+  '/index': '/index.html',
+  '/': '/index.html',
+};
+
+Object.entries(friendlyRedirects).forEach(([from, to]) => {
+  app.get(from, (req, res) => res.redirect(to));
+  app.get(from + '/', (req, res) => res.redirect(to));
 });
+
+// Extensionless redirects for root pages, eg. /account -> /account.html
+function tryRedirectToHtml(req, res, next) {
+  const p = req.path;
+  if (p.startsWith('/api/') || path.extname(p)) return next();
+
+  const candidate = path.join(__dirname, `${p}.html`); // eg. /points-calculator -> /points-calculator.html
+  fs.access(candidate, fs.constants.F_OK, (err) => {
+    if (!err) {
+      return res.redirect(`${p}.html`);
+    }
+
+    // Support for pages inside folders (Dashboard/Dashboard.html)
+    const name = p.replace(/^\//, '');
+    if (!name) return next();
+    const cap = name.charAt(0).toUpperCase() + name.slice(1);
+    const dirFile = path.join(__dirname, cap, `${cap}.html`);
+    fs.access(dirFile, fs.constants.F_OK, (err2) => {
+      if (!err2) return res.redirect(`/${cap}/${cap}.html`);
+      return next();
+    });
+  });
+}
+
+app.get('/:page', tryRedirectToHtml);
+app.get('/:page/', tryRedirectToHtml);
+
+app.use(async (req, res, next) => {
+    if (req.session.isLoggedIn && req.session.userId) {
+        try {
+            const [userRows] = await pool.query('SELECT userID, userName, email, firstName, lastName FROM Users WHERE userID = ?', [req.session.userId]);
+            const user = userRows[0];
+
+            if (user) {
+                const [roleRows] = await pool.query(
+                    `SELECT Roles.roleName FROM UserRoles
+                    JOIN Roles ON UserRoles.roleID = Roles.roleID
+                    WHERE UserRoles.userID = ?`, [req.session.userId]
+                );
+                const roles = roleRows.map(row => row.roleName);
+                const isAdmin = roles.includes('Admin');
+                console.log('User roles:', roles);
+
+                req.userRoles = { user, roles, isAdmin };
+            } else {
+                req.userRoles = { roles: [], isAdmin: false };
+            }
+        } catch (error) {
+            console.error('Error obtaining user roles and/or admin status', error);
+            req.userRoles = { roles: [], isAdmin: false };
+        }
+    } else {
+        req.userRoles = { roles: [], isAdmin: false };
+    }
+    next();
+});
+
+// Session info route
+app.get('/auth/session-info', (req, res) => {
+    if (req.session.isLoggedIn) {
+        res.json({
+            isLoggedIn: req.session.isLoggedIn,
+            userId: req.session.userId,
+            isAdmin: req.userRoles.isAdmin,
+            firstName: req.userRoles.user.firstName,
+            lastName: req.userRoles.user.lastName
+        });
+    } else {
+        res.status(401).json({ isLoggedIn: false });
+    }
+});
+
+// Passport middleware
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(express.static('public'));
+
+// Routers
+app.use('/auth', authRouter);
+
+
+// Start Server
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
+module.exports = app;

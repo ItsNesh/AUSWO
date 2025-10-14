@@ -5,22 +5,69 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Visa Options</title>
   <link rel="stylesheet" href="/stylesheets/Global.css" />
+  <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
 </head>
 <body>
-  <nav class="navbar">
-    <a class="brand" href="/index.html">AUSWO</a>
-    <div class="nav-links">
-      <a href="/points-calculator.html">Points Calculator</a>
-      <a href="/Dashboard/Dashboard.html">Dashboard</a>
-      <a href="/Login/Login.html">Login</a>
-      <a href="/Login/Signup.html">Sign Up</a>
-      <a href="/Profile/Profile.html">Profile</a>
-      <a href="/account.html">Account</a>
-    </div>
-  </nav>
-  <main class="page-container">
-    <h1>Visa Options</h1>
-  </main>
+  <div id="app">
+    <nav class="navbar">
+      <a class="brand" href="/index.html">AUSWO</a>
+      <div class="nav-links">
+        <a href="/points-calculator.html">Points Calculator</a>
+        <a href="/Dashboard.html">Dashboard</a>
+        <a href="/Profile.html">Profile</a>
+        <a href="/account.html">Account</a>
+        <a href="/Login.html" v-if="!isLoggedIn">Log In</a>
+        <a href="/auth/logout" v-if="isLoggedIn" @click.prevent="logout">Log Out</a>
+      </div>
+    </nav>
+    <main class="page-container">
+      <h1>Visa Options</h1>
+    </main>
+  </div>
+  <script>
+        new Vue({
+            el: '#app',
+            data: {
+                isLoggedIn: false,
+                sessionInfo: null,
+                isAdmin: false,
+            },
+            mounted() {
+                this.checkLoginState();
+            },
+            methods: {
+                async checkLoginState() {
+                    try {
+                        const response = await fetch('/auth/session-info');
+                        if (!response.ok) throw new Error('Failed to fetch session info');
+                        const data = await response.json();
+                        this.isLoggedIn = data.isLoggedIn;
+                        this.sessionInfo = data;
+                        this.isAdmin = data.isAdmin;
+                    } catch (error) {
+                        console.error('Error fetching session info:', error);
+                        this.sessionInfo = 'No session information available';
+                    }
+                },
+                logout() {
+                    fetch('/auth/logout')
+                        .then(response => {
+                            if (response.ok) {
+                                localStorage.removeItem('token');
+                                this.isLoggedIn = false;
+                                this.isAdmin = false;
+                                window.location.href = '/Login.html';
+                            } else {
+                                console.error('Logout failed');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error during logout:', error);
+                        });
+                }
+            }
+        });
+    </script>    
 </body>
 </html>
 
