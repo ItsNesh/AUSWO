@@ -11,6 +11,9 @@ const { body } = require('express-validator');
 
 // Route Handlers
 var authRouter = require('./routes/auth');
+var dashboardRouter = require('./routes/Dashboard');
+var immigrationRouter = require('./routes/Immigration');
+var profileRouter = require('./routes/Profile');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -327,7 +330,9 @@ app.use(express.static('public'));
 
 // Routers
 app.use('/auth', authRouter);
-
+app.use('/Dashboard', dashboardRouter);
+app.use('/Immigration', immigrationRouter);
+app.use('/Profile', profileRouter);
 
 // Start Server
 
