@@ -126,7 +126,7 @@ router.get('/session-info', async (req, res, next) => {
 
         const isAdmin = roles.includes('Admin');
 
-        req.userRoles = { user, roles, isAdmin, isManager, branchId, branchName };
+        req.userRoles = { user, roles, isAdmin };
         next();
     } catch (error) {
         console.error('Error obtaining user roles and/or admin status', error);

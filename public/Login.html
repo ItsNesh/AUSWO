@@ -10,51 +10,53 @@
 
 </head>
 <body>
-    <nav class="navbar">
-        <a class="brand" href="/index.html">AUSWO</a>
-        <div class="nav-links">
-            <a href="/points-calculator.html">Points Calculator</a>
-            <a href="/Dashboard.html">Dashboard</a>
-            <a href="/Profile.html">Profile</a>
-            <a href="/account.html">Account</a>
-            <a href="/Login.html" v-if="!isLoggedIn">Log In</a>
-            <a href="/auth/logout" v-if="isLoggedIn" @click.prevent="logout">Log Out</a>
-        </div>
-    </nav>
-    <div class="container">
-        <div class="form-side">
-            <main>
-                <h1>Login Page</h1>
-                <form id="login-signup-form">
-                    <div class="form-group">
-                        <label for="login-signup-username">Username:</label>
-                        <br />
-                        <input type="text" id="login-signup-username" name="login-signup-username" placeholder="John_B" required>
-                        <br /><br />
-                    </div>
+    <div id="app">
+        <nav class="navbar">
+            <a class="brand" href="/index.html">AUSWO</a>
+            <div class="nav-links" v-if="sessionInfo !== null">
+                <a href="/points-calculator.html">Points Calculator</a>
+                <a href="/Dashboard.html">Dashboard</a>
+                <a href="/Profile.html">Profile</a>
+                <a href="/account.html">Account</a>
+                <a href="/Login.html" v-if="!isLoggedIn">Log In</a>
+                <a href="/auth/logout" v-if="isLoggedIn" @click.prevent="logout">Log Out</a>
+            </div>
+        </nav>
+        <div class="container">
+            <div class="form-side">
+                <main>
+                    <h1>Login Page</h1>
+                    <form id="login-signup-form" @submit.prevent="login">
+                        <div class="form-group">
+                            <label for="login-signup-username">Username:</label>
+                            <br />
+                            <input type="text" id="login-signup-username" name="login-signup-username" placeholder="John_B" required>
+                            <br /><br />
+                        </div>
 
-                    <div class="form-group">
-                        <label for="login-signup-password">Password:</label>
-                        <br />
-                        <input type="password" id="login-signup-password" name="login-signup-password" required>                
-                        <br /><br />
-                    </div>
+                        <div class="form-group">
+                            <label for="login-signup-password">Password:</label>
+                            <br />
+                            <input type="password" id="login-signup-password" name="login-signup-password" required>                
+                            <br /><br />
+                        </div>
 
-                    <div class="form-group checkbox-group">
-                        <input type="checkbox" value="remember-me" id="remember-me" name="remember-me">
-                        <label for="remember-me">Remember Me</label>
-                    </div>
-                    <button type="submit">Login</button>
-                    <a @click="loginWithGoogle" class="google-signin-button">
-                    <img src="https://banner2.cleanpng.com/20180423/gkw/kisspng-google-logo-logo-logo-5ade7dc753b015.9317679115245306313428.jpg" alt="Google Logo">
-                    Sign in with Google
-                </a>           
-                </form>
-                <p>Dont have an account yet? <a href="Signup.html">Sign up</a></p>
-            </main>
-        </div>
-        <div class="image-side">
-            <img src="/images/People-Happy.jpg" alt="Login Illistration">
+                        <div class="form-group checkbox-group">
+                            <input type="checkbox" value="remember-me" id="remember-me" name="remember-me">
+                            <label for="remember-me">Remember Me</label>
+                        </div>
+                        <button type="submit">Login</button>
+                        <a @click="loginWithGoogle" class="google-signin-button">
+                        <img src="https://banner2.cleanpng.com/20180423/gkw/kisspng-google-logo-logo-logo-5ade7dc753b015.9317679115245306313428.jpg" alt="Google Logo">
+                        Sign in with Google
+                    </a>           
+                    </form>
+                    <p>Dont have an account yet? <a href="Signup.html">Sign up</a></p>
+                </main>
+            </div>
+            <div class="image-side">
+                <img src="/images/People-Happy.jpg" alt="Login Illistration">
+            </div>
         </div>
     </div>
     <script>
@@ -72,8 +74,8 @@
           methods: {
               async login(event) {
                   event.preventDefault();
-                  const username = document.getElementById('username').value;
-                  const password = document.getElementById('password').value;
+                  const username = document.getElementById('login-signup-username').value;
+                  const password = document.getElementById('login-signup-password').value;
 
                   try {
                       const response = await fetch('/auth/login', {

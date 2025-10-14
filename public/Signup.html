@@ -10,13 +10,13 @@
         async function validateForm(event) {
             event.preventDefault();
 
-            const firstName = document.getElementById('firstName').value;
-            const lastName = document.getElementById('lastName').value;
-            const phoneNumber = document.getElementById('phoneNumber').value;
-            const email = document.getElementById('email').value;
-            const userName = document.getElementById('userName').value;
-            const password = document.getElementById('password').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
+            const firstName = document.getElementById('login-signup-first-name').value;
+            const lastName = document.getElementById('login-signup-last-name').value;
+            const phoneNumber = document.getElementById('login-signup-phonenumber').value;
+            const email = document.getElementById('login-signup-email').value;
+            const userName = document.getElementById('login-signup-username').value;
+            const password = document.getElementById('login-signup-password').value;
+            const confirmPassword = document.getElementById('login-signup-repeat-password').value;
 
             const errorList = document.getElementById('errorList');
             errorList.innerHTML = ''; // Clear existing errors
@@ -55,7 +55,7 @@
 <body>
     <nav class="navbar">
         <a class="brand" href="/index.html">AUSWO</a>
-        <div class="nav-links">
+        <div class="nav-links" v-if="sessionInfo !== null">
             <a href="/points-calculator.html">Points Calculator</a>
             <a href="/Dashboard.html">Dashboard</a>
             <a href="/Profile.html">Profile</a>
@@ -85,7 +85,7 @@
                     <div class="form-group">
                         <label for="login-signup-phonenumber">Phonenumber:</label>
                         <br />
-                        <input type="number" id="login-signup-phonenumber" name="login-signup-phonenumber" placeholder="0403685949" required>
+                        <input type="tel" id="login-signup-phonenumber" name="login-signup-phonenumber" placeholder="0403685949" required>
                         <br /><br />
                     </div>
 
