@@ -12,26 +12,27 @@ const { body } = require('express-validator');
 var authRouter = require('./routes/auth');
 var dashboardRouter = require('./routes/Dashboard');
 var immigrationRouter = require('./routes/Immigration');
-var loginRouter = require('./routes/Login');
 var profileRouter = require('./routes/Profile');
-var signupRouter = require('./routes/Signup');
 
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(express.urlencoded({ extended: true }));
-app,use(express.json());
 app.use(session({
   secret: 'GOCSPX-3p0mYH8m7VfX5d4h8j9kL0qJz9W',
   resave: false,
   saveUninitialized: false,
   cookie: { maxAge: 60000} // 10 Minutes
 }));
+
+// Initialize Passport
+app.use(passport.initialize());
+app.use(passport.session());
+
 app.use('./routes/Dashboard', express.static(path.join(__dirname, 'Dashboard')));
 
 // Redirects
@@ -80,6 +81,9 @@ function tryRedirectToHtml(req, res, next) {
 
 app.get('/:page', tryRedirectToHtml);
 app.get('/:page/', tryRedirectToHtml);
+
+// Mount auth router
+app.use('/auth', authRouter);
 
 const pool = mysql.createPool({
   host: process.env.DB_HOST || 'localhost',
@@ -153,19 +157,6 @@ app.get('/api/users', async (req, res) => {
   }
 });
 
-app.post('/api/users', async (req, res) => {
-  const { firstName, lastName, phoneNumber, email, userName, passwordHash } = req.body;
-  try {
-    const [result] = await pool.query(
-      'INSERT INTO Users (firstName, lastName, phoneNumber, email, userName, passwordHash) VALUES (?, ?, ?, ?, ?, ?)',
-      [firstName, lastName, phoneNumber, email, userName, passwordHash]
-    );
-    res.status(201).json({ userID: result.insertId });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Failed to create user' });
-  }
-});
 
 // Edit user profile fields
 app.put('/api/users/:userID', async (req, res) => {
@@ -270,26 +261,6 @@ app.get('/api/quick-news', async (req, res) => {
   }
 });
 
-// Simple login for now
-app.post('/api/login', async (req, res) => {
-  const { email, password } = req.body || {};
-  if (!email || !password) {
-    return res.status(400).json({ error: 'Email and password are required' });
-  }
-  try {
-    const [rows] = await pool.query(
-      'SELECT userID FROM Users WHERE email = ? AND passwordHash = ? LIMIT 1',
-      [email, password]
-    );
-    if (rows.length === 0) {
-      return res.status(401).json({ error: 'Invalid credentials' });
-    }
-    res.json({ userID: rows[0].userID });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Login failed' });
-  }
-});
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

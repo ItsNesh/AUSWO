@@ -8,10 +8,10 @@ var GoogleStrategy = require('passport-google-oauth2').Strategy;
 
 // MySQL connection configuration
 var pool = mysql.createPool({
-    host: 'localhost',
-    user: 'root',
-    password: 'AUSWO2025',
-    database: 'AUSWO',
+    host: process.env.DB_HOST || 'localhost',
+    user: process.env.DB_USER || 'root',
+    password: process.env.DB_PASSWORD || 'test',
+    database: process.env.DB_NAME || 'AUSWO',
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0
@@ -38,7 +38,12 @@ router.post('/register', [
         return res.status(400).json({ errors: errors.array() });
     }
 
-    const { firstName, lastName, phoneNumber, email, userName, password } = req.body;
+    let { firstName, lastName, phoneNumber, email, userName, password } = req.body;
+
+    // Auto-generate userName from email if not provided
+    if (!userName && email) {
+        userName = email.split('@')[0];
+    }
 
     try {
         // Check if user already exists
@@ -69,11 +74,16 @@ router.post('/register', [
 
 // Login route
 router.post('/login', async (req, res) => {
-    const { userName, password } = req.body;
+    const { userName, email, password } = req.body;
+    const identifier = userName || email; // Accept either userName or email
+
+    if (!identifier || !password) {
+        return res.status(400).json({ errors: [{ msg: 'Username/email and password are required' }] });
+    }
 
     try {
-        // Check if user exists
-        const [users] = await pool.execute('SELECT * FROM Users WHERE userName = ?', [userName]);
+        // Check if user exists by userName or email
+        const [users] = await pool.execute('SELECT * FROM Users WHERE userName = ? OR email = ?', [identifier, identifier]);
         if (users.length === 0) {
             return res.status(400).json({ errors: [{ msg: 'Invalid username or password' }] });
         }
@@ -125,7 +135,7 @@ router.get('/session-info', async (req, res, next) => {
 
         const isAdmin = roles.includes('Admin');
 
-        req.userRoles = { user, roles, isAdmin, isManager, branchId, branchName };
+        req.userRoles = { user, roles, isAdmin };
         next();
     } catch (error) {
         console.error('Error obtaining user roles and/or admin status', error);
