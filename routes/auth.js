@@ -1,11 +1,10 @@
 var express = require('express');
+var router = express.Router();
 var argon2 = require('argon2');
 var { body, validationResult } = require('express-validator');
 var mysql = require('mysql2/promise');
 var passport = require('passport');
 var GoogleStrategy = require('passport-google-oauth2').Strategy;
-
-var SECRET_KEY = 'your-secret-key'; // Do we need this?
 
 // MySQL connection configuration
 var pool = mysql.createPool({
@@ -19,13 +18,12 @@ var pool = mysql.createPool({
 });
 
 // Registration route
-app.post('/register', [
+router.post('/register', [
     // Validate and sanitize inputs
     body('firstName').notEmpty().withMessage('First name is required').trim().escape(),
     body('lastName').notEmpty().withMessage('Last name is required').trim().escape(),
     body('phoneNumber').notEmpty().withMessage('Phone number is required').trim().escape(),
     body('email').isEmail().withMessage('Invalid email address').normalizeEmail(),
-    body('userName').notEmpty().withMessage('Username is required').trim().escape(),
     body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters long').trim().escape(),
     body('confirmPassword').custom((value, { req }) => {
         if (value !== req.body.password) {
@@ -70,7 +68,7 @@ app.post('/register', [
 });
 
 // Login route
-app.post('/login', async (req, res) => {
+router.post('/login', async (req, res) => {
     const { userName, password } = req.body;
 
     try {
@@ -99,7 +97,7 @@ app.post('/login', async (req, res) => {
 });
 
 // Logout route
-app.get('/logout', (req, res) => {
+router.get('/logout', (req, res) => {
     req.session.destroy(err => {
         if (err) {
             return res.status(500).json({ errors: [{ msg: 'Error logging out' }] });
@@ -109,7 +107,7 @@ app.get('/logout', (req, res) => {
     });
 });
 
-app.get('/session-info', async (req, res, next) => {
+router.get('/session-info', async (req, res, next) => {
     if (!req.session.isLoggedIn || !req.session.userId) {
         return res.json({ isLoggedIn: false });
     }
@@ -150,7 +148,7 @@ app.get('/session-info', async (req, res, next) => {
 });
 
 // Google Passport
-const GOOGLE_CLIENT_ID = '227608984263-fqq6iudhv9c71aaf61mao6t8td9m7oh7.apps.googleusercontent.com';
+const GOOGLE_CLIENT_ID = '227608984263-fqq6iudhv9c71aaf61mao6t8td9m7oh7.routers.googleusercontent.com';
 const GOOGLE_CLIENT_SECRET = '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';
 
 // Might need to add authorised redirect URIs in Google Cloud Console once its understood what page we want to be redirected to. (If not completed, message Nicholas)
@@ -210,24 +208,24 @@ passport.deserializeUser(async function (id, done) {
 });
 
 // Google OAuth Routes
-app.get('/google', passport.authenticate('google', { scope: ['email', 'profile'] }));
+router.get('/google', passport.authenticate('google', { scope: ['email', 'profile'] }));
 
-app.get('/google/callback',
+router.get('/google/callback',
     passport.authenticate('google', {
         successRedirect: '/auth/google/success',
         failureRedirect: '/auth/failure',
     })
 );
 
-app.get('/google/success', (req, res) => {
+router.get('/google/success', (req, res) => {
     // Set session variables
     req.session.isLoggedIn = true;
     req.session.userId = req.user.userID;
     res.redirect('/index.html');
 });
 
-app.get('/failure', (req, res) => {
+router.get('/failure', (req, res) => {
     res.send('Something went wrong');
 });
 
-module.exports = app;
+module.exports = router;
