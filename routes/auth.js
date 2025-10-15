@@ -154,6 +154,7 @@ router.get('/session-info', async (req, res, next) => {
             firstName: req.userRoles.user.firstName,
             lastName: req.userRoles.user.lastName,
             roles: req.userRoles.roles,
+            isAdmin: req.userRoles.isAdmin
         });
     } else {
         res.json({ isLoggedIn: false });

@@ -22,7 +22,7 @@
     </nav>
     <main class="page-container">
       <h1>Points Calculator</h1>
-      <section id="calc">
+      <section id="calc" v-pre>
         <div id="status" style="margin:8px 0;color:#666;"></div>
         <div id="step-visa" style="display:block;"></div>
         <div id="step-categories" style="display:none;"></div>
@@ -151,11 +151,17 @@
       return res.json();
     }
 
-    (async function init() {
+    async function startCalculator() {
       const status = document.getElementById('status');
       const stepVisa = document.getElementById('step-visa');
       const stepCats = document.getElementById('step-categories');
       const stepSummary = document.getElementById('step-summary');
+
+      if (!status || !stepVisa || !stepCats || !stepSummary) {
+        console.error('Points calculator container missing from DOM.');
+        return;
+      }
+
       status.textContent = 'Loading calculator...';
       try {
         const visas = await loadLogic();
@@ -184,7 +190,27 @@
         status.textContent = 'Failed to load calculator.';
         console.error(e);
       }
-    })();
+    }
+
+    function scheduleCalculatorStart() {
+      if (window.__calcStartPromise) {
+        return window.__calcStartPromise;
+      }
+
+      const start = () => {
+        window.__calcStartPromise = startCalculator();
+        return window.__calcStartPromise;
+      };
+
+      if (document.readyState === 'complete' || document.readyState === 'interactive') {
+        return start();
+      }
+
+      document.addEventListener('DOMContentLoaded', start, { once: true });
+      return Promise.resolve();
+    }
+
+    scheduleCalculatorStart();
 
     new Vue({
         el: '#app',
