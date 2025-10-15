@@ -127,6 +127,13 @@
                       this.isLoggedIn = data.isLoggedIn;
                       this.sessionInfo = data;
                       this.isAdmin = data.isAdmin;
+
+                      // Sync localStorage with session for OAuth
+                      if (data.isLoggedIn && data.userId) {
+                          localStorage.setItem('userID', data.userId);
+                      } else if (!data.isLoggedIn) {
+                          localStorage.removeItem('userID');
+                      }
                   } catch (error) {
                       console.error('Error fetching session info:', error);
                       this.sessionInfo = 'No session information available';
