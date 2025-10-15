@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Points Calculator</title>
+  <link rel="stylesheet" href="/stylesheets/Global.css" />
+  <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+</head>
+<body>
+  <div id="app">
+    <nav class="navbar">
+      <a class="brand" href="/index.html">AUSWO</a>
+      <div class="nav-links" v-if="sessionInfo !== null">
+        <a href="/points-calculator.html">Points Calculator</a>
+        <a href="/Dashboard.html">Dashboard</a>
+        <a href="/Profile.html">Profile</a>
+        <a href="/account.html">Account</a>
+        <a href="/Login.html" v-if="!isLoggedIn">Log In</a>
+        <a href="/auth/logout" v-if="isLoggedIn" @click.prevent="logout">Log Out</a>
+      </div>
+    </nav>
+    <main class="page-container">
+      <h1>Points Calculator</h1>
+      <section id="calc" v-pre>
+        <div id="status" style="margin:8px 0;color:#666;"></div>
+        <div id="step-visa" style="display:block;"></div>
+        <div id="step-categories" style="display:none;"></div>
+        <div id="step-summary" style="display:none;"></div>
+      </section>
+    </main>
+  </div>
+  <script>
+    // load logic from JSON
+    async function loadLogic() {
+      const rj = await fetch('/points_calculator_logic.json', { headers: { 'Accept': 'application/json' } });
+      if (!rj.ok) throw new Error('Failed to load calculator JSON');
+      const j = await rj.json();
+      return normalizeFromJSON(j);
+    }
+
+    function normalizeFromJSON(data) {
+      if (!data || !Array.isArray(data.visas)) throw new Error('Invalid JSON structure');
+      return data.visas.map(v => ({
+        name: v.name,
+        id: v.id,
+        categories: (v.categories || []).map(c => ({
+          name: c.name,
+          description: c.description || null,
+          options: (c.options || []).map(o => ({ label: o.label, points: Number(o.points) || 0 }))
+        }))
+      }));
+    }
+
+
+    function renderVisaStep(container, visas, onNext) {
+      const html = `
+        <h2>Select a Visa</h2>
+        <div style="margin:8px 0 16px 0;">
+          ${visas.map((v, i) => `
+            <label style="display:block;margin:4px 0;">
+              <input type="radio" name="visa" value="${i}"> ${v.name}
+            </label>
+          `).join('')}
+        </div>
+        <button id="visa-next">Next</button>
+      `;
+      container.innerHTML = html;
+      container.querySelector('#visa-next').addEventListener('click', () => {
+        const sel = container.querySelector('input[name="visa"]:checked');
+        if (!sel) { alert('Please select a visa'); return; }
+        const idx = parseInt(sel.value, 10);
+        onNext(visas[idx]);
+      });
+    }
+
+    function renderCategoriesStep(container, visa, onSubmit) {
+      const panels = visa.categories.filter(c => c.options && c.options.length > 0);
+      let i = 0;
+      const selections = new Array(panels.length).fill(null); // store selected option index per panel
+      const nav = document.createElement('div');
+      const panelWrap = document.createElement('div');
+      const nextBtn = document.createElement('button');
+      const backBtn = document.createElement('button');
+      nextBtn.textContent = 'Next';
+      backBtn.textContent = 'Back';
+      backBtn.style.marginRight = '8px';
+
+      function renderPanel() {
+        const cat = panels[i];
+        panelWrap.innerHTML = `
+          <h2>${cat.name}</h2>
+          ${cat.description ? `<p style="color:#666;margin-top:6px;">${cat.description}</p>` : ''}
+          <div>
+            ${cat.options.map((opt, oi) => `
+              <label style="display:block;margin:4px 0;">
+                <input type="radio" name="cat_${i}" value="${oi}"> ${opt.label} (${opt.points} pts)
+              </label>
+            `).join('')}
+          </div>
+        `;
+        // re-apply prior selection if navigating back
+        if (selections[i] !== null && selections[i] !== undefined) {
+          const pre = panelWrap.querySelector(`input[name="cat_${i}"][value="${selections[i]}"]`);
+          if (pre) pre.checked = true;
+        }
+        nav.innerHTML = '';
+        nav.appendChild(backBtn);
+        nav.appendChild(nextBtn);
+        backBtn.disabled = i === 0;
+        nextBtn.textContent = i === panels.length - 1 ? 'Submit' : 'Next';
+      }
+
+      backBtn.addEventListener('click', () => { if (i>0) { i--; renderPanel(); } });
+      nextBtn.addEventListener('click', () => {
+        const sel = container.querySelector(`input[name="cat_${i}"]:checked`);
+        if (!sel) { alert('Please choose an option'); return; }
+        selections[i] = parseInt(sel.value, 10);
+        if (i === panels.length - 1) {
+          // collect answers from stored selections
+          const answers = panels.map((cat, ci) => {
+            const idx = selections[ci];
+            const opt = cat.options[idx];
+            return { category: cat.name, label: opt.label, points: opt.points };
+          });
+          const visaLabel = visa.name;
+          const visaId = visa.id;
+          const total = answers.reduce((a,b)=>a + (b.points||0), 0);
+          onSubmit({ visaLabel, visaId, answers, total });
+          return;
+        }
+        i++;
+        renderPanel();
+      });
+
+      container.innerHTML = '';
+      container.appendChild(panelWrap);
+      container.appendChild(nav);
+      renderPanel();
+    }
+
+    async function saveUserVisaPoints({ visaOption, visaPoints }) {
+      const userID = localStorage.getItem('userID');
+      if (!userID) throw new Error('Not logged in. Please login first.');
+      const res = await fetch(`/api/users/${encodeURIComponent(userID)}/visa-points`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ visaOption, visaPoints })
+      });
+      if (!res.ok) throw new Error('Failed to save results');
+      return res.json();
+    }
+
+    async function startCalculator() {
+      const status = document.getElementById('status');
+      const stepVisa = document.getElementById('step-visa');
+      const stepCats = document.getElementById('step-categories');
+      const stepSummary = document.getElementById('step-summary');
+
+      if (!status || !stepVisa || !stepCats || !stepSummary) {
+        console.error('Points calculator container missing from DOM.');
+        return;
+      }
+
+      status.textContent = 'Loading calculator...';
+      try {
+        const visas = await loadLogic();
+        status.textContent = '';
+        renderVisaStep(stepVisa, visas, (visa) => {
+          stepVisa.style.display = 'none';
+          stepCats.style.display = 'block';
+          renderCategoriesStep(stepCats, visa, async ({ visaLabel, visaId, answers, total }) => {
+            try {
+              await saveUserVisaPoints({ visaOption: String(visaId), visaPoints: total });
+              stepCats.style.display = 'none';
+              stepSummary.style.display = 'block';
+              stepSummary.innerHTML = `
+                <h2>Summary</h2>
+                <p>Visa: ${visaLabel}</p>
+                <p>Total points: <strong>${total}</strong></p>
+                <p>Saved to your account.</p>
+                <a href="/account.html">Go to Account</a>
+              `;
+            } catch (e) {
+              alert(e.message || 'Failed to save result.');
+            }
+          });
+        });
+      } catch (e) {
+        status.textContent = 'Failed to load calculator.';
+        console.error(e);
+      }
+    }
+
+    function scheduleCalculatorStart() {
+      if (window.__calcStartPromise) {
+        return window.__calcStartPromise;
+      }
+
+      const start = () => {
+        window.__calcStartPromise = startCalculator();
+        return window.__calcStartPromise;
+      };
+
+      if (document.readyState === 'complete' || document.readyState === 'interactive') {
+        return start();
+      }
+
+      document.addEventListener('DOMContentLoaded', start, { once: true });
+      return Promise.resolve();
+    }
+
+    scheduleCalculatorStart();
+
+    new Vue({
+        el: '#app',
+        data: {
+            isLoggedIn: false,
+            sessionInfo: null,
+            isAdmin: false,
+        },
+        mounted() {
+            this.checkLoginState();
+        },
+        methods: {
+            async checkLoginState() {
+                try {
+                    const response = await fetch('/auth/session-info');
+                    if (!response.ok) throw new Error('Failed to fetch session info');
+                    const data = await response.json();
+                    this.isLoggedIn = data.isLoggedIn;
+                    this.sessionInfo = data;
+                    this.isAdmin = data.isAdmin;
+                } catch (error) {
+                    console.error('Error fetching session info:', error);
+                    this.sessionInfo = 'No session information available';
+                }
+            },
+            logout() {
+                fetch('/auth/logout')
+                    .then(response => {
+                        if (response.ok) {
+                            localStorage.removeItem('token');
+                            this.isLoggedIn = false;
+                            this.isAdmin = false;
+                            window.location.href = '/Login.html';
+                        } else {
+                            throw new Error('Logout failed');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error logging out:', error);
+                      });
+            }
+        }
+    });
+  </script>
+</body>
+</html>

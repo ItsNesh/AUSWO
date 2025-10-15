@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Account</title>
+  <link rel="stylesheet" href="/stylesheets/Global.css" />
+  <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+</head>
+<body>
+  <nav class="navbar">
+    <a class="brand" href="/index.html">AUSWO</a>
+    <div class="nav-links" v-if="sessionInfo !== null">
+      <a href="/points-calculator.html">Points Calculator</a>
+      <a href="/Dashboard.html">Dashboard</a>
+      <a href="/Profile.html">Profile</a>
+      <a href="/account.html">Account</a>
+      <a href="/Login.html" v-if="!isLoggedIn">Log In</a>
+      <a href="/auth/logout" v-if="isLoggedIn" @click.prevent="logout">Log Out</a>
+    </div>
+  </nav>
+  <main class="page-container">
+    <h1>Account</h1>
+    <section id="account-points" style="margin-top:16px;">
+      <h2>Your Visa Points</h2>
+      <div id="points-content">Loading...</div>
+    </section>
+  </main>
+  <script>
+    async function resolveVisaName(value) {
+      if (!value) return 'N/A';
+      if (!/^\d+$/.test(value)) return value;
+      const code = String(value);
+      try {
+        const res = await fetch('/points_calculator_logic.json', { headers: { 'Accept': 'application/json' } });
+        if (!res.ok) return `Subclass ${code}`;
+        const data = await res.json();
+        const visas = Array.isArray(data?.visas) ? data.visas : [];
+        const found = visas.find(v => String(v.id) === code);
+        return found?.name || `Subclass ${code}`;
+      } catch {
+        return `Subclass ${code}`;
+      }
+    }
+
+    (async function(){
+      const el = document.getElementById('points-content');
+      try {
+        const userID = localStorage.getItem('userID');
+        if (!userID) { el.textContent = 'Not logged in.'; return; }
+        const res = await fetch(`/api/users/${encodeURIComponent(userID)}`);
+        if (!res.ok) { el.textContent = 'Failed to load account data.'; return; }
+        const u = await res.json();
+        const pts = (typeof u.visaPoints === 'number') ? u.visaPoints : 'N/A';
+        const visaName = await resolveVisaName(u.visaOption);
+        el.innerHTML = `
+          <p>Visa Option: <strong>${visaName}</strong></p>
+          <p>Total Points: <strong>${pts}</strong></p>
+          <a href="/points-calculator.html">Update your points</a>
+        `;
+      } catch (e) {
+        console.error(e);
+        el.textContent = 'Error loading account information';
+      }
+    })();
+  
+    new Vue({
+        el: '#app',
+        data: {
+            isLoggedIn: false,
+            sessionInfo: null,
+            isAdmin: false,
+        },
+        mounted() {
+            this.checkLoginState();
+        },
+        methods: {
+            async checkLoginState() {
+                try {
+                    const response = await fetch('/auth/session-info');
+                    if (!response.ok) throw new Error('Failed to fetch session info');
+                    const data = await response.json();
+                    this.isLoggedIn = data.isLoggedIn;
+                    this.sessionInfo = data;
+                    this.isAdmin = data.isAdmin;
+
+                    // Sync localStorage with session for OAuth
+                    if (data.isLoggedIn && data.userId) {
+                        localStorage.setItem('userID', data.userId);
+                        const currentUserID = localStorage.getItem('userID');
+                        if (currentUserID && currentUserID !== String(data.userId)) {
+                            window.location.reload();
+                        }
+                    } else if (!data.isLoggedIn) {
+                        localStorage.removeItem('userID');
+                    }
+                } catch (error) {
+                    console.error('Error fetching session info:', error);
+                    this.sessionInfo = 'No session information available';
+                }
+            },
+            logout() {
+                fetch('/auth/logout')
+                    .then(response => {
+                        if (response.ok) {
+                            localStorage.removeItem('token');
+                            this.isLoggedIn = false;
+                            this.isAdmin = false;
+                            window.location.href = '/Login.html';
+                        } else {
+                            throw new Error('Logout failed');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error logging out:', error);
+                      });
+            }
+        }
+    });
+    </script>
+</body>
+</html>

@@ -22,6 +22,10 @@ services:
       DB_USER: root
       DB_PASSWORD: test
       DB_NAME: AUSWO
+      PORT: 3000
+      SESSION_SECRET: GOCSPX-3p0mYH8m7VfX5d4h8j9kL0qJz9W
+      GOOGLE_CLIENT_ID: 227608984263-fqq6iudhv9c71aaf61mao6t8td9m7oh7.apps.googleusercontent.com
+      GOOGLE_CLIENT_SECRET: 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
     depends_on:
       - db
     volumes:

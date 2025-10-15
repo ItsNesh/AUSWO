@@ -1,3 +1,5 @@
+const { router } = require("argon");
+
 async function loadImmigration() {
     try {
         const response = await fetch('Immigration.json');
