@@ -3,9 +3,10 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Dashboard</title>
+    <title>Migration News Dashboard</title>
     <link rel="stylesheet" href="/stylesheets/Global.css">
     <link rel="stylesheet" href="/stylesheets/Dashboard.css">
+    <link rel="stylesheet" href="/stylesheets/Footer.css" />
     <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
 </head>
 
@@ -24,13 +25,12 @@
         </nav>
 
         <main class="dashboard-container">
-            <h1>Immigration Information</h1>
             <div id="immigration-content" class="dashboard-content">
-                Loading...
             </div>
         </main>
     </div>
     <script src="/javascripts/Immigration.js"></script>
+    <script src="/javascripts/Footer.js"></script>
     <script>
         new Vue({
             el: '#app',
