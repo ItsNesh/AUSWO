@@ -34,8 +34,20 @@ INSERT INTO Occupations (anzsco, name, authority, skillLevel, listID)
 VALUES (249311, 'Teacher of English to Speakers of Other Languages', 'ADC', 1, 
 (SELECT listID FROM OccupationLists WHERE listName = 'ROL'));
 
-INSERT INTO Pages (pageName, pageTitle, pageContent)
-VALUES 
-('home', 'Welcome to AUSWO', 'This is the homepage content...'),
-('about', 'About Us', 'This page describes the company and mission...'),
-('occupation_list', 'Occupation List', 'This page contains the lists of occupations...');
+INSERT INTO ScrapedOccupations (JobTitle, CorporateName, PositionType, Location, JobDescription) VALUES
+('Software Engineer', 'TechSolutions Pty Ltd', 'Full-time', 'Sydney, NSW', 'Develop and maintain web applications using modern frameworks. Open to skilled foreign applicants.'),
+('Chef', 'Gourmet Eats', 'Full-time', 'Melbourne, VIC', 'Experienced chefs needed for fine dining. Visa sponsorship available.'),
+('English Teacher', 'Global Language Institute', 'Part-time', 'Brisbane, QLD', 'Teach English to non-native speakers. TESOL certification preferred.'),
+('Civil Engineer', 'BuildCorp', 'Contract', 'Perth, WA', 'Manage construction projects and ensure compliance with safety standards.'),
+('Registered Nurse', 'HealthFirst Hospital', 'Full-time', 'Adelaide, SA', 'Provide nursing care in a hospital setting. Registration with AHPRA required.'),
+('Data Analyst', 'DataWave Analytics', 'Full-time', 'Sydney, NSW', 'Analyze business data to produce actionable insights. SQL and Python skills required.'),
+('Marketing Coordinator', 'Bright Ideas Agency', 'Full-time', 'Melbourne, VIC', 'Coordinate marketing campaigns and social media strategy.'),
+('Construction Project Manager', 'Urban Builders', 'Full-time', 'Brisbane, QLD', 'Oversee construction projects, budgets, and timelines.'),
+('Barista', 'Coffee Culture', 'Part-time', 'Sydney, NSW', 'Prepare coffee and provide excellent customer service. Experience preferred.'),
+('Plumber', 'Rapid Plumbing Services', 'Full-time', 'Perth, WA', 'Install and repair plumbing systems. License preferred.'),
+('UX/UI Designer', 'Creative Minds', 'Contract', 'Melbourne, VIC', 'Design user interfaces and improve user experience for web and mobile apps.'),
+('Mechanical Engineer', 'AutoTech Engineering', 'Full-time', 'Adelaide, SA', 'Design and maintain mechanical systems in manufacturing.'),
+('Accountant', 'Numbers & Co.', 'Full-time', 'Sydney, NSW', 'Prepare financial statements and manage accounts. CPA preferred.'),
+('Hotel Receptionist', 'Sunrise Hotels', 'Full-time', 'Gold Coast, QLD', 'Manage front desk, bookings, and customer inquiries. Experience preferred.'),
+('Warehouse Operator', 'LogiTech', 'Full-time', 'Melbourne, VIC', 'Manage inventory, loading, and shipping operations in a warehouse.');
+

@@ -84,58 +84,6 @@
   </div>
 
   <script src="/javascripts/Footer.js"></script>
-  <script>
-    new Vue({
-      el: '#app',
-      data: {
-        isLoggedIn: false,
-        sessionInfo: null,
-      },
-      mounted() {
-        this.isLoggedIn = !!localStorage.getItem('userID');
-        this.fetchSessionInfo();
-      },
-      methods: {
-        async login(event) {
-          event.preventDefault();
-          const username = document.getElementById('login-signup-username').value;
-          const password = document.getElementById('login-signup-password').value;
-          try {
-            const response = await fetch('/auth/login', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ userName: username, password }),
-            });
-            if (!response.ok) throw new Error('Login failed');
-            const data = await response.json();
-            localStorage.setItem('userID', data.userID);
-            this.isLoggedIn = true;
-            window.location.href = data.redirect || '/index.html';
-          } catch (error) {
-            alert('Login failed');
-          }
-        },
-        loginWithGoogle() {
-          window.location.href = '/auth/google';
-        },
-        logout() {
-          localStorage.removeItem('userID');
-          this.isLoggedIn = false;
-          window.location.href = '/Login.html';
-        },
-        async fetchSessionInfo() {
-          try {
-            const response = await fetch('/auth/session-info');
-            if (!response.ok) throw new Error('Failed to fetch session info');
-            const data = await response.json();
-            this.sessionInfo = data;
-          } catch (error) {
-            console.error('Error fetching session info:', error);
-            this.sessionInfo = 'No session information available';
-          }
-        },
-      },
-    });
-  </script>
+  <script src="/javascripts/SessionManagerLoginPage.js"></script>
 </body>
 </html>
