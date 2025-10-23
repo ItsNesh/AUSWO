@@ -8,12 +8,40 @@
   <link rel="stylesheet" href="/stylesheets/Signup.css">
   <link rel="stylesheet" href="/stylesheets/Footer.css">
   <script>
+    const SIGNUP_FIELD_ID_MAP = {
+      firstName: 'login-signup-first-name',
+      lastName: 'login-signup-last-name',
+      phoneNumber: 'login-signup-phonenumber',
+      email: 'login-signup-email',
+      userName: 'login-signup-username',
+      password: 'login-signup-password',
+      confirmPassword: 'login-signup-repeat-password',
+    };
+
+    function resetSignupFieldErrors(form) {
+      if (!form || !window.AUSWOFormValidation) {
+        return;
+      }
+      Object.values(SIGNUP_FIELD_ID_MAP).forEach(id => {
+        window.AUSWOFormValidation.clearFieldError(id, { scope: form });
+      });
+    }
+
     async function validateForm(event) {
       event.preventDefault();
 
       const form = (event && event.target && typeof event.target.closest === 'function')
         ? event.target.closest('form')
         : document.getElementById('login-signup-form');
+
+      resetSignupFieldErrors(form);
+
+      const errorList = document.getElementById('errorList');
+      if (errorList) {
+        errorList.innerHTML = '';
+        errorList.style.display = 'none';
+      }
+
       if (form && !form.reportValidity()) {
         return;
       }
@@ -26,13 +54,14 @@
       const password = document.getElementById('login-signup-password').value;
       const confirmPassword = document.getElementById('login-signup-repeat-password').value;
 
-      const errorList = document.getElementById('errorList');
-      errorList.innerHTML = '';
-
       if (password !== confirmPassword) {
-        const li = document.createElement('li');
-        li.textContent = 'Passwords do not match.';
-        errorList.appendChild(li);
+        if (window.AUSWOFormValidation) {
+          window.AUSWOFormValidation.setFieldError(
+            SIGNUP_FIELD_ID_MAP.confirmPassword,
+            'Passwords do not match.',
+            { scope: form, focus: true }
+          );
+        }
         return;
       }
 
@@ -51,24 +80,62 @@
           }),
         });
 
-        const result = await response.json();
+        const result = await response.json().catch(() => ({}));
         if (response.status !== 201) {
-          displayErrors(result.errors || [{ msg: result.error || 'Registration failed' }]);
+          const payloadErrors = Array.isArray(result.errors) && result.errors.length
+            ? result.errors
+            : [{ msg: result.error || 'Registration failed' }];
+          displayErrors(payloadErrors, form);
         } else if (result.redirect) {
           window.location.href = result.redirect;
         }
       } catch (err) {
-        displayErrors([{ msg: 'Network error. Please try again.' }]);
+        displayErrors([{ msg: 'Network error. Please try again.' }], form);
       }
     }
 
-    function displayErrors(errors) {
-      const errorList = document.getElementById('errorList');
+    function displayErrors(errors, form) {
+      const list = document.getElementById('errorList');
+      const handledParams = new Set();
+
+      if (!Array.isArray(errors) || errors.length === 0) {
+        if (list) {
+          list.innerHTML = '';
+          list.style.display = 'none';
+        }
+        return;
+      }
+
       errors.forEach(error => {
-        const li = document.createElement('li');
-        li.textContent = error.msg;
-        errorList.appendChild(li);
+        const param = error && error.param;
+        const message = error && error.msg ? String(error.msg) : 'An error occurred.';
+        const fieldId = param && SIGNUP_FIELD_ID_MAP[param];
+
+        if (fieldId && window.AUSWOFormValidation) {
+          const applied = window.AUSWOFormValidation.setFieldError(fieldId, message, {
+            scope: form,
+            focus: handledParams.size === 0,
+          });
+          if (applied) {
+            handledParams.add(param);
+            return;
+          }
+        }
+
+        if (list) {
+          const li = document.createElement('li');
+          li.textContent = message;
+          list.appendChild(li);
+        }
       });
+
+      if (list) {
+        list.style.display = list.children.length ? '' : 'none';
+      }
+
+      if (!handledParams.size && form && typeof form.reportValidity === 'function') {
+        form.reportValidity();
+      }
     }
   </script>
   <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
