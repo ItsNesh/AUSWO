@@ -27,6 +27,9 @@ const { body, validationResult } = require('express-validator');
 // Database Setup
 const pool = require('./db');
 
+// Middleware
+const { requireOwnership, requireAdmin } = require('./middleware/auth');
+
 // Route Handlers
 var authRouter = require('./routes/auth');
 var dashboardRouter = require('./routes/Dashboard');
@@ -67,6 +70,39 @@ app.use(session({
 // Passport middleware - must be after session and before routes
 app.use(passport.initialize());
 app.use(passport.session());
+
+// Middleware to obtain user roles and admin status
+app.use(async (req, res, next) => {
+    if (req.session.isLoggedIn && req.session.userId) {
+        try {
+            const [userRows] = await pool.query('SELECT userID, userName, email, firstName, lastName FROM Users WHERE userID = ?', [req.session.userId]);
+
+            if (!userRows || userRows.length === 0) {
+                req.session.destroy();
+                req.userRoles = { roles: [], isAdmin: false };
+                return next();
+            }
+
+            const user = userRows[0];
+            const [roleRows] = await pool.query(
+                `SELECT Roles.roleName FROM UserRoles
+                JOIN Roles ON UserRoles.roleID = Roles.roleID
+                WHERE UserRoles.userID = ?`, [req.session.userId]
+            );
+            const roles = roleRows.map(row => row.roleName);
+            const isAdmin = roles.includes('Admin');
+            console.log('User roles:', roles);
+
+            req.userRoles = { user, roles, isAdmin };
+        } catch (error) {
+            console.error('Error obtaining user roles and/or admin status', error);
+            req.userRoles = { roles: [], isAdmin: false };
+        }
+    } else {
+        req.userRoles = { roles: [], isAdmin: false };
+    }
+    next();
+});
 
 app.use('/Dashboard', express.static(path.join(__dirname, 'Dashboard')));
 
@@ -114,42 +150,27 @@ async function ensureUserVisaColumns() {
         title VARCHAR(100) NOT NULL,
         body TEXT NOT NULL,
         datePublished DATETIME DEFAULT CURRENT_TIMESTAMP,
-        authorID INT NOT NULL,
-        FOREIGN KEY (authorID) REFERENCES Users(userID)
+        authorID INT NULL,
+        FOREIGN KEY (authorID) REFERENCES Users(userID) ON DELETE SET NULL
       )
     `);
+
+    // Ensure authorID can be NULL for existing tables
+    try {
+      await pool.query(`
+        ALTER TABLE QuickNews
+        MODIFY COLUMN authorID INT NULL
+      `);
+    } catch (err) {
+      // Ignore error if column already allows NULL
+      if (err.errno !== 1060) {
+        console.error('Failed to modify QuickNews authorID column:', err);
+      }
+    }
   } catch (e) {
     console.error('DB init check failed:', e);
   }
 })();
-
-// Authorization Middleware
-// Require user to own the resource they are accessing
-function requireOwnership(req, res, next) {
-   if (!req.session.isLoggedIn || !req.session.userId) {
-        return res.status(401).json({ error: 'Unauthorized - Please log in' });
-    }
-    
-    const requestedUserId = parseInt(req.params.userID, 10);
-    const sessionUserId = parseInt(req.session.userId, 10);
-    
-    if (requestedUserId !== sessionUserId) {
-        return res.status(403).json({ error: 'Forbidden - You can only access your own data' });
-    }
-    next()
-}
-
-// Require user to be admin
-function requireAdmin(req, res, next) {
-    if (!req.session.isLoggedIn || !req.session.userId) {
-        return res.status(401).json({ error: 'Unauthorized - Please log in' });
-    }
-    if (!req.userRoles || !req.userRoles.isAdmin) {
-        return res.status(403).json({ error: 'Forbidden - Admin access required' });
-    }
-    next();
-}
-
 
 // -----------------
 // API Routes
@@ -191,11 +212,11 @@ app.get('/api/admin/users', requireAdmin, async (req, res) => {
 
 // Edit user profile fields
 app.put('/api/users/:userID', requireOwnership, [
-    body('firstName').optional({ checkFalsy: true }).isLength({ min: 1, max: 50 }).trim().escape(),
-    body('lastName').optional({ checkFalsy: true }).isLength({ min: 1, max: 50 }).trim().escape(),
-    body('email').optional({ checkFalsy: true }).isEmail().normalizeEmail(),
-    body('userName').optional({ checkFalsy: true }).isLength({ min: 3, max: 30 }).matches(/^\w+$/).trim(),
-    body('phoneNumber').optional({ checkFalsy: true }).isMobilePhone().trim().escape()
+    body('firstName').optional({ checkFalsy: true }).isLength({ min: 1, max: 50 }).withMessage('First name must be between 1 and 50 characters').trim().escape(),
+    body('lastName').optional({ checkFalsy: true }).isLength({ min: 1, max: 50 }).withMessage('Last name must be between 1 and 50 characters').trim().escape(),
+    body('email').optional({ checkFalsy: true }).isEmail().withMessage('Email address is invalid').normalizeEmail(),
+    body('userName').optional({ checkFalsy: true }).isLength({ min: 3, max: 30 }).withMessage('Username must be between 3 and 30 characters').matches(/^\w+$/).withMessage('Username can only contain letters, numbers, and underscores').trim(),
+    body('phoneNumber').optional({ checkFalsy: true }).isMobilePhone().withMessage('Phone number format is invalid').trim().escape()
   ], async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -309,6 +330,39 @@ app.get('/api/quick-news', async (req, res) => {
   }
 });
 
+// Get jobs from database
+app.get('/api/jobs', async (req, res) => {
+  try {
+    const [rows] = await pool.query(
+      'SELECT scrapeID, JobTitle, CorporateName, PositionType, Location, JobDescription, DateScraped FROM ScrapedOccupations ORDER BY DateScraped DESC LIMIT 20'
+    );
+    res.json(rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json([]);
+  }
+});
+
+// Get occupations by list type
+app.get('/api/occupations/:listType', async (req, res) => {
+  const { listType } = req.params;
+
+  try {
+    const [rows] = await pool.query(`
+      SELECT o.anzsco, o.name, o.authority, o.skillLevel
+      FROM Occupations o
+      JOIN OccupationLists ol ON o.listID = ol.listID
+      WHERE ol.listName = ?
+      ORDER BY o.name ASC
+    `, [listType.toUpperCase()]);
+
+    res.json(rows);
+  } catch (err) {
+    console.error('Error fetching occupations:', err);
+    res.status(500).json({ error: 'Failed to fetch occupations' });
+  }
+});
+
 // -----------------------
 
 // Redirects
@@ -364,39 +418,6 @@ function tryRedirectToHtml(req, res, next) {
 
 app.get('/:page', tryRedirectToHtml);
 app.get('/:page/', tryRedirectToHtml);
-
-// Middleware to obtain user roles and admin status
-app.use(async (req, res, next) => {
-    if (req.session.isLoggedIn && req.session.userId) {
-        try {
-            const [userRows] = await pool.query('SELECT userID, userName, email, firstName, lastName FROM Users WHERE userID = ?', [req.session.userId]);
-
-            if (!userRows || userRows.length === 0) {
-                req.session.destroy();
-                req.userRoles = { roles: [], isAdmin: false };
-                return next();
-            }
-
-            const user = userRows[0];
-            const [roleRows] = await pool.query(
-                `SELECT Roles.roleName FROM UserRoles
-                JOIN Roles ON UserRoles.roleID = Roles.roleID
-                WHERE UserRoles.userID = ?`, [req.session.userId]
-            );
-            const roles = roleRows.map(row => row.roleName);
-            const isAdmin = roles.includes('Admin');
-            console.log('User roles:', roles);
-
-            req.userRoles = { user, roles, isAdmin };
-        } catch (error) {
-            console.error('Error obtaining user roles and/or admin status', error);
-            req.userRoles = { roles: [], isAdmin: false };
-        }
-    } else {
-        req.userRoles = { roles: [], isAdmin: false };
-    }
-    next();
-});
 
 // Routers
 app.use('/auth', authRouter);

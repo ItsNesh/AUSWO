@@ -18,9 +18,12 @@
       <div class="nav-links" v-if="sessionInfo !== null">
         <a href="/index.html">Home</a>
         <a href="/Profile.html">Profile</a>
-        <a href="/preferences.html">Preferences</a>
-        <a href="/contact.html">Contact</a>
         <a href="/points-calculator.html">Points Calculator</a>
+        <a href="/migration-news.html">News</a>
+        <a href="/jobs.html">Jobs</a>
+        <a href="/contact.html">Contact</a>
+        <a href="/preferences.html">Preferences</a>
+        <a href="/AdminPage.html" v-if="isAdmin">Admin</a>
         <a href="/Login.html" v-if="!isLoggedIn">Log In</a>
         <a href="/auth/logout" v-if="isLoggedIn" @click.prevent="logout">Log Out</a>
       </div>
@@ -81,7 +84,7 @@
                   <td>{{ user.visaPoints !== null ? user.visaPoints : 'N/A' }}</td>
                   <td>{{ user.role }}</td>
                   <td>
-                    <button @click="removeUser(user)" class="btn-delete">Remove</button>
+                    <button v-if="user.id !== currentUserId" @click="removeUser(user)" class="btn-delete">Remove</button>
                   </td>
                 </tr>
               </tbody>
@@ -89,10 +92,58 @@
           </div>
         </div>
       </section>
+
+      <section class="page-container section">
+        <form class="card" id="preferences-form">
+          <h2 class="card-title">Post Quick News</h2>
+          <div>
+            <label for="news-title">News Title</label>
+            <input id="news-title" type="text" placeholder="Enter title" maxlength="100" required>
+          </div>
+          <div>
+            <label for="news-content">News Content</label>
+            <textarea id="news-content" rows="6" placeholder="Enter the content here..." required></textarea>
+          </div>
+          <div class="form-footer">
+            <button type="submit" class="btn btn-primary">Publish News</button>
+            <button type="reset" class="btn btn-outline">Reset</button>
+          </div>
+        </form>
+      </section>
     </main>
   </div>
 
   <script src="/javascripts/Footer.js"></script>
   <script src="/javascripts/SessionManagerAdmin.js"></script>
+  <script>
+    // Quick news submit
+    document.getElementById('preferences-form').addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const title = document.getElementById('news-title').value;
+      const body = document.getElementById('news-content').value;
+
+      try {
+        const response = await fetch('/admin/quick-news', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ title, body })
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to post news');
+        }
+
+        const data = await response.json();
+        alert('Quick news posted successfully!');
+        document.getElementById('preferences-form').reset();
+      } catch (error) {
+        console.error('Error posting news:', error);
+        alert('Failed to post news. Please try again.');
+      }
+    });
+  </script>
 </body>
 </html>

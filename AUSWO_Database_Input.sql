@@ -2,9 +2,9 @@ USE AUSWO;
 
 INSERT INTO Users (firstName, lastName, phoneNumber, email, userName, passwordHash)
 VALUES 
-('Alice', 'Smith', '0412000001', 'alice@example.com', 'alice_smith', 'hashed_password1'),
-('Bob', 'Johnson', '0412000002', 'bob@example.com', 'bob_j', 'hashed_password2'),
-('Charlie', 'Brown', '0412000003', 'charlie@example.com', 'charlie_b', 'hashed_password3');
+('Alice', 'Smith', '0412000001', 'alice@example.com', 'alice_smith', '$argon2id$v=19$m=65536,t=3,p=1$V4Y2xGU8I6ufDyk6VClatA$AyIKvl8m8F8g1OJtzStHB/Ifx7tT1PFrnxz9FyRzVlE'), -- Alicesmith01!
+('Bob', 'Johnson', '0412000002', 'bob@example.com', 'bob_j', '$argon2id$v=19$m=65536,t=3,p=1$FhygmQh5whec4CwxQKL58g$1sZHcOGjG4uj3ZTparSdAtT74cu+vu2bImeEFVjejwU'), -- Bobjohnson01!
+('Charlie', 'Brown', '0412000003', 'charlie@example.com', 'charlie_b', '$argon2id$v=19$m=65536,t=3,p=1$mthNwq+FeUoTVrchoecRDg$h5b6/PtrNYYHVkddiyNDA+1NVsfZyrez3dNUF2C8C9U'); -- Charliebrown01!
 
 INSERT INTO Roles (roleName, roleAbilities)
 VALUES
@@ -19,20 +19,29 @@ VALUES
 
 INSERT INTO QuickNews (title, body, authorID)
 VALUES
-('Server Maintenance Tonight', 'The system will be down for maintenance tonight from 10 PM to 12 AM.', 1),
-('New Feature Released', 'We have launched the new dashboard feature for all users.', 1);
+('Server Maintenance Tonight', 'The system will be down for maintenance tonight from 10 PM to 12 AM.', NULL),
+('New Feature Released', 'We have launched the new dashboard feature for all users.', NULL);
 
-INSERT INTO Occupations (anzsco, name, authority, skillLevel, listID)
-VALUES (254422, 'Registered Nurse (Mental Health)', 'VETASSESS', 1, 
-(SELECT listID FROM OccupationLists WHERE listName = 'MLTSSL'));
+INSERT INTO Occupations (anzsco, name, authority, skillLevel, listID) VALUES 
+(254422, 'Registered Nurse (Mental Health)', 'VETASSESS', 1, (SELECT listID FROM OccupationLists WHERE listName = 'MLTSSL')),
+(254423, 'Registered Nurse (Perioperative)', 'EAVIML', 1, (SELECT listID FROM OccupationLists WHERE listName = 'MLTSSL')),
+(254424, 'Registered Nurse (Surgical)', 'ACECQA', 1, (SELECT listID FROM OccupationLists WHERE listName = 'MLTSSL')),
+(254425, 'Registered Nurse (Paediatrics)', 'ANMAC', 1, (SELECT listID FROM OccupationLists WHERE listName = 'MLTSSL')),
+(254499, 'Registered Nurses nec', 'VETASSESS', 1, (SELECT listID FROM OccupationLists WHERE listName = 'MLTSSL'));
 
-INSERT INTO Occupations (anzsco, name, authority, skillLevel, listID)
-VALUES (234711, 'Veterinarian', 'TRA', 2, 
-(SELECT listID FROM OccupationLists WHERE listName = 'STSOL'));
+INSERT INTO Occupations (anzsco, name, authority, skillLevel, listID) VALUES 
+(234711, 'Veterinarian', 'TRA', 2, (SELECT listID FROM OccupationLists WHERE listName = 'STSOL')),
+(234911, 'Conservator', 'VETASSESS', 3, (SELECT listID FROM OccupationLists WHERE listName = 'STSOL')),
+(234912, 'Metallurgist', 'ANMAC', 2, (SELECT listID FROM OccupationLists WHERE listName = 'STSOL')),
+(234913, 'Meteorologist', 'VETASSESS', 2, (SELECT listID FROM OccupationLists WHERE listName = 'STSOL')),
+(234914, 'Physicist', 'ACWA', 2, (SELECT listID FROM OccupationLists WHERE listName = 'STSOL'));
 
-INSERT INTO Occupations (anzsco, name, authority, skillLevel, listID)
-VALUES (249311, 'Teacher of English to Speakers of Other Languages', 'ADC', 1, 
-(SELECT listID FROM OccupationLists WHERE listName = 'ROL'));
+INSERT INTO Occupations (anzsco, name, authority, skillLevel, listID) VALUES
+(249311, 'Teacher of English to Speakers of Other Languages', 'ADC', 1, (SELECT listID FROM OccupationLists WHERE listName = 'ROL')),
+(251111, 'Dietitian', 'AIMS', 3, (SELECT listID FROM OccupationLists WHERE listName = 'ROL')),
+(251112, 'Nutritionist', 'AMSA', 2, (SELECT listID FROM OccupationLists WHERE listName = 'ROL')),
+(251211, 'Medical Diagnostic Radiographer', 'CASA', 1, (SELECT listID FROM OccupationLists WHERE listName = 'ROL')),
+(251212, 'Medical Radiation Therapist', 'CASA', 1, (SELECT listID FROM OccupationLists WHERE listName = 'ROL'));
 
 INSERT INTO ScrapedOccupations (JobTitle, CorporateName, PositionType, Location, JobDescription) VALUES
 ('Software Engineer', 'TechSolutions Pty Ltd', 'Full-time', 'Sydney, NSW', 'Develop and maintain web applications using modern frameworks. Open to skilled foreign applicants.'),

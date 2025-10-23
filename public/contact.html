@@ -18,8 +18,11 @@
       <div class="nav-links" v-if="sessionInfo !== null">
         <a href="/index.html">Home</a>
         <a href="/Profile.html">Profile</a>
-        <a href="/preferences.html">Preferences</a>
         <a href="/points-calculator.html">Points Calculator</a>
+        <a href="/migration-news.html">News</a>
+        <a href="/jobs.html">Jobs</a>
+        <a href="/contact.html">Contact</a>
+        <a href="/preferences.html">Preferences</a>
         <a href="/AdminPage.html" v-if="isAdmin">Admin</a>
         <a href="/Login.html" v-if="!isLoggedIn">Log In</a>
         <a href="/auth/logout" v-if="isLoggedIn" @click.prevent="logout">Log Out</a>

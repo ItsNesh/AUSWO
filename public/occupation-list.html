@@ -18,9 +18,11 @@
       <div class="nav-links" v-if="sessionInfo !== null">
         <a href="/index.html">Home</a>
         <a href="/Profile.html">Profile</a>
-        <a href="/preferences.html">Preferences</a>
-        <a href="/contact.html">Contact</a>
         <a href="/points-calculator.html">Points Calculator</a>
+        <a href="/migration-news.html">News</a>
+        <a href="/jobs.html">Jobs</a>
+        <a href="/contact.html">Contact</a>
+        <a href="/preferences.html">Preferences</a>
         <a href="/AdminPage.html" v-if="isAdmin">Admin</a>
         <a href="/Login.html" v-if="!isLoggedIn">Log In</a>
         <a href="/auth/logout" v-if="isLoggedIn" @click.prevent="logout">Log Out</a>
@@ -32,53 +34,68 @@
         <div class="section-header">
           <div>
             <span class="tag">Occupations</span>
-            <h1 class="section-title">Current Jobs Available</h1>
+            <h1 class="section-title">Occupation List</h1>
             <p class="section-subtitle">
-              A current list of available jobs.
+              A list of potential occupations.
             </p>
           </div>
         </div>
         <div class="surface">
-          <div class="table-wrap">
+          <div style="margin-bottom: 20px;">
+            <label style="font-weight: 600; margin-bottom: 10px; display: block;">Select Occupation List:</label>
+            <div class="radio-group">
+              <label class="radio-label">
+                <input type="radio" name="listType" value="MLTSSL" v-model="selectedList" @change="fetchOccupations">
+                <span>MLTSSL (Medium and Long-term Strategic Skills List)</span>
+              </label>
+              <label class="radio-label">
+                <input type="radio" name="listType" value="STSOL" v-model="selectedList" @change="fetchOccupations">
+                <span>STSOL (Short-term Skilled Occupation List)</span>
+              </label>
+              <label class="radio-label">
+                <input type="radio" name="listType" value="ROL" v-model="selectedList" @change="fetchOccupations">
+                <span>ROL (Regional Occupation List)</span>
+              </label>
+            </div>
+          </div>
+
+          <div v-if="selectedList" style="background-color: #f5f5f5; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
+            <div v-if="selectedList === 'MLTSSL'">
+              <p>This list comprises occupations deemed to be in critical and ongoing demand across Australia for the long term. Being on the MLTSSL typically offers a direct path to permanent residency through independent or state-nominated visas (like the Skilled Independent 189 visa).</p>
+            </div>
+            <div v-if="selectedList === 'STSOL'">
+              <p>This list includes occupations that address immediate and short-term skill shortages. While some temporary visas (like the Temporary Skill Shortage 482 visa) are linked to the STSOL, permanent residency pathways are generally more limited and often require specific state/territory or employer sponsorship.</p>
+            </div>
+            <div v-if="selectedList === 'ROL'">
+              <p>This is the overarching term for Australia's official list of in-demand occupations that skilled migrants can use to apply for various visas. It's currently categorized into the MLTSSL and STSOL (and sometimes a Regional Occupation List).</p>
+            </div>
+          </div>
+
+          <div v-if="error" style="text-align: center; padding: 40px; color: red;">
+            <p>{{ error }}</p>
+          </div>
+
+          <div v-else class="table-wrap">
             <table class="data-table">
               <thead>
                 <tr>
-                  <th>Occupation</th>
-                  <th>Company</th>
-                  <th>Visa Required</th>
-                  <th>Notes</th>
+                  <th>ANZSCO</th>
+                  <th>Name</th>
+                  <th>Authority</th>
+                  <th>Skill Level</th>
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td>1</td>
-                  <td>1</td>
-                  <td>1</td>
-                  <td>1</td>
+                <tr v-if="occupations.length === 0">
+                  <td colspan="4" style="text-align: center; padding: 40px; color: #666;">
+                    No occupations found for this list.
+                  </td>
                 </tr>
-                <tr>
-                  <td>2</td>
-                  <td>2</td>
-                  <td>2</td>
-                  <td>2</td>
-                </tr>
-                <tr>
-                  <td>3</td>
-                  <td>3</td>
-                  <td>3</td>
-                  <td>3</td>
-                </tr>
-                <tr>
-                  <td>4</td>
-                  <td>4</td>
-                  <td>4</td>
-                  <td>4</td>
-                </tr>
-                <tr>
-                  <td>5</td>
-                  <td>5</td>
-                  <td>5</td>
-                  <td>5</td>
+                <tr v-for="occupation in occupations" :key="occupation.anzsco">
+                  <td>{{ occupation.anzsco }}</td>
+                  <td>{{ occupation.name }}</td>
+                  <td>{{ occupation.authority }}</td>
+                  <td>{{ occupation.skillLevel }}</td>
                 </tr>
               </tbody>
             </table>
@@ -91,6 +108,123 @@
     </main>
   </div>
   <script src="/javascripts/Footer.js"></script>
-  <script src="/javascripts/SessionManager.js"></script>
+  <script>
+    new Vue({
+      el: '#app',
+      data: {
+        isLoggedIn: false,
+        sessionInfo: null,
+        isAdmin: false,
+        selectedList: 'MLTSSL',
+        occupations: [],
+        loading: false,
+        error: null
+      },
+      mounted() {
+        this.checkLoginState();
+        this.fetchOccupations();
+      },
+      methods: {
+        async checkLoginState() {
+          try {
+            const response = await fetch('/auth/session-info');
+            if (!response.ok) throw new Error('Failed to fetch session info');
+            const data = await response.json();
+            this.isLoggedIn = data.isLoggedIn;
+            this.sessionInfo = data;
+            this.isAdmin = data.isAdmin;
+
+            // Sync localStorage with session for OAuth
+            if (data.isLoggedIn && data.userId) {
+              localStorage.setItem('userID', data.userId);
+              const currentUserID = localStorage.getItem('userID');
+              if (currentUserID && currentUserID !== String(data.userId)) {
+                window.location.reload();
+              }
+            } else if (!data.isLoggedIn) {
+              localStorage.removeItem('userID');
+            }
+          } catch (error) {
+            console.error('Error fetching session info:', error);
+            this.sessionInfo = 'No session information available';
+          }
+        },
+        async fetchOccupations() {
+          this.loading = true;
+          this.error = null;
+
+          try {
+            const response = await fetch(`/api/occupations/${this.selectedList}`);
+
+            if (!response.ok) {
+              throw new Error(`Failed to fetch occupations: ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            this.occupations = data;
+          } catch (err) {
+            console.error('Error fetching occupations:', err);
+            this.error = 'Failed to load occupations. Please try again later.';
+            this.occupations = [];
+          } finally {
+            this.loading = false;
+          }
+        },
+        logout() {
+          fetch('/auth/logout')
+            .then(response => {
+              if (response.ok) {
+                localStorage.removeItem('token');
+                this.isLoggedIn = false;
+                this.isAdmin = false;
+                window.location.href = '/Login.html';
+              } else {
+                throw new Error('Logout failed');
+              }
+            })
+            .catch(error => {
+              console.error('Error logging out:', error);
+            });
+        }
+      }
+    });
+  </script>
+  <style>
+    .radio-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .radio-label {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      padding: 10px;
+      border-radius: 6px;
+      transition: background-color 0.2s;
+    }
+
+    .radio-label:hover {
+      background-color: rgba(0, 0, 0, 0.02);
+    }
+
+    .radio-label input[type="radio"] {
+      margin-right: 10px;
+      cursor: pointer;
+      width: 18px;
+      height: 18px;
+    }
+
+    .radio-label span {
+      font-size: 14px;
+    }
+
+    @media (max-width: 768px) {
+      .radio-label span {
+        font-size: 13px;
+      }
+    }
+  </style>
 </body>
 </html>

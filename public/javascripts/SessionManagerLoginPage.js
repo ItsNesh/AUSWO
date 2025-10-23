@@ -2,7 +2,10 @@ new Vue({
     el: '#app',
     data: {
         isLoggedIn: false, // Assume initially not logged in
-        sessionInfo: null
+        sessionInfo: null,
+        errors: {
+            general: ''
+        }
     },
     mounted() {
         // Check if the user is logged in (check for userID in localStorage)
@@ -10,6 +13,11 @@ new Vue({
         this.fetchSessionInfo();
     },
     methods: {
+        clearError(field) {
+            if (field === 'general') {
+                this.errors.general = '';
+            }
+        },
         async login(event) {
             event.preventDefault();
             const username = document.getElementById('login-signup-username').value;
@@ -22,16 +30,32 @@ new Vue({
                     body: JSON.stringify({ userName: username, password: password })
                 });
 
+                const data = await response.json();
+
+                console.log('Response status:', response.status);
+                console.log('Response data:', data);
+
                 if (!response.ok) {
-                    throw new Error('Login failed');
+                    // Handle validation errors from backend
+                    if (data.errors && Array.isArray(data.errors)) {
+                        console.log('Processing errors:', data.errors);
+                        // Collect all error messages
+                        const errorMessages = data.errors.map(error => error.msg);
+                        this.errors.general = errorMessages.join('\n');
+                        console.log('Final errors object:', this.errors);
+                    } else {
+                        // Fallback for unexpected error format
+                        this.errors.general = 'Login failed. Please check your credentials.';
+                    }
+                    return;
                 }
 
-                const data = await response.json();
                 localStorage.setItem('userID', data.userID); // Save the userID in local storage
                 this.isLoggedIn = true; // Update the login state
                 window.location.href = data.redirect || '/index.html'; // Redirect after login
             } catch (error) {
-                alert('Login failed');
+                console.error('Login error:', error);
+                this.errors.general = 'An unexpected error occurred. Please try again.';
             }
         },
         loginWithGoogle() {

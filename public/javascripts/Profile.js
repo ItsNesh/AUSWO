@@ -31,16 +31,144 @@ function editProfile() {
 
     content.innerHTML = `
         <h2>Edit Profile</h2>
-        <label>Name: <input type="text" id="editName" value="${escapeHTML(currentName)}"></label><br><br>
-        <label>Username: <input type="text" id="editUsername" value="${escapeHTML(currentUserName)}"></label><br><br>
-        <label>Email: <input type="email" id="editEmail" value="${escapeHTML(currentEmail)}"></label><br><br>
-        <label>Phone: <input type="tel" id="editPhone" value="${escapeHTML(currentPhone)}"></label><br><br>
+        <div id="profile-error" class="general-error" style="display: none;"></div>
+        <label>Name:
+            <input type="text" id="editName" value="${escapeHTML(currentName)}" oninput="clearFieldError('editName')" onblur="validateField('editName')" required>
+            <span class="field-error" id="editName-error"></span>
+        </label><br><br>
+        <label>Username:
+            <input type="text" id="editUsername" value="${escapeHTML(currentUserName)}" oninput="clearFieldError('editUsername')" onblur="validateField('editUsername')" required minlength="3" maxlength="30" pattern="^\\w+$">
+            <span class="field-error" id="editUsername-error"></span>
+        </label><br><br>
+        <label>Email:
+            <input type="email" id="editEmail" value="${escapeHTML(currentEmail)}" oninput="clearFieldError('editEmail')" onblur="validateField('editEmail')" required>
+            <span class="field-error" id="editEmail-error"></span>
+        </label><br><br>
+        <label>Phone:
+            <input type="tel" id="editPhone" value="${escapeHTML(currentPhone)}" oninput="clearFieldError('editPhone')" onblur="validateField('editPhone')" required>
+            <span class="field-error" id="editPhone-error"></span>
+        </label><br><br>
         <button class="button" onclick="saveProfile()">Save</button>
         <button class="button" style="margin-left:8px;" onclick="cancelEdit()">Cancel</button>
     `;
 }
 
+function clearProfileError() {
+    const errorDiv = document.getElementById('profile-error');
+    if (errorDiv) {
+        errorDiv.style.display = 'none';
+        errorDiv.textContent = '';
+    }
+}
+
+function showProfileError(message) {
+    const errorDiv = document.getElementById('profile-error');
+    if (errorDiv) {
+        errorDiv.textContent = message;
+        errorDiv.style.display = 'block';
+    }
+}
+
+function clearFieldError(fieldId) {
+    const input = document.getElementById(fieldId);
+    const errorSpan = document.getElementById(`${fieldId}-error`);
+
+    if (input) {
+        input.classList.remove('input-error');
+    }
+    if (errorSpan) {
+        errorSpan.textContent = '';
+    }
+}
+
+function showFieldError(fieldId, message) {
+    const input = document.getElementById(fieldId);
+    const errorSpan = document.getElementById(`${fieldId}-error`);
+
+    if (input) {
+        input.classList.add('input-error');
+    }
+    if (errorSpan) {
+        errorSpan.textContent = message;
+    }
+}
+
+function validateField(fieldId) {
+    const input = document.getElementById(fieldId);
+    if (!input) return true;
+
+    const value = input.value.trim();
+
+    // Check if field is empty
+    if (value === '') {
+        const fieldName = fieldId.replace('edit', '');
+        showFieldError(fieldId, `${fieldName} is required`);
+        return false;
+    }
+
+    // Additional validation based on field type
+    switch(fieldId) {
+        case 'editName':
+            if (value.length < 1 || value.length > 100) {
+                showFieldError(fieldId, 'Name must be between 1 and 100 characters');
+                return false;
+            }
+            break;
+
+        case 'editUsername':
+            if (value.length < 3 || value.length > 30) {
+                showFieldError(fieldId, 'Username must be between 3 and 30 characters');
+                return false;
+            }
+            if (!/^\w+$/.test(value)) {
+                showFieldError(fieldId, 'Username can only contain letters, numbers, and underscores');
+                return false;
+            }
+            break;
+
+        case 'editEmail':
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailPattern.test(value)) {
+                showFieldError(fieldId, 'Please enter a valid email address');
+                return false;
+            }
+            break;
+
+        case 'editPhone':
+            if (value.length < 8) {
+                showFieldError(fieldId, 'Please enter a valid phone number');
+                return false;
+            }
+            break;
+    }
+
+    clearFieldError(fieldId);
+    return true;
+}
+
+function validateAllFields() {
+    const fields = ['editName', 'editUsername', 'editEmail', 'editPhone'];
+    let isValid = true;
+
+    fields.forEach(fieldId => {
+        if (!validateField(fieldId)) {
+            isValid = false;
+        }
+    });
+
+    return isValid;
+}
+
 async function saveProfile() {
+    // Clear previous general error
+    clearProfileError();
+
+    // Validate all fields before submission
+    if (!validateAllFields()) {
+        showProfileError('Please fix the errors above before saving.');
+        return;
+    }
+
     const newName = document.getElementById("editName").value || '';
     const newEmail = document.getElementById("editEmail").value || '';
     const newUserName = document.getElementById("editUsername").value || '';
@@ -51,12 +179,8 @@ async function saveProfile() {
     const lastName = parts.join(' ');
 
     const userID = localStorage.getItem('userID');
-    const content = document.getElementById("main-content");
     if (!userID) {
-        content.innerHTML = `
-            <h2>Not Logged In</h2>
-            <p>Please log in to update your profile.</p>
-        `;
+        showProfileError('Please log in to update your profile.');
         return;
     }
 
@@ -75,11 +199,15 @@ async function saveProfile() {
 
         if (!res.ok) {
             const err = await res.json().catch(() => ({}));
-            const msg = err && err.error ? err.error : 'Failed to update profile';
-            content.innerHTML = `
-                <h2>Update Failed</h2>
-                <p>${escapeHTML(msg)}</p>
-            `;
+
+            // Handle validation errors from backend
+            if (err.errors && Array.isArray(err.errors)) {
+                const errorMessages = err.errors.map(error => error.msg);
+                showProfileError(errorMessages.join('\n'));
+            } else {
+                const msg = err && err.error ? err.error : 'Failed to update profile';
+                showProfileError(msg);
+            }
             return;
         }
 
@@ -92,16 +220,14 @@ async function saveProfile() {
             firstName, lastName, email: newEmail, userName: newUserName, phoneNumber: newPhone
         });
 
+        const content = document.getElementById("main-content");
         content.innerHTML = `
             <h2>Profile Updated</h2>
             <p>Your changes have been saved.</p>
         `;
     } catch (e) {
         console.error(e);
-        content.innerHTML = `
-            <h2>Error</h2>
-            <p>There was an error updating your profile.</p>
-        `;
+        showProfileError('An unexpected error occurred. Please try again.');
     }
 }
 
