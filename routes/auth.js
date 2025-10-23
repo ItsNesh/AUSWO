@@ -4,6 +4,7 @@ var argon2 = require('argon2');
 var { body, validationResult } = require('express-validator');
 var passport = require('passport');
 var GoogleStrategy = require('passport-google-oauth2').Strategy;
+var rateLimit = require('express-rate-limit');
 
 // MySQL connection pool (shared)
 var pool = require('../db');
