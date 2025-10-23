@@ -26,7 +26,7 @@ router.post('/register', authLimiter, [
     body('phoneNumber').notEmpty().withMessage('Phone number is required').isMobilePhone().withMessage('Invalid phone number format').trim().escape(),
     body('email').isEmail().withMessage('Invalid email address').normalizeEmail(),
     body('userName').trim().isLength({ min: 3, max: 30 }).withMessage('Username must be 3–30 chars').matches(/^\w+$/).withMessage('Only letters, numbers, and underscores allowed'),
-    body('password').isLength({ min: 8 }).withMessage('Min 8 chars').matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/).withMessage('Must have upper, lower, and number'),
+    body('password').isLength({ min: 8 }).withMessage('Min 8 chars').matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/).withMessage('Must contain an uppercase letter, lowercase letter and a number'),
     body('confirmPassword').custom((value, { req }) => {
         if (value !== req.body.password) {
             throw new Error('Password confirmation does not match password');
