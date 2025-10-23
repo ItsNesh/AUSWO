@@ -93,3 +93,36 @@
     gap: 18px;
   }
 }
+
+.general-error {
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid #f5c6cb;
+  margin-bottom: 1rem;
+  font-size: 14px;
+  white-space: pre-line;
+}
+
+.field-error {
+  color: #d32f2f;
+  font-size: 12px;
+  margin-top: 4px;
+  display: block;
+  min-height: 18px;
+  transition: opacity 0.2s ease;
+}
+
+.field-error:empty {
+  opacity: 0;
+}
+
+.input-error {
+  border-color: #d32f2f !important;
+  background-color: #fff5f5 !important;
+}
+
+#main-content input {
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}

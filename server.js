@@ -212,11 +212,11 @@ app.get('/api/admin/users', requireAdmin, async (req, res) => {
 
 // Edit user profile fields
 app.put('/api/users/:userID', requireOwnership, [
-    body('firstName').optional({ checkFalsy: true }).isLength({ min: 1, max: 50 }).trim().escape(),
-    body('lastName').optional({ checkFalsy: true }).isLength({ min: 1, max: 50 }).trim().escape(),
-    body('email').optional({ checkFalsy: true }).isEmail().normalizeEmail(),
-    body('userName').optional({ checkFalsy: true }).isLength({ min: 3, max: 30 }).matches(/^\w+$/).trim(),
-    body('phoneNumber').optional({ checkFalsy: true }).isMobilePhone().trim().escape()
+    body('firstName').optional({ checkFalsy: true }).isLength({ min: 1, max: 50 }).withMessage('First name must be between 1 and 50 characters').trim().escape(),
+    body('lastName').optional({ checkFalsy: true }).isLength({ min: 1, max: 50 }).withMessage('Last name must be between 1 and 50 characters').trim().escape(),
+    body('email').optional({ checkFalsy: true }).isEmail().withMessage('Email address is invalid').normalizeEmail(),
+    body('userName').optional({ checkFalsy: true }).isLength({ min: 3, max: 30 }).withMessage('Username must be between 3 and 30 characters').matches(/^\w+$/).withMessage('Username can only contain letters, numbers, and underscores').trim(),
+    body('phoneNumber').optional({ checkFalsy: true }).isMobilePhone().withMessage('Phone number format is invalid').trim().escape()
   ], async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {

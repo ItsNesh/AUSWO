@@ -112,4 +112,5 @@
   border: 1px solid #f5c6cb;
   margin-bottom: 1rem;
   font-size: 14px;
+  white-space: pre-line;
 }

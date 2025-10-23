@@ -41,7 +41,7 @@ new Vue({
                         console.log('Processing errors:', data.errors);
                         // Collect all error messages
                         const errorMessages = data.errors.map(error => error.msg);
-                        this.errors.general = errorMessages.join('. ');
+                        this.errors.general = errorMessages.join('\n');
                         console.log('Final errors object:', this.errors);
                     } else {
                         // Fallback for unexpected error format

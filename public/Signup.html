@@ -7,63 +7,6 @@
   <link rel="stylesheet" href="/stylesheets/Global.css">
   <link rel="stylesheet" href="/stylesheets/Signup.css">
   <link rel="stylesheet" href="/stylesheets/Footer.css">
-  <script>
-    async function validateForm(event) {
-      event.preventDefault();
-
-      const firstName = document.getElementById('login-signup-first-name').value;
-      const lastName = document.getElementById('login-signup-last-name').value;
-      const phoneNumber = document.getElementById('login-signup-phonenumber').value;
-      const email = document.getElementById('login-signup-email').value;
-      const userName = document.getElementById('login-signup-username').value;
-      const password = document.getElementById('login-signup-password').value;
-      const confirmPassword = document.getElementById('login-signup-repeat-password').value;
-
-      const errorList = document.getElementById('errorList');
-      errorList.innerHTML = '';
-
-      if (password !== confirmPassword) {
-        const li = document.createElement('li');
-        li.textContent = 'Passwords do not match.';
-        errorList.appendChild(li);
-        return;
-      }
-
-      try {
-        const response = await fetch('/auth/register', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            firstName,
-            lastName,
-            phoneNumber,
-            email,
-            userName,
-            password,
-            confirmPassword,
-          }),
-        });
-
-        const result = await response.json();
-        if (response.status !== 201) {
-          displayErrors(result.errors || [{ msg: result.error || 'Registration failed' }]);
-        } else if (result.redirect) {
-          window.location.href = result.redirect;
-        }
-      } catch (err) {
-        displayErrors([{ msg: 'Network error. Please try again.' }]);
-      }
-    }
-
-    function displayErrors(errors) {
-      const errorList = document.getElementById('errorList');
-      errors.forEach(error => {
-        const li = document.createElement('li');
-        li.textContent = error.msg;
-        errorList.appendChild(li);
-      });
-    }
-  </script>
   <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
 </head>
 <body>
@@ -97,41 +40,44 @@
               Unlock the full migration toolkit: personalised recommendations, visa shortlists, and real-time updates.
             </p>
 
-            <ul id="errorList" class="auth-errors"></ul>
+            <!-- General error message -->
+            <div v-if="errors.general" class="general-error">
+              {{ errors.general }}
+            </div>
 
-            <form id="login-signup-form" onsubmit="validateForm(event)">
+            <form id="login-signup-form" @submit.prevent="register">
               <div class="form-grid">
                 <div>
                   <label for="login-signup-first-name">First name</label>
-                  <input type="text" id="login-signup-first-name" name="login-signup-first-name" placeholder="Alex" required>
+                  <input type="text" id="login-signup-first-name" name="login-signup-first-name" placeholder="Alex" required @input="clearError('general')">
                 </div>
                 <div>
                   <label for="login-signup-last-name">Last name</label>
-                  <input type="text" id="login-signup-last-name" name="login-signup-last-name" placeholder="Smith" required>
+                  <input type="text" id="login-signup-last-name" name="login-signup-last-name" placeholder="Smith" required @input="clearError('general')">
                 </div>
                 <div>
                   <label for="login-signup-phonenumber">Phone number</label>
-                  <input type="tel" id="login-signup-phonenumber" name="login-signup-phonenumber" placeholder="0403 685 949" required>
+                  <input type="tel" id="login-signup-phonenumber" name="login-signup-phonenumber" placeholder="0403 685 949" required @input="clearError('general')">
                 </div>
                 <div>
                   <label for="login-signup-email">Email</label>
-                  <input type="email" id="login-signup-email" name="login-signup-email" placeholder="alex@example.com" required>
+                  <input type="email" id="login-signup-email" name="login-signup-email" placeholder="alex@example.com" required @input="clearError('general')">
                 </div>
               </div>
 
               <div>
                 <label for="login-signup-username">Username</label>
-                <input type="text" id="login-signup-username" name="login-signup-username" placeholder="alex.smith" required>
+                <input type="text" id="login-signup-username" name="login-signup-username" placeholder="alex.smith" required @input="clearError('general')">
               </div>
 
               <div class="form-grid">
                 <div>
                   <label for="login-signup-password">Password</label>
-                  <input type="password" id="login-signup-password" name="login-signup-password" required>
+                  <input type="password" id="login-signup-password" name="login-signup-password" required @input="clearError('general')">
                 </div>
                 <div>
                   <label for="login-signup-repeat-password">Confirm password</label>
-                  <input type="password" id="login-signup-repeat-password" name="login-signup-repeat-password" required>
+                  <input type="password" id="login-signup-repeat-password" name="login-signup-repeat-password" required @input="clearError('general')">
                 </div>
               </div>
 

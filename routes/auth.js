@@ -21,12 +21,12 @@ const authLimiter = rateLimit({
 // Registration route
 router.post('/register', authLimiter, [
     // Validate and sanitize inputs
-    body('firstName').isLength({ min: 1, max: 50 }).withMessage('First name must be 1–50 chars').trim().escape(),
-    body('lastName').isLength({ min: 1, max: 50 }).withMessage('Last name must be 1–50 chars').trim().escape(),
-    body('phoneNumber').notEmpty().withMessage('Phone number is required').isMobilePhone().withMessage('Invalid phone number format').trim().escape(),
-    body('email').isEmail().withMessage('Invalid email address').normalizeEmail(),
-    body('userName').trim().isLength({ min: 3, max: 30 }).withMessage('Username must be 3–30 chars').matches(/^\w+$/).withMessage('Only letters, numbers, and underscores allowed'),
-    body('password').isLength({ min: 8 }).withMessage('Min 8 chars').matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/).withMessage('Must contain an uppercase letter, lowercase letter and a number'),
+    body('firstName').isLength({ min: 1, max: 50 }).withMessage('First name must be between 1 and 50 characters').trim().escape(),
+    body('lastName').isLength({ min: 1, max: 50 }).withMessage('Last name must be between 1 and 50 characters').trim().escape(),
+    body('phoneNumber').notEmpty().withMessage('Phone number is required').isMobilePhone().withMessage('Phone number format is invalid').trim().escape(),
+    body('email').isEmail().withMessage('Email address is invalid').normalizeEmail(),
+    body('userName').trim().isLength({ min: 3, max: 30 }).withMessage('Username must be between 3 and 30 characters').matches(/^\w+$/).withMessage('Username can only contain letters, numbers, and underscores'),
+    body('password').isLength({ min: 8 }).withMessage('Password must be at least 8 characters').matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/).withMessage('Password must contain at least one uppercase letter, one lowercase letter, and one number'),
     body('confirmPassword').custom((value, { req }) => {
         if (value !== req.body.password) {
             throw new Error('Password confirmation does not match password');

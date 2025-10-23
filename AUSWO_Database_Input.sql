@@ -11,16 +11,16 @@ VALUES
 ('Admin', '{"can_post_news": true, "can_manage_users": true}'),
 ('User', '{"can_post_news": false, "can_manage_users": false}');
 
-INSERT INTO UserRoles (userID, roleID)
-VALUES
-(1, 1),  -- Alice -> Admin
-(2, 2),  -- Bob -> User
-(3, 2);  -- Charlie -> User
+-- INSERT INTO UserRoles (userID, roleID)
+-- VALUES
+-- (1, 1),  -- Alice -> Admin
+-- (2, 2),  -- Bob -> User
+-- (3, 2);  -- Charlie -> User
 
 INSERT INTO QuickNews (title, body, authorID)
 VALUES
-('Server Maintenance Tonight', 'The system will be down for maintenance tonight from 10 PM to 12 AM.', 1),
-('New Feature Released', 'We have launched the new dashboard feature for all users.', 1);
+('Server Maintenance Tonight', 'The system will be down for maintenance tonight from 10 PM to 12 AM.', NULL),
+('New Feature Released', 'We have launched the new dashboard feature for all users.', NULL);
 
 INSERT INTO Occupations (anzsco, name, authority, skillLevel, listID) VALUES 
 (254422, 'Registered Nurse (Mental Health)', 'VETASSESS', 1, (SELECT listID FROM OccupationLists WHERE listName = 'MLTSSL')),
