@@ -23,7 +23,6 @@
         <a href="/preferences.html">Preferences</a>
         <a href="/contact.html">Contact</a>
         <a href="/points-calculator.html">Points Calculator</a>
-        <a href="/account.html">Account</a>
         <a href="/AdminPage.html">Admin</a>
         <a href="/Login.html" v-if="!isLoggedIn">Log In</a>
         <a href="/auth/logout" v-if="isLoggedIn" @click.prevent="logout">Log Out</a>
@@ -211,7 +210,7 @@
                 <p>Visa: ${visaLabel}</p>
                 <p>Total points: <strong>${total}</strong></p>
                 <p>Saved to your account.</p>
-                <a class="btn btn-primary" href="/account.html">Go to account</a>
+                <a class="btn btn-primary" href="/Profile.html">Go to profile</a>
               `;
             } catch (e) {
               alert(e.message || 'Failed to save result.');
