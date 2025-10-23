@@ -1,65 +1,78 @@
 function createNewsCards(articles) {
-    return articles.map(article => `
-        <div class="news-card">
-            <a href="/news-article.html?id=${article.id}" class=news-card-link"></a>
-                <div class="news-card-image">
-                    placeholder
-                </div>
-                <div class="news-card-content">
-                    <span class="news-card-tag">${article.tag}</span>
-                    <h3>${article.title}</h3>
-                    <p>${article.description}</p>
-                    <div class="news-card-meta">
-                        <div class="news-card-avatar"></div>
-                        <span>${article.author}</span>
-                        <span>•</span>
-                        <span>${article.date}</span>
-                        <span>•</span>
-                        <span>${article.readTime}</span>
-                    </div>
-                </div>
-            </div>
-        `).join('');
+  return articles
+    .map(
+      article => `
+        <article class="news-card">
+          <span class="news-card-tag">${article.tag ?? 'News'}</span>
+          <h3>${article.title ?? 'Migration update'}</h3>
+          <p>${article.description ?? ''}</p>
+          <div class="news-card-meta">
+            <span>${article.author ?? 'AUSWO editorial'}</span>
+            <span>${article.date ?? ''}</span>
+            <span>${article.readTime ?? ''}</span>
+          </div>
+        </article>
+      `,
+    )
+    .join('');
 }
 
-async function initializePage() {
-    const mainContainer = document.querySelector('.page-container');
-    if (!mainContainer) return;
-    mainContainer.innerHTML = '';
-    const heroSection = document.createElement('div');
-    heroSection.className = 'hero-section';
-    heroSection.innerHTML = `
-        <h1> Stay Updated with<br>Immigration News and<br>Insights</h1>
-        <p>Uncover the latest updates and insights from immigration experts in Australia. Get news, policy analysis and immigration news and developments</p>
-        <div class="hero-buttons">
-            <button class="btn btn-primary">Learn More</button>
-            <button class="btn btn-secondary">Subscribe</button>
-        </div>
-    `;
-    const newsSection = document.createElement('section');
-    newsSection.className = 'news-section';
-    const newsHeader = `
-        <h2>Latest Immigration Updated</h2>
-        <p class="subtitle">Stay informed about immigration news and policies</p>
-    `;
-    const newsGrid = document.createElement('div');
-    newsGrid.className = 'news-grid';
-    try {
-        const response = await fetch('/migration-news.json');
-        if (!response.ok) throw new Error('Failed to load news articles');
-        const newsArticles = await response.json();
-        newsGrid.innerHTML = createNewsCards(newsArticles);
-    } catch (error) {
-        console.error('Error loading news:', error);
-        newsGrid.innerHTML = '<p> Unable to load news articles at this time.</p>';
-    }
-    const viewAllContainer = document.createElement('div');
-    viewAllContainer.className = 'view-all-container';
-    viewAllContainer.innerHTML = '<button class="btn-view-all">View all</button>';
-    newsSection.innerHTML = newsHeader;
-    newsSection.appendChild(newsGrid);
-    newsSection.appendChild(viewAllContainer);
-    mainContainer.appendChild(heroSection);
-    mainContainer.appendChild(newsSection);
+async function fetchNewsArticles() {
+  try {
+    const response = await fetch('/migration-news.json', { headers: { Accept: 'application/json' } });
+    if (!response.ok) throw new Error('Unable to load migration news.');
+    return await response.json();
+  } catch (error) {
+    console.error('Error loading news:', error);
+    return [];
+  }
 }
-document.addEventListener('DOMContentLoaded', initializePage);
+
+async function renderNewsPage() {
+  const root = document.getElementById('news-root');
+  if (!root) return;
+
+  root.innerHTML = `
+    <div class="hero news-hero">
+      <span class="pill">Migration insights</span>
+      <h1>Stay ahead of Australian migration news.</h1>
+      <p>
+        We track government announcements, occupation updates, and policy changes daily so you can focus on planning your move.
+      </p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="/quick-news.html">Daily quick news</a>
+        <a class="btn btn-secondary" href="/contact.html">Join an advisor session</a>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Latest articles</h2>
+          <p class="section-subtitle">
+            Curated long-form analysis from the AUSWO editorial team. Updated weekly with the developments that matter most.
+          </p>
+        </div>
+      </div>
+      <div class="news-grid" id="news-grid"></div>
+      <div class="view-all-container">
+        <button class="btn-view-all" type="button">View archive</button>
+      </div>
+    </div>
+  `;
+
+  const grid = document.getElementById('news-grid');
+  const articles = await fetchNewsArticles();
+
+  if (!Array.isArray(articles) || articles.length === 0) {
+    grid.outerHTML = '<div class="news-empty">We are preparing new stories. Check back soon.</div>';
+    return;
+  }
+
+  grid.innerHTML = createNewsCards(articles);
+  const viewAll = document.querySelector('.btn-view-all');
+  if (viewAll) {
+    viewAll.addEventListener('click', () => window.location.href = '/migration-news.html#archive');
+  }
+}
+
+document.addEventListener('DOMContentLoaded', renderNewsPage);

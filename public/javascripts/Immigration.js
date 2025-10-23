@@ -1,62 +1,62 @@
-const { router } = require("argon");
-
-async function loadImmigration() {
-    try {
-        const response = await fetch('Immigration.json');
-        const data = await response.json();
-        renderArticle(data);
-        /*
-        const container = document.getElementById('immigration-content');
-        container.innerHTML = '';
-
-        const card = document.createElement('div');
-        card.className = 'card';
-        card.textContent = data.text;
-        container.appendChild(card); */
-    } catch (err) {
-        console.error('Error loading immigration text', err);
-        document.getElementById('immigration-content').textContent = 'Failed to load content.';
-    }
+async function fetchImmigrationBriefing() {
+  try {
+    const response = await fetch('/Immigration.json', { headers: { Accept: 'application/json' } });
+    if (!response.ok) throw new Error('Unable to load immigration briefing.');
+    return await response.json();
+  } catch (error) {
+    console.error('Error loading immigration briefing', error);
+    return null;
+  }
 }
-document.addEventListener("DOMContentLoaded", () => {
-    fetch("immigration.json")
-        .then((response) => response.json())
-        .then((data) => renderArticle(data))
-        .catch((error) => console.error("Error loading JSON:", error));
-});
 
-function renderArticle(article) {
-    const container = document.getElementById("article-container");
-    container.innerHTML = `
-        <header class="article-header">
-            <h1>${article.title}</h1>
-            <div class="article-meta">
-                <span>By ${article.author}</span> |
-                <span>${article.date}</span> |
-                <span>${article.readTime} min read</span>
-            </div>
-        </header>
+function renderImmigrationArticle(article) {
+  const container = document.getElementById('article-container');
+  if (!container) return;
 
-        ${article.sections.map(
-            (section) => 
-                <section class="content-section">
-                    <h2>${section.heading}</h2>
-                    <p>${section.text}</p>
-                </section>
-            
-        ).join("")}
+  if (!article) {
+    container.innerHTML = '<div class="table-empty">We could not load the latest briefing. Please try again later.</div>';
+    return;
+  }
 
-        <blockquote class="article-quote">
-            “${article.quote}”
-        </blockquote>
+  const sections = Array.isArray(article.sections)
+    ? article.sections
+        .map(
+          section => `
+            <section class="article-section">
+              <h2>${section.heading ?? ''}</h2>
+              <p>${section.text ?? ''}</p>
+            </section>
+          `,
+        )
+        .join('')
+    : '';
 
-        <section class="author-card">
-            <div>
-                <h3>${article.author}</h3>
-                <p>${article.authorBio}</p>
-            </div>
-    </section>
+  container.innerHTML = `
+    <header class="article-header">
+      <h1>${article.title ?? 'Immigration update'}</h1>
+      <div class="article-meta">
+        <span>${article.author ?? 'AUSWO Editorial'}</span>
+        <span>${article.date ?? ''}</span>
+        <span>${article.readTime ?? ''}</span>
+      </div>
+    </header>
+    ${sections}
+    ${
+      article.quote
+        ? `<blockquote class="article-quote">“${article.quote}”</blockquote>`
+        : ''
+    }
+    <footer class="article-footer surface-soft">
+      <strong>Need personalised advice?</strong>
+      <p class="muted">Keep your profile up to date and connect with our advisors for tailored guidance.</p>
+      <a class="btn btn-outline" href="/contact.html">Contact AUSWO advisors</a>
+    </footer>
   `;
 }
 
-loadImmigration();
+async function initImmigrationPage() {
+  const article = await fetchImmigrationBriefing();
+  renderImmigrationArticle(article);
+}
+
+document.addEventListener('DOMContentLoaded', initImmigrationPage);
