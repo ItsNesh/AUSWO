@@ -39,14 +39,20 @@
             <p class="muted">
               Continue tracking your migration journey, save visa preferences, and sync your progress across devices.
             </p>
+
+            <!-- General error message -->
+            <div v-if="errors.general" class="general-error">
+              {{ errors.general }}
+            </div>
+
             <form id="login-signup-form" @submit.prevent="login">
               <div>
                 <label for="login-signup-username">Username</label>
-                <input type="text" id="login-signup-username" name="login-signup-username" placeholder="john.b" required>
+                <input type="text" id="login-signup-username" name="login-signup-username" placeholder="john.b" required @input="clearError('general')">
               </div>
               <div>
                 <label for="login-signup-password">Password</label>
-                <input type="password" id="login-signup-password" name="login-signup-password" placeholder="••••••••" required>
+                <input type="password" id="login-signup-password" name="login-signup-password" placeholder="••••••••" required @input="clearError('general')">
               </div>
               <div class="form-footer auth-options">
                 <label class="remember">

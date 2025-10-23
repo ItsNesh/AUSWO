@@ -103,3 +103,13 @@
     order: -1;
   }
 }
+
+.general-error {
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid #f5c6cb;
+  margin-bottom: 1rem;
+  font-size: 14px;
+}
