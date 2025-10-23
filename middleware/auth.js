@@ -1,5 +1,4 @@
 // Authorization Middleware
-
 // Require user to own the resource they are accessing
 function requireOwnership(req, res, next) {
     if (!req.session.isLoggedIn || !req.session.userId) {

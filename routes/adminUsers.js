@@ -30,9 +30,14 @@ router.get('/all', requireAdmin, async (req, res) => {
 // Remove user
 router.delete('/:id', requireAdmin, async (req, res) => {
     const { id } = req.params;
+    const currentUserID = req.session?.userId;
     const connection = await pool.getConnection();
 
     try {
+        // Prevent admin from deleting themselves
+        if (parseInt(id) === parseInt(currentUserID)) {
+            return res.status(400).json({ error: 'You cannot remove your own account' });
+        }
         await connection.beginTransaction();
 
         // Delete related records
