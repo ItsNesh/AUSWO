@@ -1,3 +1,19 @@
+// Load environment variables from .env file
+require('dotenv').config();
+
+// Validate critical environment variables on startup
+const requiredEnvVars = ['SESSION_SECRET', 'GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET'];
+const missingVars = requiredEnvVars.filter(varName => !process.env[varName]);
+
+if (missingVars.length > 0) {
+    console.error('CRITICAL ERROR: Missing required environment variables:');
+    missingVars.forEach(varName => console.error(`   - ${varName}`));
+    console.error('Please create a .env file with these variables.');
+    process.exit(1);
+}
+
+console.log('Environment variables have loaded successfully');
+
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
@@ -6,7 +22,7 @@ const fs = require('fs');
 const cookieParser = require('cookie-parser');
 const passport = require('passport');
 const session = require('express-session');
-const { body } = require('express-validator');
+const { body, validationResult } = require('express-validator');
 
 // Database Setup
 const pool = require('./db');
@@ -26,11 +42,25 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Secure Session Configuration
+const sessionSecret = process.env.SESSION_SECRET || 'GOCSPX-3p0mYH8m7VfX5d4h8j9kL0qJz9W' // Use an environment variable in production
+if (!sessionSecret) {
+  console.error('CRITICAL ERROR: SESSION_SECRET is not set in environment variables.');
+  process.exit(1);
+}
+
 app.use(session({
-  secret: process.env.SESSION_SECRET || 'GOCSPX-3p0mYH8m7VfX5d4h8j9kL0qJz9W', // Use an environment variable in production
+  secret: sessionSecret,
   resave: false,
   saveUninitialized: false,
-  cookie: { maxAge: 7 * 24 * 60 * 60 * 1000 } // 7 days
+  cookie: { 
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    httpOnly: true, // Prevent client-side JS access
+    secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
+    sameSite: 'strict' // Mitigate CSRF attacks
+  },
+  name: 'sessionID' // Custom cookie name - adding obscurity due to not using default connect.sid
 }));
 
 // Passport middleware - must be after session and before routes
@@ -40,7 +70,6 @@ app.use(passport.session());
 app.use('/Dashboard', express.static(path.join(__dirname, 'Dashboard')));
 
 // Helper to wait for DB to be ready
-
 async function sleep(ms) { return new Promise(r => setTimeout(r, ms)); } 
 
 async function waitForDB(retries = 30, delayMs = 1000) {
@@ -93,11 +122,47 @@ async function ensureUserVisaColumns() {
   }
 })();
 
+// Authorization Middleware
+// Require user to be logged in
+function requireAuth(req, res, next) {
+  if (!req.session.isLoggedIn || !req.session.userId) {
+    return res.status(401).json({ error: 'Unauthorized - Please log in' });
+  }
+  next();
+}
+
+// Require user to own the resource they are accessing
+function requireOwnership(req, res, next) {
+   if (!req.session.isLoggedIn || !req.session.userId) {
+        return res.status(401).json({ error: 'Unauthorized - Please log in' });
+    }
+    
+    const requestedUserId = parseInt(req.params.userID, 10);
+    const sessionUserId = parseInt(req.session.userId, 10);
+    
+    if (requestedUserId !== sessionUserId) {
+        return res.status(403).json({ error: 'Forbidden - You can only access your own data' });
+    }
+    next()
+}
+
+// Require user to be admin
+function requireAdmin(req, res, next) {
+    if (!req.session.isLoggedIn || !req.session.userId) {
+        return res.status(401).json({ error: 'Unauthorized - Please log in' });
+    }
+    if (!req.userRoles || !req.userRoles.isAdmin) {
+        return res.status(403).json({ error: 'Forbidden - Admin access required' });
+    }
+    next();
+}
+
+
 // -----------------
 // API Routes
 // -----------------
 
-app.get('/api/users', async (req, res) => {
+app.get('/api/users', requireAuth, requireAdmin, async (req, res) => {
   try {
     const [rows] = await pool.query('SELECT userID, firstName, lastName, email, userName, phoneNumber FROM Users');
     res.json(rows);
@@ -107,7 +172,7 @@ app.get('/api/users', async (req, res) => {
   }
 });
 
-app.post('/api/users', async (req, res) => {
+app.post('/api/users', requireAuth, requireAdmin, async (req, res) => {
   const { firstName, lastName, phoneNumber, email, userName, passwordHash } = req.body;
   try {
     const [result] = await pool.query(
@@ -122,19 +187,36 @@ app.post('/api/users', async (req, res) => {
 });
 
 // Edit user profile fields
-app.put('/api/users/:userID', async (req, res) => {
+app.put('/api/users/:userID', requireAuth, requireOwnership, [
+    body('firstName').optional({ checkFalsy: true }).isLength({ min: 1, max: 50 }).trim().escape(),
+    body('lastName').optional({ checkFalsy: true }).isLength({ min: 1, max: 50 }).trim().escape(),
+    body('email').optional({ checkFalsy: true }).isEmail().normalizeEmail(),
+    body('userName').optional({ checkFalsy: true }).isLength({ min: 3, max: 30 }).matches(/^\w+$/).trim(),
+    body('phoneNumber').optional({ checkFalsy: true }).isMobilePhone().trim().escape()
+  ], async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        console.error('Validation errors:', errors.array());
+        return res.status(400).json({ errors: errors.array() });
+    }
+    
   const { userID } = req.params;
   const { firstName, lastName, email, userName, phoneNumber } = req.body || {};
+
+  // Whitelist allowed fields only (To prevent some fields like passwordHash and isAdmin from being updated here)
+  const allowedFields = ['firstName', 'lastName', 'email', 'userName', 'phoneNumber'];
 
   // Update only provided fields
   const fields = [];
   const values = [];
   const toNullable = (v) => (typeof v === 'string' && v.trim() === '' ? null : v);
-  if (typeof firstName === 'string') { fields.push('firstName = ?'); values.push(toNullable(firstName)); }
-  if (typeof lastName === 'string')  { fields.push('lastName = ?');  values.push(toNullable(lastName)); }
-  if (typeof email === 'string')     { fields.push('email = ?');     values.push(toNullable(email)); }
-  if (typeof userName === 'string')  { fields.push('userName = ?');  values.push(toNullable(userName)); }
-  if (typeof phoneNumber === 'string') { fields.push('phoneNumber = ?'); values.push(toNullable(phoneNumber)); }
+
+
+  if (allowedFields.includes('firstName') && typeof firstName === 'string') { fields.push('firstName = ?'); values.push(toNullable(firstName)); }
+  if (allowedFields.includes('lastName') && typeof lastName === 'string')  { fields.push('lastName = ?');  values.push(toNullable(lastName)); }
+  if (allowedFields.includes('email') && typeof email === 'string')     { fields.push('email = ?');     values.push(toNullable(email)); }
+  if (allowedFields.includes('userName') && typeof userName === 'string')  { fields.push('userName = ?');  values.push(toNullable(userName)); }
+  if (allowedFields.includes('phoneNumber') && typeof phoneNumber === 'string') { fields.push('phoneNumber = ?'); values.push(toNullable(phoneNumber)); }
 
   if (fields.length === 0) {
     return res.status(400).json({ error: 'No valid fields to update' });
@@ -163,7 +245,7 @@ app.put('/api/users/:userID', async (req, res) => {
 });
 
 // Get single user
-app.get('/api/users/:userID', async (req, res) => {
+app.get('/api/users/:userID', requireAuth, requireOwnership, async (req, res) => {
   const { userID } = req.params;
   try {
     // Select * to avoid errors if newer columns are missing
@@ -191,7 +273,7 @@ app.get('/api/users/:userID', async (req, res) => {
 });
 
 // Update user visa points
-app.put('/api/users/:userID/visa-points', async (req, res) => {
+app.put('/api/users/:userID/visa-points', requireAuth, requireOwnership, async (req, res) => {
   const { userID } = req.params;
   const { visaOption, visaPoints } = req.body || {};
   if (!visaOption || typeof visaPoints !== 'number') {
@@ -284,6 +366,7 @@ function tryRedirectToHtml(req, res, next) {
 app.get('/:page', tryRedirectToHtml);
 app.get('/:page/', tryRedirectToHtml);
 
+// Middleware to obtain user roles and admin status
 app.use(async (req, res, next) => {
     if (req.session.isLoggedIn && req.session.userId) {
         try {

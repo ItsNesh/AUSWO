@@ -91,49 +91,6 @@
   </div>
 
   <script src="/javascripts/Footer.js"></script>
-  <script>
-    new Vue({
-      el: '#app',
-      data: {
-        isLoggedIn: false,
-        sessionInfo: null,
-        isAdmin: false,
-      },
-      mounted() {
-        this.checkLoginState();
-      },
-      methods: {
-        async checkLoginState() {
-          try {
-            const response = await fetch('/auth/session-info');
-            if (!response.ok) throw new Error('Failed to fetch session info');
-            const data = await response.json();
-            this.isLoggedIn = data.isLoggedIn;
-            this.sessionInfo = data;
-            this.isAdmin = data.isAdmin;
-          } catch (error) {
-            console.error('Error fetching session info:', error);
-            this.sessionInfo = 'No session information available';
-          }
-        },
-        logout() {
-          fetch('/auth/logout')
-            .then(response => {
-              if (response.ok) {
-                localStorage.removeItem('token');
-                this.isLoggedIn = false;
-                this.isAdmin = false;
-                window.location.href = '/Login.html';
-              } else {
-                console.error('Logout failed');
-              }
-            })
-            .catch(error => {
-              console.error('Error during logout:', error);
-            });
-        },
-      },
-    });
-  </script>
+  <script src="/javascripts/SessionManager.js"></script>  
 </body>
 </html>

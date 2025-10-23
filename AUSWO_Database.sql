@@ -70,13 +70,15 @@ CREATE TABLE IF NOT EXISTS Occupations (
 -- Insert the three lists
 INSERT IGNORE INTO OccupationLists (listName) VALUES ('MLTSSL'), ('STSOL'), ('ROL');
 
--- To display text on pages (Could use markdown text so then it is easier to display it on the front end)
-CREATE TABLE IF NOT EXISTS Pages (
-    pageID INT PRIMARY KEY AUTO_INCREMENT,
-    pageName VARCHAR(100) UNIQUE NOT NULL,  -- e.g., "home", "about", "occupation_list"
-    pageTitle VARCHAR(200),                 -- optional title
-    pageContent TEXT NOT NULL,              -- the text/HTML of the page
-    lastUpdated DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP -- track when last updated
+-- Web Scraper Table
+CREATE TABLE IF NOT EXISTS ScrapedOccupations (
+    scrapeID INT PRIMARY KEY AUTO_INCREMENT,
+    JobTitle VARCHAR(255),
+    CorporateName VARCHAR(255),
+    PositionType VARCHAR(100),
+    Location VARCHAR(255),
+    JobDescription TEXT,
+    DateScraped DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
 

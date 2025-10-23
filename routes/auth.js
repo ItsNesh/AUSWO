@@ -4,19 +4,29 @@ var argon2 = require('argon2');
 var { body, validationResult } = require('express-validator');
 var passport = require('passport');
 var GoogleStrategy = require('passport-google-oauth2').Strategy;
+var rateLimit = require('express-rate-limit');
 
 // MySQL connection pool (shared)
 var pool = require('../db');
 
+// To limit repeated registration/login attempts
+const authLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 5, // limit each IP to 100 requests per windowMs
+    message: 'Too many registration attempts, please try again after 15 minutes',
+    standardHeaders: true,
+    legacyHeaders: false,
+});
+
 // Registration route
-router.post('/register', [
+router.post('/register', authLimiter, [
     // Validate and sanitize inputs
-    body('firstName').notEmpty().withMessage('First name is required').trim(),
-    body('lastName').notEmpty().withMessage('Last name is required').trim(),
-    body('phoneNumber').notEmpty().withMessage('Phone number is required').trim(),
+    body('firstName').isLength({ min: 1, max: 50 }).withMessage('First name must be 1–50 chars').trim().escape(),
+    body('lastName').isLength({ min: 1, max: 50 }).withMessage('Last name must be 1–50 chars').trim().escape(),
+    body('phoneNumber').notEmpty().withMessage('Phone number is required').isMobilePhone().withMessage('Invalid phone number format').trim().escape(),
     body('email').isEmail().withMessage('Invalid email address').normalizeEmail(),
-    body('userName').notEmpty().withMessage('Username is required').trim(),
-    body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters long'),
+    body('userName').trim().isLength({ min: 3, max: 30 }).withMessage('Username must be 3–30 chars').matches(/^\w+$/).withMessage('Only letters, numbers, and underscores allowed'),
+    body('password').isLength({ min: 8 }).withMessage('Min 8 chars').matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/).withMessage('Must have upper, lower, and number'),
     body('confirmPassword').custom((value, { req }) => {
         if (value !== req.body.password) {
             throw new Error('Password confirmation does not match password');
@@ -40,7 +50,12 @@ router.post('/register', [
         }
 
         // Hash password using Argon2
-        const hashedPassword = await argon2.hash(password);
+        const hashedPassword = await argon2.hash(password, {
+            type: argon2.argon2id,
+            memoryCost: 2 ** 16, // 64 MB
+            timeCost: 3,
+            parallelism: 1
+        });
 
         // Insert new user
         const query = 'INSERT INTO Users (firstName, lastName, phoneNumber, email, userName, passwordHash) VALUES (?, ?, ?, ?, ?, ?)';
@@ -51,6 +66,9 @@ router.post('/register', [
         const roleQuery = 'INSERT INTO UserRoles (userID, roleID) VALUES (?, ?)';
         await pool.execute(roleQuery, [userId, 2]);
 
+        // Log successful registration (To see if its working + Security monitoring)
+        console.log(`New user registered: ${userName} (ID: ${userId})`);
+
         // Redirect to login page after successful registration
         res.status(201).json({ redirect: '/Login.html' });
     } catch (error) {
@@ -59,10 +77,11 @@ router.post('/register', [
     }
 });
 
+
 // Login route
 router.post('/login', [
     // Validate inputs
-    body('userName').notEmpty().withMessage('Username is required').trim(),
+    body('userName').notEmpty().withMessage('Username is required').trim().escape(),
     body('password').notEmpty().withMessage('Password is required')
 ], async (req, res) => {
     const errors = validationResult(req);
@@ -82,19 +101,37 @@ router.post('/login', [
 
         const user = users[0];
 
+        // Check if user has a password (OAuth users won't)
+        if (!user.passwordHash) {
+            return res.status(400).json({ errors: [{ msg: 'Please log in using your OAuth provider' }] });
+        }
+
         // Compare password using Argon2
         const match = await argon2.verify(user.passwordHash, password);
         if (!match) {
             return res.status(400).json({ errors: [{ msg: 'Invalid username or password' }] });
         }
 
-        // Create session
-        req.session.userId = user.userID;
-        req.session.isLoggedIn = true;
-        res.status(200).json({
-            redirect: '/index.html',
-            userID: user.userID,
-            userName: user.userName
+        // Session Regeneration to prevent session fixation
+        req.session.regenerate((err) => {
+            if (err) {
+                console.error('Session regeneration error:', err);
+                return res.status(500).json({ errors: [{ msg: 'Error logging in user' }] });
+            }
+
+            // Set session variables after regneration
+            req.session.userId = user.userID;
+            req.session.isLoggedIn = true;
+        
+            // Log successful login (Security monitoring)
+            console.log(`User logged in: ${userName} (ID: ${user.userID})`);
+        
+        
+            res.status(200).json({
+                redirect: '/index.html',
+                userID: user.userID,
+                userName: user.userName
+            });
         });
     } catch (error) {
         console.error('Error logging in user:', error);
@@ -104,11 +141,20 @@ router.post('/login', [
 
 // Logout route
 router.get('/logout', (req, res) => {
+    const userID = req.session.userId;
+    
     req.session.destroy(err => {
         if (err) {
+            console.error('Error destroying session during logout:', err);
             return res.status(500).json({ errors: [{ msg: 'Error logging out' }] });
         }
-        res.clearCookie('connect.sid');
+
+        // Log logout for security monitoring
+        if (userID) {
+            console.log(`User logged out: ID ${userID}`);
+        }
+
+        res.clearCookie('sessionID', { path: '/', httpOnly: true, sameSite: 'strict' });
         res.redirect('/Login.html');
     });
 });
@@ -162,10 +208,16 @@ router.get('/session-info', async (req, res, next) => {
 });
 
 // Google Passport
-const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || '227608984263-fqq6iudhv9c71aaf61mao6t8td9m7oh7.apps.googleusercontent.com';
-const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET || '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';
-
+const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || '227608984263-fqq6iudhv9c71aaf61mao6t8td9m7oh7.apps.googleusercontent.com'; // Use an environment variable in production
+const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET || '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'; // Use an environment variable in production
 const PORT = process.env.PORT || 3000;
+
+// Ensure that Google OAuth credentials are set
+if (!GOOGLE_CLIENT_ID || !GOOGLE_CLIENT_SECRET) {
+    console.error('CRITICAL: GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET must be set in environment variables');
+    process.exit(1);
+}
+
 passport.use(new GoogleStrategy({
     clientID: GOOGLE_CLIENT_ID,
     clientSecret: GOOGLE_CLIENT_SECRET,
@@ -195,6 +247,8 @@ passport.use(new GoogleStrategy({
                 // Assign member role to new user
                 const roleQuery = 'INSERT INTO UserRoles (userID, roleID) VALUES (?, ?)';
                 await pool.execute(roleQuery, [newUser.userID, 2]);
+
+                console.log(`New OAuth user created: ${newUser.userName} (${newUser.userID})`);
 
                 return done(null, newUser);
             }

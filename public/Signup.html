@@ -10,6 +10,7 @@
   <script>
     async function validateForm(event) {
       event.preventDefault();
+
       const firstName = document.getElementById('login-signup-first-name').value;
       const lastName = document.getElementById('login-signup-last-name').value;
       const phoneNumber = document.getElementById('login-signup-phonenumber').value;
@@ -17,6 +18,7 @@
       const userName = document.getElementById('login-signup-username').value;
       const password = document.getElementById('login-signup-password').value;
       const confirmPassword = document.getElementById('login-signup-repeat-password').value;
+
       const errorList = document.getElementById('errorList');
       errorList.innerHTML = '';
 
@@ -27,25 +29,29 @@
         return;
       }
 
-      const response = await fetch('/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          firstName,
-          lastName,
-          phoneNumber,
-          email,
-          userName,
-          password,
-          confirmPassword,
-        }),
-      });
+      try {
+        const response = await fetch('/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            firstName,
+            lastName,
+            phoneNumber,
+            email,
+            userName,
+            password,
+            confirmPassword,
+          }),
+        });
 
-      const result = await response.json();
-      if (response.status !== 201) {
-        displayErrors(result.errors || [{ msg: result.error || 'Registration failed' }]);
-      } else if (result.redirect) {
-        window.location.href = result.redirect;
+        const result = await response.json();
+        if (response.status !== 201) {
+          displayErrors(result.errors || [{ msg: result.error || 'Registration failed' }]);
+        } else if (result.redirect) {
+          window.location.href = result.redirect;
+        }
+      } catch (err) {
+        displayErrors([{ msg: 'Network error. Please try again.' }]);
       }
     }
 
@@ -90,7 +96,9 @@
             <p class="muted">
               Unlock the full migration toolkit: personalised recommendations, visa shortlists, and real-time updates.
             </p>
+
             <ul id="errorList" class="auth-errors"></ul>
+
             <form id="login-signup-form" onsubmit="validateForm(event)">
               <div class="form-grid">
                 <div>
@@ -110,10 +118,12 @@
                   <input type="email" id="login-signup-email" name="login-signup-email" placeholder="alex@example.com" required>
                 </div>
               </div>
+
               <div>
                 <label for="login-signup-username">Username</label>
                 <input type="text" id="login-signup-username" name="login-signup-username" placeholder="alex.smith" required>
               </div>
+
               <div class="form-grid">
                 <div>
                   <label for="login-signup-password">Password</label>
@@ -124,14 +134,17 @@
                   <input type="password" id="login-signup-repeat-password" name="login-signup-repeat-password" required>
                 </div>
               </div>
+
               <div class="auth-options">
                 <label class="remember">
                   <input type="checkbox" id="terms" required>
                   <span>I agree to the <a href="/terms-of-service.html">terms</a>.</span>
                 </label>
               </div>
+
               <button type="submit" class="btn btn-primary">Create account</button>
             </form>
+
             <p class="auth-footer text-small">
               Already registered? <a href="/Login.html">Sign in instead</a>.
             </p>
@@ -149,6 +162,9 @@
               </p>
               <a class="btn btn-outline" href="/preferences.html">View preferences hub</a>
             </div>
+            <div class="image-side" style="margin-top: 1rem;">
+              <img src="/images/People-Happy.jpg" alt="Signup Illustration">
+            </div>
           </aside>
         </div>
       </section>
@@ -156,46 +172,6 @@
   </div>
 
   <script src="/javascripts/Footer.js"></script>
-  <script>
-    new Vue({
-      el: '#app',
-      data: {
-        isLoggedIn: false,
-        sessionInfo: null,
-      },
-      mounted() {
-        this.checkLoginState();
-      },
-      methods: {
-        async checkLoginState() {
-          try {
-            const response = await fetch('/auth/session-info');
-            if (!response.ok) throw new Error('Failed to fetch session info');
-            const data = await response.json();
-            this.isLoggedIn = data.isLoggedIn;
-            this.sessionInfo = data;
-          } catch (error) {
-            console.error('Error fetching session info:', error);
-            this.sessionInfo = 'No session information available';
-          }
-        },
-        logout() {
-          fetch('/auth/logout')
-            .then(response => {
-              if (response.ok) {
-                localStorage.removeItem('userID');
-                this.isLoggedIn = false;
-                window.location.href = '/Login.html';
-              } else {
-                throw new Error('Logout failed');
-              }
-            })
-            .catch(error => {
-              console.error('Error logging out:', error);
-            });
-        },
-      },
-    });
-  </script>
+  <script src="/javascripts/SessionManager.js"></script>
 </body>
 </html>
