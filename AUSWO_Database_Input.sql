@@ -1,10 +1,10 @@
 USE AUSWO;
 
---INSERT INTO Users (firstName, lastName, phoneNumber, email, userName, passwordHash)
---VALUES 
---('Alice', 'Smith', '0412000001', 'alice@example.com', 'alice_smith', ''), --
---('Bob', 'Johnson', '0412000002', 'bob@example.com', 'bob_j', ''), --
---('Charlie', 'Brown', '0412000003', 'charlie@example.com', 'charlie_b', ''); --
+INSERT INTO Users (firstName, lastName, phoneNumber, email, userName, passwordHash)
+VALUES 
+('Alice', 'Smith', '0412000001', 'alice@example.com', 'alice_smith', '$argon2id$v=19$m=65536,t=3,p=1$V4Y2xGU8I6ufDyk6VClatA$AyIKvl8m8F8g1OJtzStHB/Ifx7tT1PFrnxz9FyRzVlE'), -- Alicesmith01!
+('Bob', 'Johnson', '0412000002', 'bob@example.com', 'bob_j', '$argon2id$v=19$m=65536,t=3,p=1$FhygmQh5whec4CwxQKL58g$1sZHcOGjG4uj3ZTparSdAtT74cu+vu2bImeEFVjejwU'), -- Bobjohnson01!
+('Charlie', 'Brown', '0412000003', 'charlie@example.com', 'charlie_b', '$argon2id$v=19$m=65536,t=3,p=1$mthNwq+FeUoTVrchoecRDg$h5b6/PtrNYYHVkddiyNDA+1NVsfZyrez3dNUF2C8C9U'); -- Charliebrown01!
 
 INSERT INTO Roles (roleName, roleAbilities)
 VALUES
