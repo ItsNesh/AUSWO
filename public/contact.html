@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AUSWO · Contact</title>
+  <link rel="stylesheet" href="/stylesheets/Global.css">
+  <link rel="stylesheet" href="/stylesheets/Footer.css">
+  <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+</head>
+<body>
+  <div id="app" class="page-shell">
+    <nav class="navbar">
+      <a class="brand" href="/index.html">
+        AUSWO
+        <span class="brand-tag">Migration Hub</span>
+      </a>
+      <div class="nav-links" v-if="sessionInfo !== null">
+        <a href="/index.html">Home</a>
+        <a href="/Dashboard.html">Dashboard</a>
+        <a href="/Immigration.html">Immigration</a>
+        <a href="/Profile.html">Profile</a>
+        <a href="/preferences.html">Preferences</a>
+        <a href="/contact.html">Contact</a>
+        <a href="/points-calculator.html">Points Calculator</a>
+        <a href="/account.html">Account</a>
+        <a href="/AdminPage.html">Admin</a>
+        <a href="/Login.html" v-if="!isLoggedIn">Log In</a>
+        <a href="/auth/logout" v-if="isLoggedIn" @click.prevent="logout">Log Out</a>
+      </div>
+    </nav>
+
+    <main class="page-content">
+      <section class="page-container section">
+        <div class="section-header">
+          <div>
+            <span class="tag">Contact</span>
+            <h1 class="section-title">Talk to the AUSWO team</h1>
+            <p class="section-subtitle">
+              We are here to help with migration planning, visa pathways, and platform support. Send us a quick message and we will respond within one business day.
+            </p>
+          </div>
+        </div>
+
+        <div class="grid-two">
+          <div class="card">
+            <h2 class="card-title">Send us a message</h2>
+            <form id="contact-form">
+              <div class="form-grid">
+                <div>
+                  <label for="contact-name">Full name</label>
+                  <input type="text" id="contact-name" name="name" placeholder="Alex Migration" required>
+                </div>
+                <div>
+                  <label for="contact-email">Email</label>
+                  <input type="email" id="contact-email" name="email" placeholder="alex@example.com" required>
+                </div>
+              </div>
+              <div>
+                <label for="contact-topic">Enquiry topic</label>
+                <select id="contact-topic" name="topic" required>
+                  <option value="">Select a topic</option>
+                  <option value="visa-advice">Visa advice</option>
+                  <option value="points">Points calculator support</option>
+                  <option value="technical">Technical issue</option>
+                  <option value="partnership">Partnership</option>
+                </select>
+              </div>
+              <div>
+                <label for="contact-message">Message</label>
+                <textarea id="contact-message" name="message" rows="5" placeholder="Share a few details so we can help faster." required></textarea>
+              </div>
+              <div class="form-footer">
+                <button type="submit" class="btn btn-primary">Submit</button>
+              </div>
+              <p class="helper-text">We will reply within 24 hours. Urgent enquiries? Call the number below.</p>
+            </form>
+          </div>
+
+          <aside class="surface-soft contact-info">
+            <h2 class="card-title">Contact details</h2>
+            <p class="muted">Prefer another channel? Reach us using the details below.</p>
+            <ul class="list-plain">
+              <li><strong>Email:</strong> hello@auswo.com.au</li>
+              <li><strong>Phone:</strong> +61 2 8001 2345</li>
+              <li><strong>Hours:</strong> Mon–Fri, 9am to 6pm AEST</li>
+            </ul>
+            <div class="divider"></div>
+            <h3 class="card-title">Office locations</h3>
+            <ul class="list-plain">
+              <li>Sydney · Level 18, 123 Pitt Street</li>
+              <li>Melbourne · 76 Collins Street</li>
+              <li>Perth · 45 St Georges Terrace</li>
+            </ul>
+            <div class="divider"></div>
+            <p class="muted">Follow AUSWO on social media for live migration alerts and webinars.</p>
+            <div class="section-actions">
+              <a class="btn btn-outline" href="https://www.linkedin.com" target="_blank" rel="noopener">LinkedIn</a>
+              <a class="btn btn-outline" href="https://www.youtube.com" target="_blank" rel="noopener">YouTube</a>
+            </div>
+          </aside>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="/javascripts/Footer.js"></script>
+  <script>
+    document.getElementById('contact-form').addEventListener('submit', (event) => {
+      event.preventDefault();
+      const form = event.target;
+      form.reset();
+      alert('Thanks for reaching out! We will be in touch soon.');
+    });
+
+    new Vue({
+      el: '#app',
+      data: {
+        isLoggedIn: false,
+        sessionInfo: null,
+        isAdmin: false,
+      },
+      mounted() {
+        this.checkLoginState();
+      },
+      methods: {
+        async checkLoginState() {
+          try {
+            const response = await fetch('/auth/session-info');
+            if (!response.ok) throw new Error('Failed to fetch session info');
+            const data = await response.json();
+            this.isLoggedIn = data.isLoggedIn;
+            this.sessionInfo = data;
+            this.isAdmin = data.isAdmin;
+          } catch (error) {
+            console.error('Error fetching session info:', error);
+            this.sessionInfo = 'No session information available';
+          }
+        },
+        logout() {
+          fetch('/auth/logout')
+            .then(response => {
+              if (response.ok) {
+                localStorage.removeItem('token');
+                this.isLoggedIn = false;
+                this.isAdmin = false;
+                window.location.href = '/Login.html';
+              } else {
+                throw new Error('Logout failed');
+              }
+            })
+            .catch(error => {
+              console.error('Error during logout:', error);
+            });
+        },
+      },
+    });
+  </script>
+</body>
+</html>

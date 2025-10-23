@@ -1,0 +1,29 @@
+[
+    {
+        "id": "new-visa-options-for-skilled-workers",
+        "tag": "News",
+        "title": "New visa Options for Skilled Workers.",
+        "description": "Click here to view visa pathways vailable for skilled individuals in Australia",
+        "author": "John Doe",
+        "date": "20 Oct 2025",
+        "readTime": "7 min read"
+    },
+    {
+        "id": "changes-to-immigration-policies",
+        "tag": "News",
+        "title": "Changes to Immigration Policies.",
+        "description": "Click here to view changes to Immigration Policies announced by the Government",
+        "author": "Jane Doe",
+        "date": "17 Mar 2025",
+        "readTime": "4 min read"
+    },
+    {
+        "id": "points-based-immigration-system",
+        "tag": "News",
+        "title": "Understanding the Points-Based Immigration System",
+        "description": "Click here to a guide to Australia's points-bsed immigration system.",
+        "author": "John Pork",
+        "date": "2 Dec 2024",
+        "readTime": "8 min read"
+    }
+]

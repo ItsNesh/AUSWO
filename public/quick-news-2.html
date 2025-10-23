@@ -3,9 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AUSWO · Profile</title>
+  <title>AUSWO · State Quick News</title>
   <link rel="stylesheet" href="/stylesheets/Global.css">
-  <link rel="stylesheet" href="/stylesheets/Profile.css">
   <link rel="stylesheet" href="/stylesheets/Footer.css">
   <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
 </head>
@@ -35,51 +34,49 @@
       <section class="page-container section">
         <div class="section-header">
           <div>
-            <span class="tag">Profile</span>
-            <h1 class="section-title">Welcome back</h1>
+            <span class="tag">States & Territories</span>
+            <h1 class="section-title">Nomination alerts</h1>
             <p class="section-subtitle">
-              Review and keep your details current so we can guide you with the best migration recommendations.
+              Track state nomination updates at a glance. Refresh regularly for seat allocations and invitation rounds.
             </p>
           </div>
-        </div>
-
-        <div class="grid-two">
-          <div class="card profile-card">
-            <div class="profile-photo" onclick="document.getElementById('uploadPic').click()">
-              <div class="avatar-placeholder" id="picText">Upload</div>
-              <img id="profileImage" alt="Profile" />
-            </div>
-            <input type="file" id="uploadPic" accept="image/*" onchange="uploadProfilePic(event)" hidden>
-
-            <div class="profile-info" id="basic-info">
-              <h2 id="userName">Loading...</h2>
-              <p id="userEmail" class="muted"></p>
-              <p id="userUsername" class="muted"></p>
-              <p id="userPhone" class="muted"></p>
-            </div>
-
-            <div class="profile-actions">
-              <button class="btn btn-primary" type="button" onclick="editProfile()">Edit profile</button>
-              <a class="btn btn-outline" href="/points-calculator.html">Points calculator</a>
-            </div>
-          </div>
-
-          <div class="surface-soft" id="main-content">
-            Welcome to your new profile page!
+          <div class="section-actions">
+            <a class="btn btn-outline" href="/migration-news.html">Read detailed coverage</a>
           </div>
         </div>
-
-        <section id="account-points" class="surface profile-points">
-          <h2 class="card-title">Visa summary</h2>
-          <div id="points-content">Loading...</div>
-        </section>
+        <div class="card">
+          <div id="quick-news-list" class="content-grid two"></div>
+        </div>
       </section>
     </main>
   </div>
 
-  <script src="/javascripts/Profile.js"></script>
   <script src="/javascripts/Footer.js"></script>
   <script>
+    function renderQuickNews(items) {
+      const container = document.getElementById('quick-news-list');
+      if (!container) return;
+      container.innerHTML = '';
+      if (!Array.isArray(items) || items.length === 0) {
+        container.innerHTML = '<div class="table-empty">No state updates yet.</div>';
+        return;
+      }
+      items.forEach(item => {
+        const article = document.createElement('article');
+        article.className = 'surface-soft';
+        article.innerHTML = `
+          <strong>${item.title}</strong>
+          <p class="muted">${item.body}</p>
+        `;
+        container.appendChild(article);
+      });
+    }
+
+    fetch('/api/quick-news')
+      .then(res => (res.ok ? res.json() : []))
+      .then(renderQuickNews)
+      .catch(err => console.error('Failed to load quick news', err));
+
     new Vue({
       el: '#app',
       data: {
@@ -99,15 +96,6 @@
             this.isLoggedIn = data.isLoggedIn;
             this.sessionInfo = data;
             this.isAdmin = data.isAdmin;
-            if (data.isLoggedIn && data.userId) {
-              localStorage.setItem('userID', data.userId);
-              const currentUserID = localStorage.getItem('userID');
-              if (currentUserID && currentUserID !== String(data.userId)) {
-                window.location.reload();
-              }
-            } else if (!data.isLoggedIn) {
-              localStorage.removeItem('userID');
-            }
           } catch (error) {
             console.error('Error fetching session info:', error);
             this.sessionInfo = 'No session information available';
@@ -122,7 +110,7 @@
                 this.isAdmin = false;
                 window.location.href = '/Login.html';
               } else {
-                console.error('Logout failed');
+                throw new Error('Logout failed');
               }
             })
             .catch(error => {

@@ -1,92 +1,78 @@
-body {
-    background-color: #f2f2f2;
-    margin: 0;
-    font-family: Arial, Helvetica, sans-serif
+.auth-section {
+  padding-top: 40px;
 }
 
-.container {
-    display: flex;
-    height: 100vh;
-    width: 100%;
+.auth-grid {
+  display: grid;
+  gap: 32px;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr);
+  align-items: start;
 }
 
-.form-side {
-    flex: 0 0 40%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #f2f2f2;
+.auth-card {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
-.image-side {
-    flex: 0 0 60%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #fff;
+.auth-card h1 {
+  margin: 0;
+  font-size: 2rem;
+  color: var(--color-navy);
 }
 
-.image-side {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+.auth-errors {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: #ff6262;
+  font-weight: 600;
 }
 
-.login-container {
-    width: 90%;
-    max-width: 400px;
+.auth-errors li {
+  background: rgba(233, 137, 28, 0.1);
+  border: 1px solid rgba(233, 137, 28, 0.35);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  margin-top: 8px;
 }
 
-h1 {
-    color: #333;
-    text-align: center;
-    font-size: 42px;
-    margin-bottom: 25px;
+.auth-options {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
 }
 
-label {
-    color: block;
-    font-weight: bold;
-    margin-bottom: 5px;
-    color: #555;
+.remember {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
 }
 
-input {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
+.remember input {
+  width: auto;
+  accent-color: var(--color-cyan);
 }
 
-button {
-    width: 100%;
-    background-color: #333;
-    color: white;
-    padding: 12px;
-    border: none;
-    border-radius: 4px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s;
+.auth-options .remember {
+  color: var(--color-muted);
 }
 
-button:hover {
-    background-color: teal;
+.highlight {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-.login-link {
-    text-align: center;
-    margin-top: 15px;
-    font-size: 14px;
+.preferences-summary {
+  margin-top: 40px;
 }
 
-.login-link a {
-    color: real;
-    text-decoration: none;
-}
-
-.login-link a:hover {
-    text-decoration: underline;
+@media (max-width: 960px) {
+  .auth-grid {
+    grid-template-columns: 1fr;
+  }
 }
