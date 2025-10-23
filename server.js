@@ -330,6 +330,19 @@ app.get('/api/quick-news', async (req, res) => {
   }
 });
 
+// Get jobs from database
+app.get('/api/jobs', async (req, res) => {
+  try {
+    const [rows] = await pool.query(
+      'SELECT scrapeID, JobTitle, CorporateName, PositionType, Location, JobDescription, DateScraped FROM ScrapedOccupations ORDER BY DateScraped DESC LIMIT 20'
+    );
+    res.json(rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json([]);
+  }
+});
+
 // Get occupations by list type
 app.get('/api/occupations/:listType', async (req, res) => {
   const { listType } = req.params;

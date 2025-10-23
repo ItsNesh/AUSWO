@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AUSWO · Quick News</title>
+  <title>AUSWO · Jobs</title>
   <link rel="stylesheet" href="/stylesheets/Global.css">
   <link rel="stylesheet" href="/stylesheets/Footer.css">
   <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
@@ -33,47 +33,42 @@
       <section class="page-container section">
         <div class="section-header">
           <div>
-            <span class="tag">Briefings</span>
-            <h1 class="section-title">Quick news overview</h1>
+            <span class="tag">Job opportunities</span>
+            <h1 class="section-title">Available jobs</h1>
             <p class="section-subtitle">
-              Short, sharp migration updates delivered in under a minute. Perfect for a daily check-in.
+              Recent job listings from Australian companies.
             </p>
-          </div>
-          <div class="section-actions">
-            <a class="btn btn-primary" href="/migration-news.html">Full articles</a>
           </div>
         </div>
         <div class="card">
-          <div id="quick-news-list" class="content-grid two"></div>
+          <div id="jobs-list" class="list-plain"></div>
         </div>
       </section>
     </main>
   </div>
-
   <script>
-    function renderQuickNews(items) {
-      const container = document.getElementById('quick-news-list');
-      if (!container) return;
-      container.innerHTML = '';
-      if (!Array.isArray(items) || items.length === 0) {
-        container.innerHTML = '<div class="table-empty">No quick news for today.</div>';
-        return;
-      }
-      items.forEach(item => {
-        const article = document.createElement('article');
-        article.className = 'surface-soft';
-        article.innerHTML = `
-          <strong>${item.title}</strong>
-          <p class="muted">${item.body}</p>
-        `;
-        container.appendChild(article);
-      });
-    }
-
-    fetch('/api/quick-news')
+    fetch('/api/jobs')
       .then(res => (res.ok ? res.json() : []))
-      .then(renderQuickNews)
-      .catch(err => console.error('Failed to load quick news', err));
+      .then(jobs => {
+        const container = document.getElementById('jobs-list');
+        if (!container) return;
+        container.innerHTML = '';
+        if (!Array.isArray(jobs) || jobs.length === 0) {
+          container.innerHTML = '<div class="table-empty">No jobs.</div>';
+          return;
+        }
+        jobs.forEach(job => {
+          const article = document.createElement('article');
+          article.className = 'surface-soft';
+          article.innerHTML = `
+            <strong>${job.JobTitle}</strong>
+            <p class="muted">${job.CorporateName} · ${job.PositionType} · ${job.Location}</p>
+            <p class="muted">${job.JobDescription}</p>
+          `;
+          container.appendChild(article);
+        });
+      })
+      .catch(err => console.error('Failed to load jobs', err));
   </script>
   <script src="/javascripts/Footer.js"></script>
   <script src="/javascripts/SessionManager.js"></script>
