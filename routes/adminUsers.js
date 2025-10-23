@@ -53,4 +53,30 @@ router.delete('/:id', requireAdmin, async (req, res) => {
     }
 });
 
+// Post quick news
+router.post('/quick-news', requireAdmin, async (req, res) => {
+    const { title, body } = req.body;
+
+    if (!title || !body) {
+        return res.status(400).json({ error: 'Title and body are required' });
+    }
+
+    try {
+        const authorID = req.session.userId || null;
+        const [result] = await pool.query(
+            'INSERT INTO QuickNews (title, body, authorID) VALUES (?, ?, ?)',
+            [title, body, authorID]
+        );
+
+        res.status(201).json({
+            success: true,
+            newsID: result.insertId,
+            message: 'Quick news posted successfully'
+        });
+    } catch (error) {
+        console.error('Error posting quick news:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
 module.exports = router;
