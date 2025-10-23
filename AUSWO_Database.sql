@@ -47,8 +47,8 @@ CREATE TABLE IF NOT EXISTS QuickNews (
     title VARCHAR(100) NOT NULL,
     body TEXT NOT NULL,
     datePublished DATETIME DEFAULT CURRENT_TIMESTAMP,
-    authorID INT NOT NULL,
-    FOREIGN KEY (authorID) REFERENCES Users(userID)
+    authorID INT NULL,
+    FOREIGN KEY (authorID) REFERENCES Users(userID) ON DELETE SET NULL
 );
 
 -- Occupation List Types (MLTSSL, STSOL, ROL)
