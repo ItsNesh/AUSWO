@@ -96,15 +96,19 @@
 
     function displayErrors(errors, form) {
       const list = document.getElementById('errorList');
-      const handledParams = new Set();
+
+      if (list) {
+        list.innerHTML = '';
+        list.style.display = 'none';
+      }
 
       if (!Array.isArray(errors) || errors.length === 0) {
-        if (list) {
-          list.innerHTML = '';
-          list.style.display = 'none';
-        }
         return;
       }
+
+      const groupedFieldErrors = Object.create(null);
+      const orderedParams = [];
+      const fallbackMessages = [];
 
       errors.forEach(error => {
         const param = error && error.param;
@@ -112,28 +116,56 @@
         const fieldId = param && SIGNUP_FIELD_ID_MAP[param];
 
         if (fieldId && window.AUSWOFormValidation) {
-          const applied = window.AUSWOFormValidation.setFieldError(fieldId, message, {
-            scope: form,
-            focus: handledParams.size === 0,
-          });
-          if (applied) {
-            handledParams.add(param);
-            return;
+          if (!groupedFieldErrors[param]) {
+            groupedFieldErrors[param] = { fieldId, messages: [] };
+            orderedParams.push(param);
           }
-        }
-
-        if (list) {
-          const li = document.createElement('li');
-          li.textContent = message;
-          list.appendChild(li);
+          groupedFieldErrors[param].messages.push(message);
+        } else if (message) {
+          fallbackMessages.push(message);
         }
       });
 
-      if (list) {
-        list.style.display = list.children.length ? '' : 'none';
+      let fieldFocused = false;
+      if (window.AUSWOFormValidation) {
+        orderedParams.forEach(param => {
+          const entry = groupedFieldErrors[param];
+          const combinedMessage = entry.messages.join('\n');
+          const applied = window.AUSWOFormValidation.setFieldError(entry.fieldId, combinedMessage, {
+            scope: form,
+            focus: !fieldFocused,
+          });
+
+          if (applied) {
+            fieldFocused = true;
+          } else {
+            fallbackMessages.push(...entry.messages.filter(Boolean));
+          }
+        });
+      } else {
+        orderedParams.forEach(param => {
+          const entry = groupedFieldErrors[param];
+          fallbackMessages.push(...entry.messages.filter(Boolean));
+        });
       }
 
-      if (!handledParams.size && form && typeof form.reportValidity === 'function') {
+      if (list && fallbackMessages.length) {
+        let appended = false;
+        fallbackMessages.forEach(message => {
+          if (!message) {
+            return;
+          }
+          const li = document.createElement('li');
+          li.textContent = message;
+          list.appendChild(li);
+          appended = true;
+        });
+        list.style.display = appended ? '' : 'none';
+      } else if (list) {
+        list.style.display = 'none';
+      }
+
+      if (!fieldFocused && form && typeof form.reportValidity === 'function') {
         form.reportValidity();
       }
     }
@@ -201,7 +233,7 @@
               <div class="form-grid">
                 <div>
                   <label for="login-signup-password">Password</label>
-                  <input type="password" id="login-signup-password" name="login-signup-password" required>
+                  <input type="password" id="login-signup-password" name="login-signup-password" minlength="8" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$" required>
                 </div>
                 <div>
                   <label for="login-signup-repeat-password">Confirm password</label>
@@ -257,7 +289,7 @@
           'login-signup-phonenumber': 'Please enter your phone number.',
           'login-signup-email': 'Please enter a valid email address.',
           'login-signup-username': 'Please choose a username.',
-          'login-signup-password': 'Please enter a password.',
+          'login-signup-password': 'Min 8 chars\nMust have upper, lower, and number.',
           'login-signup-repeat-password': 'Please confirm your password.',
           'terms': 'Please agree to the terms to continue.',
         });
