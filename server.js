@@ -306,6 +306,26 @@ app.get('/api/quick-news', async (req, res) => {
   }
 });
 
+// Get occupations by list type
+app.get('/api/occupations/:listType', async (req, res) => {
+  const { listType } = req.params;
+
+  try {
+    const [rows] = await pool.query(`
+      SELECT o.anzsco, o.name, o.authority, o.skillLevel
+      FROM Occupations o
+      JOIN OccupationLists ol ON o.listID = ol.listID
+      WHERE ol.listName = ?
+      ORDER BY o.name ASC
+    `, [listType.toUpperCase()]);
+
+    res.json(rows);
+  } catch (err) {
+    console.error('Error fetching occupations:', err);
+    res.status(500).json({ error: 'Failed to fetch occupations' });
+  }
+});
+
 // -----------------------
 
 // Redirects

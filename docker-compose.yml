@@ -4,7 +4,7 @@ services:
     image: mysql:8.0
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: test
+      MYSQL_ROOT_PASSWORD: AUSWO2025
       MYSQL_DATABASE: AUSWO
     volumes:
       - db_data:/var/lib/mysql
@@ -21,7 +21,7 @@ services:
       DB_HOST: db
       DB_PORT: 3306
       DB_USER: root
-      DB_PASSWORD: test
+      DB_PASSWORD: AUSWO2025
       DB_NAME: AUSWO
       PORT: 3000
       SESSION_SECRET: GOCSPX-3p0mYH8m7VfX5d4h8j9kL0qJz9W
