@@ -22,7 +22,7 @@ const fs = require('fs');
 const cookieParser = require('cookie-parser');
 const passport = require('passport');
 const session = require('express-session');
-const { body } = require('express-validator');
+const { body, validationResult } = require('express-validator');
 
 // Database Setup
 const pool = require('./db');
@@ -187,7 +187,19 @@ app.post('/api/users', requireAuth, requireAdmin, async (req, res) => {
 });
 
 // Edit user profile fields
-app.put('/api/users/:userID', requireAuth, requireOwnership, async (req, res) => {
+app.put('/api/users/:userID', requireAuth, requireOwnership, [
+    body('firstName').optional({ checkFalsy: true }).isLength({ min: 1, max: 50 }).trim().escape(),
+    body('lastName').optional({ checkFalsy: true }).isLength({ min: 1, max: 50 }).trim().escape(),
+    body('email').optional({ checkFalsy: true }).isEmail().normalizeEmail(),
+    body('userName').optional({ checkFalsy: true }).isLength({ min: 3, max: 30 }).matches(/^\w+$/).trim(),
+    body('phoneNumber').optional({ checkFalsy: true }).isMobilePhone().trim().escape()
+  ], async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        console.error('Validation errors:', errors.array());
+        return res.status(400).json({ errors: errors.array() });
+    }
+    
   const { userID } = req.params;
   const { firstName, lastName, email, userName, phoneNumber } = req.body || {};
 

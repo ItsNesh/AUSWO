@@ -20,9 +20,9 @@ const authLimiter = rateLimit({
 // Registration route
 router.post('/register', authLimiter, [
     // Validate and sanitize inputs
-    body('firstName').notEmpty().withMessage('First name is required').trim().escape(),
-    body('lastName').notEmpty().withMessage('Last name is required').trim().escape(),
-    body('phoneNumber').notEmpty().withMessage('Phone number is required').trim().escape(),
+    body('firstName').isLength({ min: 1, max: 50 }).withMessage('First name must be 1–50 chars').trim().escape(),
+    body('lastName').isLength({ min: 1, max: 50 }).withMessage('Last name must be 1–50 chars').trim().escape(),
+    body('phoneNumber').notEmpty().withMessage('Phone number is required').isMobilePhone().withMessage('Invalid phone number format').trim().escape(),
     body('email').isEmail().withMessage('Invalid email address').normalizeEmail(),
     body('userName').trim().isLength({ min: 3, max: 30 }).withMessage('Username must be 3–30 chars').matches(/^\w+$/).withMessage('Only letters, numbers, and underscores allowed'),
     body('password').isLength({ min: 8 }).withMessage('Min 8 chars').matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/).withMessage('Must have upper, lower, and number'),

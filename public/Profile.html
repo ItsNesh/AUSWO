@@ -26,12 +26,6 @@
         <main class="page-container">
             <h1>User Profile</h1>
             <header class="header">
-                <div class="profile-pic" onclick="document.getElementById('uploadPic').click()">
-                    <span id="picText">Profile Picture</span>
-                    <img id="profileImage" src="" alt="" style="display: none;">
-                </div>
-                <input type="file" id="uploadPic" accept="image/*" style="display: none" onchange="uploadProfilePic(event)">
-
                 <div class="info-area">
                     <div class="basic-info" id="basic-info">
                         <h3 id="userName">Loading...</h3>
@@ -63,6 +57,6 @@
         </main>
     </div>
     <script src="/javascripts/Profile.js"></script>
-    <script src="/public/javascripts/SessionManager.js"></script>
+    <script src="/javascripts/SessionManager.js"></script>
 </body>
 </html>

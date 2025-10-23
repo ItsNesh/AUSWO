@@ -1,20 +1,21 @@
+// Helper function to escape HTML special characters
+function escapeHTML(str = '') {
+    if (typeof str !== 'string') return '';
+    
+    const map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+    };
+    
+    return str.replace(/[&<>"']/g, char => map[char]);
+}
+
 function toggleDropdown() {
     const menu = document.getElementById("dropdownMenu");
     menu.style.display = (menu.style.display === "block") ? "none" : "block";
-}
-
-function uploadProfilePic(event) {
-    const file = event.target.files[0];
-    if(file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const img = document.getElementById("profileImage");
-            img.src = e.target.result;
-            img.style.display = "block";
-            document.getElementById("picText").style.display = "none";
-        };
-        reader.readAsDataURL(file);
-    }
 }
 
 function editProfile() {
@@ -30,10 +31,10 @@ function editProfile() {
 
     content.innerHTML = `
         <h2>Edit Profile</h2>
-        <label>Name: <input type="text" id="editName" value="${currentName}"></label><br><br>
-        <label>Username: <input type="text" id="editUsername" value="${currentUserName}"></label><br><br>
-        <label>Email: <input type="email" id="editEmail" value="${currentEmail}"></label><br><br>
-        <label>Phone: <input type="tel" id="editPhone" value="${currentPhone}"></label><br><br>
+        <label>Name: <input type="text" id="editName" value="${escapeHTML(currentName)}"></label><br><br>
+        <label>Username: <input type="text" id="editUsername" value="${escapeHTML(currentUserName)}"></label><br><br>
+        <label>Email: <input type="email" id="editEmail" value="${escapeHTML(currentEmail)}"></label><br><br>
+        <label>Phone: <input type="tel" id="editPhone" value="${escapeHTML(currentPhone)}"></label><br><br>
         <button class="button" onclick="saveProfile()">Save</button>
         <button class="button" style="margin-left:8px;" onclick="cancelEdit()">Cancel</button>
     `;
@@ -77,7 +78,7 @@ async function saveProfile() {
             const msg = err && err.error ? err.error : 'Failed to update profile';
             content.innerHTML = `
                 <h2>Update Failed</h2>
-                <p>${msg}</p>
+                <p>${escapeHTML(msg)}</p>
             `;
             return;
         }
@@ -156,14 +157,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         const displayName = [u.firstName, u.lastName].filter(Boolean).join(' ') || u.userName || 'User';
         nameEl.textContent = displayName;
         emailEl.textContent = u.email || '';
-        if (usernameEl) usernameEl.textContent = u.userName ? `Username: ${u.userName}` : '';
-        if (phoneEl) phoneEl.textContent = u.phoneNumber ? `Phone: ${u.phoneNumber}` : '';
+        if (usernameEl) usernameEl.textContent = u.userName ? `Username: ${escapeHTML(u.userName)}` : '';
+        if (phoneEl) phoneEl.textContent = u.phoneNumber ? `Phone: ${escapeHTML(u.phoneNumber)}` : '';
         try { window.currentUserProfile = u; } catch {}
 
         const pts = (typeof u.visaPoints === 'number') ? u.visaPoints : 'N/A';
         const visaName = await resolveVisaName(u.visaOption);
         if (pointsEl) pointsEl.innerHTML = `
-          <p>Visa Option: <strong>${visaName}</strong></p>
+          <p>Visa Option: <strong>${escapeHTML(visaName)}</strong></p>
           <p>Total Points: <strong>${pts}</strong></p>
           <a href="/points-calculator.html">Update your points</a>
         `;
