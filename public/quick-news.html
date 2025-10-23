@@ -51,6 +51,13 @@
   </div>
 
   <script>
+    // HTML escape function to prevent XSS
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
     function renderQuickNews(items) {
       const container = document.getElementById('quick-news-list');
       if (!container) return;
@@ -63,8 +70,8 @@
         const article = document.createElement('article');
         article.className = 'surface-soft';
         article.innerHTML = `
-          <strong>${item.title}</strong>
-          <p class="muted">${item.body}</p>
+          <strong>${escapeHtml(item.title || '')}</strong>
+          <p class="muted">${escapeHtml(item.body || '')}</p>
         `;
         container.appendChild(article);
       });

@@ -84,7 +84,7 @@
                   <td>{{ user.visaPoints !== null ? user.visaPoints : 'N/A' }}</td>
                   <td>{{ user.role }}</td>
                   <td>
-                    <button v-if="user.id !== Number(localStorage.getItem('userID'))"@click="removeUser(user)" class="btn-delete">Remove</button>
+                    <button v-if="user.id !== currentUserId" @click="removeUser(user)" class="btn-delete">Remove</button>
                   </td>
                 </tr>
               </tbody>
