@@ -1,7 +1,7 @@
 # AUSWO
 IT Industry Project for AUSWO
 
-![Database Schema](databaseSchema.png "Database Schema")
+![AUSWO Homepage](AUSWOHomepage.png "AUSWO Homepage")
 
 ## Running with Docker
 
@@ -12,4 +12,4 @@ IT Industry Project for AUSWO
 
 2. The website can be viewed at [http://localhost:3000](http://localhost:3000).
 
-3. The MySQL database listens on port `3306` with database `AUSWO` and password `AUSWO2025`.
+The MySQL database listens on port `3306` with database `AUSWO` and password `AUSWO2025`.
