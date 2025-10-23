@@ -18,14 +18,11 @@
       </a>
       <div class="nav-links" v-if="sessionInfo !== null">
         <a href="/index.html">Home</a>
-        <a href="/Dashboard.html">Dashboard</a>
-        <a href="/Immigration.html">Immigration</a>
         <a href="/Profile.html">Profile</a>
         <a href="/preferences.html">Preferences</a>
         <a href="/contact.html">Contact</a>
         <a href="/points-calculator.html">Points Calculator</a>
-        <a href="/AdminPage.html">Admin</a>
-        <a href="/Login.html" v-if="!isLoggedIn">Log In</a>
+        <a href="/AdminPage.html" v-if="isAdmin">Admin</a>
         <a href="/auth/logout" v-if="isLoggedIn" @click.prevent="logout">Log Out</a>
       </div>
     </nav>

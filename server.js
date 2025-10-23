@@ -32,6 +32,7 @@ var authRouter = require('./routes/auth');
 var dashboardRouter = require('./routes/Dashboard');
 var immigrationRouter = require('./routes/Immigration');
 var profileRouter = require('./routes/Profile');
+var adminUsersRouter = require('./routes/adminUsers');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -123,14 +124,6 @@ async function ensureUserVisaColumns() {
 })();
 
 // Authorization Middleware
-// Require user to be logged in
-function requireAuth(req, res, next) {
-  if (!req.session.isLoggedIn || !req.session.userId) {
-    return res.status(401).json({ error: 'Unauthorized - Please log in' });
-  }
-  next();
-}
-
 // Require user to own the resource they are accessing
 function requireOwnership(req, res, next) {
    if (!req.session.isLoggedIn || !req.session.userId) {
@@ -162,7 +155,7 @@ function requireAdmin(req, res, next) {
 // API Routes
 // -----------------
 
-app.get('/api/users', requireAuth, requireAdmin, async (req, res) => {
+app.get('/api/users', requireAdmin, async (req, res) => {
   try {
     const [rows] = await pool.query('SELECT userID, firstName, lastName, email, userName, phoneNumber FROM Users');
     res.json(rows);
@@ -172,7 +165,7 @@ app.get('/api/users', requireAuth, requireAdmin, async (req, res) => {
   }
 });
 
-app.post('/api/users', requireAuth, requireAdmin, async (req, res) => {
+app.post('/api/users', requireAdmin, async (req, res) => {
   const { firstName, lastName, phoneNumber, email, userName, passwordHash } = req.body;
   try {
     const [result] = await pool.query(
@@ -186,8 +179,18 @@ app.post('/api/users', requireAuth, requireAdmin, async (req, res) => {
   }
 });
 
+app.get('/api/admin/users', requireAdmin, async (req, res) => {
+  try {
+    const [rows] = await pool.query('SELECT userID AS id, firstName, lastName, email, userName, phoneNumber, visaOption, visaPoints FROM Users');
+    res.json({ users: rows });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database query failed' });
+  }
+});
+
 // Edit user profile fields
-app.put('/api/users/:userID', requireAuth, requireOwnership, [
+app.put('/api/users/:userID', requireOwnership, [
     body('firstName').optional({ checkFalsy: true }).isLength({ min: 1, max: 50 }).trim().escape(),
     body('lastName').optional({ checkFalsy: true }).isLength({ min: 1, max: 50 }).trim().escape(),
     body('email').optional({ checkFalsy: true }).isEmail().normalizeEmail(),
@@ -245,7 +248,7 @@ app.put('/api/users/:userID', requireAuth, requireOwnership, [
 });
 
 // Get single user
-app.get('/api/users/:userID', requireAuth, requireOwnership, async (req, res) => {
+app.get('/api/users/:userID', requireOwnership, async (req, res) => {
   const { userID } = req.params;
   try {
     // Select * to avoid errors if newer columns are missing
@@ -273,7 +276,7 @@ app.get('/api/users/:userID', requireAuth, requireOwnership, async (req, res) =>
 });
 
 // Update user visa points
-app.put('/api/users/:userID/visa-points', requireAuth, requireOwnership, async (req, res) => {
+app.put('/api/users/:userID/visa-points', requireOwnership, async (req, res) => {
   const { userID } = req.params;
   const { visaOption, visaPoints } = req.body || {};
   if (!visaOption || typeof visaPoints !== 'number') {
@@ -310,8 +313,6 @@ app.get('/api/quick-news', async (req, res) => {
 
 // Redirects
 const friendlyRedirects = {
-  '/dashboard': './public/Dashboard.html',
-  '/Dashboard': './public/Dashboard.html',
   '/immigration': './public/Immigration.html',
   '/Immigration': './public/Immigration.html',
   '/profile': './public/Profile.html',
@@ -324,8 +325,6 @@ const friendlyRedirects = {
   '/Contact': './public/contact.html',
   '/preferences': './public/preferences.html',
   '/Preferences': './public/preferences.html',
-  '/admin': '/AdminPage.html',
-  '/Admin': '/AdminPage.html',
   '/home': '/index.html',
   '/index': '/index.html',
   '/': '/index.html',
@@ -336,7 +335,7 @@ Object.entries(friendlyRedirects).forEach(([from, to]) => {
   app.get(from + '/', (req, res) => res.redirect(to));
 });
 
-app.get('/AdminPage.html', (req, res) => {
+app.get('/AdminPage.html', requireAdmin, (req, res) => {
   res.sendFile(path.join(__dirname, 'private', 'AdminPage.html'));
 });
 
@@ -404,6 +403,7 @@ app.use('/auth', authRouter);
 app.use('/Dashboard', dashboardRouter);
 app.use('/Immigration', immigrationRouter);
 app.use('/Profile', profileRouter);
+app.use('/admin', adminUsersRouter);
 
 // Start Server
 

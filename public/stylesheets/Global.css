@@ -347,6 +347,19 @@ button.btn-primary:focus-visible {
   color: var(--color-navy);
 }
 
+.btn-delete {
+  background: #dc3545;
+  color: #fff;
+  bottom: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-delete:hover {
+  background-color: #c82333;
+}
+
 /* Lists & links */
 .link-list {
   list-style: none;
@@ -778,4 +791,38 @@ textarea:focus {
   .hero-actions {
     width: 100%;
   }
+}
+
+/* Access Denied for Admin Page */
+.access-denied {
+    padding: 40px;
+    text-align: center;
+    color: #dc3545;
+}
+
+.access-denied h2 {
+    margin-bottom: 10px;
+}
+
+.link-primary {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.link-primary:hover {
+    text-decoration: underline;
+}
+
+/* Error Message Styling */
+.error-message {
+    padding: 20px;
+    background-color: #ffe6e6;
+    border: 1px solid #dc3545;
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+
+.error-message p {
+    color: #dc3545;
+    margin: 0;
 }
