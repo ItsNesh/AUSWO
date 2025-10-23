@@ -12,6 +12,10 @@ new Vue({
     methods: {
         async login(event) {
             event.preventDefault();
+            const form = (event && event.target && event.target.closest) ? event.target.closest('form') : document.getElementById('login-signup-form');
+            if (form && !form.reportValidity()) {
+                return;
+            }
             const username = document.getElementById('login-signup-username').value;
             const password = document.getElementById('login-signup-password').value;
 

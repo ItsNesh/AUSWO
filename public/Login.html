@@ -83,6 +83,18 @@
   </div>
 
   <script src="/javascripts/Footer.js"></script>
+  <script src="/javascripts/FormValidation.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('login-signup-form');
+      if (form && window.AUSWOFormValidation) {
+        window.AUSWOFormValidation.attachCustomValidity(form, {
+          'login-signup-username': 'Please enter your username.',
+          'login-signup-password': 'Please enter your password.',
+        });
+      }
+    });
+  </script>
   <script src="/javascripts/SessionManagerLoginPage.js"></script>
 </body>
 </html>

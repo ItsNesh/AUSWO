@@ -11,6 +11,13 @@
     async function validateForm(event) {
       event.preventDefault();
 
+      const form = (event && event.target && typeof event.target.closest === 'function')
+        ? event.target.closest('form')
+        : document.getElementById('login-signup-form');
+      if (form && !form.reportValidity()) {
+        return;
+      }
+
       const firstName = document.getElementById('login-signup-first-name').value;
       const lastName = document.getElementById('login-signup-last-name').value;
       const phoneNumber = document.getElementById('login-signup-phonenumber').value;
@@ -172,6 +179,24 @@
   </div>
 
   <script src="/javascripts/Footer.js"></script>
+  <script src="/javascripts/FormValidation.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('login-signup-form');
+      if (form && window.AUSWOFormValidation) {
+        window.AUSWOFormValidation.attachCustomValidity(form, {
+          'login-signup-first-name': 'Please enter your first name.',
+          'login-signup-last-name': 'Please enter your last name.',
+          'login-signup-phonenumber': 'Please enter your phone number.',
+          'login-signup-email': 'Please enter a valid email address.',
+          'login-signup-username': 'Please choose a username.',
+          'login-signup-password': 'Please enter a password.',
+          'login-signup-repeat-password': 'Please confirm your password.',
+          'terms': 'Please agree to the terms to continue.',
+        });
+      }
+    });
+  </script>
   <script src="/javascripts/SessionManager.js"></script>
 </body>
 </html>

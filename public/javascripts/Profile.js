@@ -30,17 +30,32 @@ function editProfile() {
     const currentPhone = profile.phoneNumber || '';
 
     content.innerHTML = `
-        <h2>Edit Profile</h2>
-        <label>Name: <input type="text" id="editName" value="${escapeHTML(currentName)}"></label><br><br>
-        <label>Username: <input type="text" id="editUsername" value="${escapeHTML(currentUserName)}"></label><br><br>
-        <label>Email: <input type="email" id="editEmail" value="${escapeHTML(currentEmail)}"></label><br><br>
-        <label>Phone: <input type="tel" id="editPhone" value="${escapeHTML(currentPhone)}"></label><br><br>
-        <button class="button" onclick="saveProfile()">Save</button>
-        <button class="button" style="margin-left:8px;" onclick="cancelEdit()">Cancel</button>
+        <form id="profile-edit-form" class="profile-edit-form">
+            <h2>Edit Profile</h2>
+            <label>Name: <input type="text" id="editName" value="${escapeHTML(currentName)}" required></label><br><br>
+            <label>Username: <input type="text" id="editUsername" value="${escapeHTML(currentUserName)}" required></label><br><br>
+            <label>Email: <input type="email" id="editEmail" value="${escapeHTML(currentEmail)}" required></label><br><br>
+            <label>Phone: <input type="tel" id="editPhone" value="${escapeHTML(currentPhone)}"></label><br><br>
+            <button class="button" type="button" onclick="saveProfile()">Save</button>
+            <button class="button" type="button" style="margin-left:8px;" onclick="cancelEdit()">Cancel</button>
+        </form>
     `;
+
+    const form = document.getElementById('profile-edit-form');
+    if (form && window.AUSWOFormValidation) {
+        window.AUSWOFormValidation.attachCustomValidity(form, {
+            'editName': 'Please enter your name.',
+            'editUsername': 'Please enter your username.',
+            'editEmail': 'Please enter a valid email address.',
+        });
+    }
 }
 
 async function saveProfile() {
+    const form = document.getElementById('profile-edit-form');
+    if (form && !form.reportValidity()) {
+        return;
+    }
     const newName = document.getElementById("editName").value || '';
     const newEmail = document.getElementById("editEmail").value || '';
     const newUserName = document.getElementById("editUsername").value || '';
