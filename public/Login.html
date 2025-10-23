@@ -1,64 +1,89 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <title>Login Page</title>
-    <link rel="stylesheet" href="/stylesheets/Login.css">
-    <link rel="stylesheet" href="/stylesheets/Global.css">
-    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AUSWO · Log In</title>
+  <link rel="stylesheet" href="/stylesheets/Global.css">
+  <link rel="stylesheet" href="/stylesheets/Login.css">
+  <link rel="stylesheet" href="/stylesheets/Footer.css">
+  <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
 </head>
 <body>
-    <div id="app">
-        <nav class="navbar">
-            <a class="brand" href="/index.html">AUSWO</a>
-            <div class="nav-links" v-if="sessionInfo !== null">
-                <a href="/points-calculator.html">Points Calculator</a>
-                <a href="/Dashboard.html">Dashboard</a>
-                <a href="/Profile.html">Profile</a>
-                <a href="/account.html">Account</a>
-                <a href="/Login.html" v-if="!isLoggedIn">Log In</a>
-                <a href="/auth/logout" v-if="isLoggedIn" @click.prevent="logout">Log Out</a>
-            </div>
-        </nav>
-        <div class="container">
-            <div class="form-side">
-                <main>
-                    <h1>Login Page</h1>
-                    <form id="login-signup-form" @submit.prevent="login">
-                        <div class="form-group">
-                            <label for="login-signup-username">Username:</label>
-                            <br />
-                            <input type="text" id="login-signup-username" name="login-signup-username" placeholder="John_B" required>
-                            <br /><br />
-                        </div>
+  <div id="app" class="page-shell">
+    <nav class="navbar">
+      <a class="brand" href="/index.html">
+        AUSWO
+        <span class="brand-tag">Migration Hub</span>
+      </a>
+      <div class="nav-links" v-if="sessionInfo !== null">
+        <a href="/index.html">Home</a>
+        <a href="/Dashboard.html">Dashboard</a>
+        <a href="/Immigration.html">Immigration</a>
+        <a href="/Profile.html">Profile</a>
+        <a href="/preferences.html">Preferences</a>
+        <a href="/contact.html">Contact</a>
+        <a href="/points-calculator.html">Points Calculator</a>
+        <a href="/account.html">Account</a>
+        <a href="/AdminPage.html">Admin</a>
+        <a href="/Login.html" v-if="!isLoggedIn">Log In</a>
+        <a href="/auth/logout" v-if="isLoggedIn" @click.prevent="logout">Log Out</a>
+      </div>
+    </nav>
 
-                        <div class="form-group">
-                            <label for="login-signup-password">Password:</label>
-                            <br />
-                            <input type="password" id="login-signup-password" name="login-signup-password" required>                
-                            <br /><br />
-                        </div>
+    <main class="page-content">
+      <section class="page-container section auth-section">
+        <div class="auth-grid">
+          <div class="card auth-card">
+            <span class="tag">Sign in</span>
+            <h1>Access your AUSWO account</h1>
+            <p class="muted">
+              Continue tracking your migration journey, save visa preferences, and sync your progress across devices.
+            </p>
+            <form id="login-signup-form" @submit.prevent="login">
+              <div>
+                <label for="login-signup-username">Username</label>
+                <input type="text" id="login-signup-username" name="login-signup-username" placeholder="john.b" required>
+              </div>
+              <div>
+                <label for="login-signup-password">Password</label>
+                <input type="password" id="login-signup-password" name="login-signup-password" placeholder="••••••••" required>
+              </div>
+              <div class="form-footer auth-options">
+                <label class="remember">
+                  <input type="checkbox" value="remember-me" id="remember-me" name="remember-me">
+                  <span>Remember me</span>
+                </label>
+                <a href="/contact.html" class="muted text-small">Need help?</a>
+              </div>
+              <button type="submit" class="btn btn-primary">Log in</button>
+              <button type="button" class="btn btn-outline google-signin-button" @click="loginWithGoogle">
+                <img src="/images/google-icon.svg" alt="" aria-hidden="true">
+                <span>Sign in with Google</span>
+              </button>
+            </form>
+            <p class="auth-footer text-small">
+              Don't have an account? <a href="/Signup.html">Create one now</a>.
+            </p>
+          </div>
 
-                        <div class="form-group checkbox-group">
-                            <input type="checkbox" value="remember-me" id="remember-me" name="remember-me">
-                            <label for="remember-me">Remember Me</label>
-                        </div>
-                        <button type="submit">Login</button>
-                        <a @click="loginWithGoogle" class="google-signin-button">
-                        <img src="https://banner2.cleanpng.com/20180423/gkw/kisspng-google-logo-logo-logo-5ade7dc753b015.9317679115245306313428.jpg" alt="Google Logo">
-                        Sign in with Google
-                    </a>           
-                    </form>
-                    <p>Dont have an account yet? <a href="Signup.html">Sign up</a></p>
-                </main>
-            </div>
-            <div class="image-side">
-                <img src="/images/People-Happy.jpg" alt="Login Illistration">
-            </div>
+          <aside class="auth-illustration">
+            <h2>Plan with confidence</h2>
+            <p>
+              Create watchlists, monitor occupation ceilings, and receive tailored alerts aligned with your goals.
+            </p>
+            <ul class="list-plain">
+              <li class="surface-soft">Personalised migration dashboard</li>
+              <li class="surface-soft">Visa pathway recommendations</li>
+              <li class="surface-soft">Real-time policy notifications</li>
+            </ul>
+          </aside>
         </div>
-    </div>
-    <script src="/javascripts/SessionManagerLoginPage.js"></script>
+      </section>
+    </main>
+  </div>
+
+  <script src="/javascripts/Footer.js"></script>
+  <script src="/javascripts/SessionManagerLoginPage.js"></script>
 </body>
 </html>

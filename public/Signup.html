@@ -1,133 +1,178 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <title>Signup Page</title>
-    <link rel="stylesheet" href="/stylesheets/Signup.css">
-    <link rel="stylesheet" href="/stylesheets/Global.css">
-    <script>
-        async function validateForm(event) {
-            event.preventDefault();
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AUSWO · Create Account</title>
+  <link rel="stylesheet" href="/stylesheets/Global.css">
+  <link rel="stylesheet" href="/stylesheets/Signup.css">
+  <link rel="stylesheet" href="/stylesheets/Footer.css">
+  <script>
+    async function validateForm(event) {
+      event.preventDefault();
 
-            const firstName = document.getElementById('login-signup-first-name').value;
-            const lastName = document.getElementById('login-signup-last-name').value;
-            const phoneNumber = document.getElementById('login-signup-phonenumber').value;
-            const email = document.getElementById('login-signup-email').value;
-            const userName = document.getElementById('login-signup-username').value;
-            const password = document.getElementById('login-signup-password').value;
-            const confirmPassword = document.getElementById('login-signup-repeat-password').value;
+      const firstName = document.getElementById('login-signup-first-name').value;
+      const lastName = document.getElementById('login-signup-last-name').value;
+      const phoneNumber = document.getElementById('login-signup-phonenumber').value;
+      const email = document.getElementById('login-signup-email').value;
+      const userName = document.getElementById('login-signup-username').value;
+      const password = document.getElementById('login-signup-password').value;
+      const confirmPassword = document.getElementById('login-signup-repeat-password').value;
 
-            const errorList = document.getElementById('errorList');
-            errorList.innerHTML = ''; // Clear existing errors
+      const errorList = document.getElementById('errorList');
+      errorList.innerHTML = '';
 
-            if (password !== confirmPassword) {
-                const li = document.createElement('li');
-                li.textContent = 'Passwords do not match!';
-                errorList.appendChild(li);
-                return;
-            }
+      if (password !== confirmPassword) {
+        const li = document.createElement('li');
+        li.textContent = 'Passwords do not match.';
+        errorList.appendChild(li);
+        return;
+      }
 
-            const response = await fetch('/auth/register', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ firstName, lastName, phoneNumber, email, userName, password, confirmPassword })
-            });
+      try {
+        const response = await fetch('/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            firstName,
+            lastName,
+            phoneNumber,
+            email,
+            userName,
+            password,
+            confirmPassword,
+          }),
+        });
 
-            const result = await response.json();
-            if (response.status !== 201) {
-                displayErrors(result.errors);
-            } else {
-                window.location.href = result.redirect; // Redirect to the login page
-            }
+        const result = await response.json();
+        if (response.status !== 201) {
+          displayErrors(result.errors || [{ msg: result.error || 'Registration failed' }]);
+        } else if (result.redirect) {
+          window.location.href = result.redirect;
         }
+      } catch (err) {
+        displayErrors([{ msg: 'Network error. Please try again.' }]);
+      }
+    }
 
-        function displayErrors(errors) {
-            const errorList = document.getElementById('errorList');
-            errors.forEach(error => {
-                const li = document.createElement('li');
-                li.textContent = error.msg;
-                errorList.appendChild(li);
-            });
-        }
-    </script>
+    function displayErrors(errors) {
+      const errorList = document.getElementById('errorList');
+      errors.forEach(error => {
+        const li = document.createElement('li');
+        li.textContent = error.msg;
+        errorList.appendChild(li);
+      });
+    }
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
 </head>
 <body>
+  <div id="app" class="page-shell">
     <nav class="navbar">
-        <a class="brand" href="/index.html">AUSWO</a>
-        <div class="nav-links" v-if="sessionInfo !== null">
-            <a href="/points-calculator.html">Points Calculator</a>
-            <a href="/Dashboard.html">Dashboard</a>
-            <a href="/Profile.html">Profile</a>
-            <a href="/account.html">Account</a>
-            <a href="/Login.html" v-if="!isLoggedIn">Log In</a>
-        </div>
+      <a class="brand" href="/index.html">
+        AUSWO
+        <span class="brand-tag">Migration Hub</span>
+      </a>
+      <div class="nav-links" v-if="sessionInfo !== null">
+        <a href="/index.html">Home</a>
+        <a href="/Dashboard.html">Dashboard</a>
+        <a href="/Immigration.html">Immigration</a>
+        <a href="/Profile.html">Profile</a>
+        <a href="/preferences.html">Preferences</a>
+        <a href="/contact.html">Contact</a>
+        <a href="/points-calculator.html">Points Calculator</a>
+        <a href="/account.html">Account</a>
+        <a href="/AdminPage.html">Admin</a>
+        <a href="/Login.html" v-if="!isLoggedIn">Log In</a>
+        <a href="/auth/logout" v-if="isLoggedIn" @click.prevent="logout">Log Out</a>
+      </div>
     </nav>
-    <div class="container">
-        <div class="form-side">
-            <main>
-                <h1>Sign Up Page</h1>
-                <ul id="errorList" style="color: red; margin-bottom: 20px;"></ul>
-                <form id="login-signup-form" onsubmit="return validateForm(event)"> 
-                    <div class="form-group">
-                        <label for="login-signup-first-name">First Name:</label>
-                        <br />
-                        <input type="text" id="login-signup-first-name" name="login-signup-first-name" placeholder="First Name" required>
-                        <br /><br />
-                    </div>
 
-                        <div class="form-group">
-                            <label for="login-signup-last-name">Last Name:</label>
-                            <br />
-                            <input type="text" id="login-signup-last-name" name="login-signup-last-name" placeholder="Last Name" required>
-                            <br /><br />
-                        </div>
+    <main class="page-content">
+      <section class="page-container section auth-section">
+        <div class="auth-grid">
+          <div class="card auth-card">
+            <span class="tag">Create account</span>
+            <h1>Join AUSWO</h1>
+            <p class="muted">
+              Unlock the full migration toolkit: personalised recommendations, visa shortlists, and real-time updates.
+            </p>
 
-                        <div class="form-group">
-                            <label for="login-signup-phonenumber">Phonenumber:</label>
-                            <br />
-                            <input type="tel" id="login-signup-phonenumber" name="login-signup-phonenumber" placeholder="0403685949" required>
-                            <br /><br />
-                        </div>
+            <ul id="errorList" class="auth-errors"></ul>
 
-                        <div class="form-group">
-                            <label for="login-signup-email">Email:</label>
-                            <br />
-                            <input type="text" id="login-signup-email" name="login-signup-email" placeholder="example@example.com" required>
-                            <br /><br />
-                        </div>
+            <form id="login-signup-form" onsubmit="validateForm(event)">
+              <div class="form-grid">
+                <div>
+                  <label for="login-signup-first-name">First name</label>
+                  <input type="text" id="login-signup-first-name" name="login-signup-first-name" placeholder="Alex" required>
+                </div>
+                <div>
+                  <label for="login-signup-last-name">Last name</label>
+                  <input type="text" id="login-signup-last-name" name="login-signup-last-name" placeholder="Smith" required>
+                </div>
+                <div>
+                  <label for="login-signup-phonenumber">Phone number</label>
+                  <input type="tel" id="login-signup-phonenumber" name="login-signup-phonenumber" placeholder="0403 685 949" required>
+                </div>
+                <div>
+                  <label for="login-signup-email">Email</label>
+                  <input type="email" id="login-signup-email" name="login-signup-email" placeholder="alex@example.com" required>
+                </div>
+              </div>
 
-                        <div class="form-group">
-                            <label for="login-signup-username">Username:</label>
-                            <br />
-                            <input type="text" id="login-signup-username" name="login-signup-username" placeholder="John_B" required>
-                            <br /><br />
-                        </div>
+              <div>
+                <label for="login-signup-username">Username</label>
+                <input type="text" id="login-signup-username" name="login-signup-username" placeholder="alex.smith" required>
+              </div>
 
-                        <div class="form-group">
-                            <label for="login-signup-password">Password:</label>
-                            <br />
-                            <input type="password" id="login-signup-password" name="login-signup-password" required>                
-                            <br /><br />
-                        </div>
+              <div class="form-grid">
+                <div>
+                  <label for="login-signup-password">Password</label>
+                  <input type="password" id="login-signup-password" name="login-signup-password" required>
+                </div>
+                <div>
+                  <label for="login-signup-repeat-password">Confirm password</label>
+                  <input type="password" id="login-signup-repeat-password" name="login-signup-repeat-password" required>
+                </div>
+              </div>
 
-                        <div class="form-group">
-                            <label for="login-signup-repeat-password">Repeat Password:</label>
-                            <br />
-                            <input type="password" id="login-signup-repeat-password" name="login-signup-repeat-password" required>                
-                            <br /><br />
-                        </div>
-                        <button type="submit">Submit</button>           
-                    </form>
-                    <p>Already have an Account? <a href="Login.html">Login</a></p>
-                </main>
+              <div class="auth-options">
+                <label class="remember">
+                  <input type="checkbox" id="terms" required>
+                  <span>I agree to the <a href="/terms-of-service.html">terms</a>.</span>
+                </label>
+              </div>
+
+              <button type="submit" class="btn btn-primary">Create account</button>
+            </form>
+
+            <p class="auth-footer text-small">
+              Already registered? <a href="/Login.html">Sign in instead</a>.
+            </p>
+          </div>
+
+          <aside class="auth-illustration">
+            <h2>Stay in sync</h2>
+            <p>
+              Build visa watchlists, track state nominations, and collaborate with advisors across the AUSWO network.
+            </p>
+            <div class="surface-soft highlight">
+              <strong>Migration preferences</strong>
+              <p class="muted">
+                Set your ideal destination, occupation, and timeline in the preferences hub to get curated insights.
+              </p>
+              <a class="btn btn-outline" href="/preferences.html">View preferences hub</a>
             </div>
-            <div class="image-side">
-                <img src="/images/People-Happy.jpg" alt="Signup Illistration">
+            <div class="image-side" style="margin-top: 1rem;">
+              <img src="/images/People-Happy.jpg" alt="Signup Illustration">
             </div>
+          </aside>
         </div>
-    </div>
-    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
-    <script src="/javascripts/SessionManagerLoginPage.js"></script>
+      </section>
+    </main>
+  </div>
+
+  <script src="/javascripts/Footer.js"></script>
+  <script src="/javascripts/SessionManager.js"></script>
 </body>
 </html>

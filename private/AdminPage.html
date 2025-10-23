@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AUSWO · Admin</title>
+  <link rel="stylesheet" href="/stylesheets/Global.css">
+  <link rel="stylesheet" href="/stylesheets/Footer.css">
+  <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+</head>
+<body>
+  <div id="app" class="page-shell">
+    <nav class="navbar">
+      <a class="brand" href="/index.html">
+        AUSWO
+        <span class="brand-tag">Migration Hub</span>
+      </a>
+      <div class="nav-links" v-if="sessionInfo !== null">
+        <a href="/index.html">Home</a>
+        <a href="/Dashboard.html">Dashboard</a>
+        <a href="/Immigration.html">Immigration</a>
+        <a href="/Profile.html">Profile</a>
+        <a href="/preferences.html">Preferences</a>
+        <a href="/contact.html">Contact</a>
+        <a href="/points-calculator.html">Points Calculator</a>
+        <a href="/account.html">Account</a>
+        <a href="/AdminPage.html">Admin</a>
+        <a href="/Login.html" v-if="!isLoggedIn">Log In</a>
+        <a href="/auth/logout" v-if="isLoggedIn" @click.prevent="logout">Log Out</a>
+      </div>
+    </nav>
+
+    <main class="page-content">
+      <section class="page-container section">
+        <div class="section-header">
+          <div>
+            <span class="tag">Admin</span>
+            <h1 class="section-title">User directory</h1>
+            <p class="section-subtitle">
+              View and audit every account currently stored in the AUSWO database. Search or export data before performing admin tasks.
+            </p>
+          </div>
+          <div class="section-actions">
+            <button class="btn btn-outline" type="button" id="export-users">Export CSV</button>
+          </div>
+        </div>
+
+        <div class="surface" style="margin-bottom: 24px;">
+          <div class="form-grid">
+            <label>
+              Search users
+              <input type="search" id="user-search" placeholder="Search by name, email, or username">
+            </label>
+            <label>
+              Minimum points
+              <input type="number" id="points-filter" min="0" placeholder="All">
+            </label>
+          </div>
+        </div>
+
+        <div class="surface">
+          <div class="table-wrap">
+            <table class="data-table" id="admin-user-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Username</th>
+                  <th>Phone</th>
+                  <th>Visa Option</th>
+                  <th>Points</th>
+                </tr>
+              </thead>
+              <tbody id="admin-user-tbody">
+                <tr>
+                  <td colspan="7" class="table-empty">Loading users…</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="/javascripts/Footer.js"></script>
+  <script>
+    const tableBody = document.getElementById('admin-user-tbody');
+    const searchInput = document.getElementById('user-search');
+    const pointsFilter = document.getElementById('points-filter');
+    const exportBtn = document.getElementById('export-users');
+    let cachedUsers = [];
+
+    function normalizeUsers(payload) {
+      if (Array.isArray(payload)) return payload;
+      if (payload && typeof payload === 'object') {
+        if (Array.isArray(payload.rows)) return payload.rows;
+        if (Array.isArray(payload.data)) return payload.data;
+      }
+      return [];
+    }
+
+    function renderUsers(users) {
+      if (!tableBody) return;
+      if (!Array.isArray(users) || users.length === 0) {
+        tableBody.innerHTML = '<tr><td colspan="7" class="table-empty">No users found.</td></tr>';
+        return;
+      }
+
+      tableBody.innerHTML = '';
+      users.forEach(user => {
+        const tr = document.createElement('tr');
+        const fullName = [user.firstName, user.lastName].filter(Boolean).join(' ').trim();
+        tr.innerHTML = `
+          <td>${user.userID ?? '—'}</td>
+          <td>${fullName || '—'}</td>
+          <td>${user.email ?? '—'}</td>
+          <td>${user.userName ?? '—'}</td>
+          <td>${user.phoneNumber ?? '—'}</td>
+          <td>${user.visaOption ?? '—'}</td>
+          <td>${typeof user.visaPoints === 'number' ? user.visaPoints : '—'}</td>
+        `;
+        tableBody.appendChild(tr);
+      });
+    }
+
+    function applyFilters() {
+      const query = (searchInput?.value || '').trim().toLowerCase();
+      const minPoints = Number(pointsFilter?.value);
+      const filtered = cachedUsers.filter(user => {
+        const points = typeof user.visaPoints === 'number' ? user.visaPoints : null;
+        const matchesPoints = Number.isNaN(minPoints) || minPoints === 0 || (points !== null && points >= minPoints);
+        if (!query) return matchesPoints;
+
+        const fullName = [user.firstName, user.lastName].filter(Boolean).join(' ').toLowerCase();
+        const email = (user.email || '').toLowerCase();
+        const username = (user.userName || '').toLowerCase();
+        const matchesSearch = fullName.includes(query) || email.includes(query) || username.includes(query);
+        return matchesSearch && matchesPoints;
+      });
+      renderUsers(filtered);
+    }
+
+    function exportToCSV() {
+      if (!Array.isArray(cachedUsers) || cachedUsers.length === 0) return;
+      const header = ['userID', 'firstName', 'lastName', 'email', 'userName', 'phoneNumber', 'visaOption', 'visaPoints'];
+      const rows = cachedUsers.map(user =>
+        header
+          .map(key => {
+            const value = user[key] ?? '';
+            const escaped = String(value).replace(/"/g, '""');
+            return `"${escaped}"`;
+          })
+          .join(','),
+      );
+      const csvContent = [header.join(','), ...rows].join('\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `auswo-users-${Date.now()}.csv`;
+      link.click();
+      URL.revokeObjectURL(link.href);
+    }
+
+    fetch('/api/users')
+      .then(async res => {
+        if (!res.ok) throw new Error(`Failed to load users: ${res.status}`);
+        const payload = await res.json();
+        cachedUsers = normalizeUsers(payload);
+        renderUsers(cachedUsers);
+      })
+      .catch(err => {
+        console.error('Failed to load users', err);
+        cachedUsers = [];
+        renderUsers([]);
+        const message = document.createElement('div');
+        message.className = 'alert surface-soft';
+        message.innerHTML = `<strong>Heads up:</strong> We could not load users. ${err.message || ''}`;
+        tableBody.parentElement?.parentElement?.insertAdjacentElement('beforebegin', message);
+      });
+
+    searchInput?.addEventListener('input', () => {
+      window.clearTimeout(window.__adminSearchDebounce);
+      window.__adminSearchDebounce = window.setTimeout(applyFilters, 150);
+    });
+    pointsFilter?.addEventListener('input', applyFilters);
+    exportBtn?.addEventListener('click', exportToCSV);
+
+    new Vue({
+      el: '#app',
+      data: {
+        isLoggedIn: false,
+        sessionInfo: null,
+        isAdmin: false,
+      },
+      mounted() {
+        this.checkLoginState();
+      },
+      methods: {
+        async checkLoginState() {
+          try {
+            const response = await fetch('/auth/session-info');
+            if (!response.ok) throw new Error('Failed to fetch session info');
+            const data = await response.json();
+            this.isLoggedIn = data.isLoggedIn;
+            this.sessionInfo = data;
+            this.isAdmin = data.isAdmin;
+            if (data.isLoggedIn && data.userId) {
+              localStorage.setItem('userID', data.userId);
+            } else if (!data.isLoggedIn) {
+              localStorage.removeItem('userID');
+            }
+          } catch (error) {
+            console.error('Error fetching session info:', error);
+            this.sessionInfo = 'No session information available';
+          }
+        },
+        logout() {
+          fetch('/auth/logout')
+            .then(response => {
+              if (response.ok) {
+                localStorage.removeItem('token');
+                this.isLoggedIn = false;
+                this.isAdmin = false;
+                window.location.href = '/Login.html';
+              } else {
+                console.error('Logout failed');
+              }
+            })
+            .catch(error => console.error('Error during logout:', error));
+        },
+      },
+    });
+  </script>
+</body>
+</html>

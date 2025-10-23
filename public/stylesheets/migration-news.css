@@ -1,0 +1,123 @@
+.news-hero {
+  position: relative;
+  overflow: hidden;
+}
+
+.news-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at top right, rgba(0, 180, 216, 0.4), transparent 45%),
+    radial-gradient(circle at bottom left, rgba(233, 137, 28, 0.4), transparent 50%);
+  opacity: 0.8;
+  pointer-events: none;
+}
+
+.news-hero h1 {
+  margin-bottom: 16px;
+}
+
+.news-hero .hero-actions {
+  margin-top: 24px;
+}
+
+.news-grid {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.news-card {
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+
+.news-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+}
+
+.news-card .news-card-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(0, 212, 126, 0.12);
+  color: var(--color-mint);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.news-card h3 {
+  margin: 0;
+  font-size: 1.15rem;
+  color: var(--color-navy);
+}
+
+.news-card p {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.news-card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: auto;
+  color: var(--color-muted);
+  font-size: 0.85rem;
+}
+
+.news-card-meta span::before {
+  content: '•';
+  margin: 0 6px 0 2px;
+  color: rgba(6, 35, 61, 0.2);
+}
+
+.news-card-meta span:first-child::before {
+  content: '';
+  margin: 0;
+}
+
+.news-empty {
+  text-align: center;
+  padding: 32px;
+  color: var(--color-muted);
+}
+
+.view-all-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 24px;
+}
+
+.btn-view-all {
+  background: transparent;
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  padding: 10px 18px;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color var(--transition), color var(--transition);
+}
+
+.btn-view-all:hover {
+  border-color: var(--color-cyan);
+  color: var(--color-navy);
+}
+
+@media (max-width: 720px) {
+  .news-card {
+    padding: 18px;
+  }
+}

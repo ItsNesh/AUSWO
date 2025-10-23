@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AUSWO · Quick News</title>
+  <title>AUSWO · State Quick News</title>
   <link rel="stylesheet" href="/stylesheets/Global.css">
   <link rel="stylesheet" href="/stylesheets/Footer.css">
   <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
@@ -34,14 +34,14 @@
       <section class="page-container section">
         <div class="section-header">
           <div>
-            <span class="tag">Briefings</span>
-            <h1 class="section-title">Quick news overview</h1>
+            <span class="tag">States & Territories</span>
+            <h1 class="section-title">Nomination alerts</h1>
             <p class="section-subtitle">
-              Short, sharp migration updates delivered in under a minute. Perfect for a daily check-in.
+              Track state nomination updates at a glance. Refresh regularly for seat allocations and invitation rounds.
             </p>
           </div>
           <div class="section-actions">
-            <a class="btn btn-primary" href="/migration-news.html">Full articles</a>
+            <a class="btn btn-outline" href="/migration-news.html">Read detailed coverage</a>
           </div>
         </div>
         <div class="card">
@@ -51,13 +51,14 @@
     </main>
   </div>
 
+  <script src="/javascripts/Footer.js"></script>
   <script>
     function renderQuickNews(items) {
       const container = document.getElementById('quick-news-list');
       if (!container) return;
       container.innerHTML = '';
       if (!Array.isArray(items) || items.length === 0) {
-        container.innerHTML = '<div class="table-empty">No quick news for today.</div>';
+        container.innerHTML = '<div class="table-empty">No state updates yet.</div>';
         return;
       }
       items.forEach(item => {
@@ -75,8 +76,49 @@
       .then(res => (res.ok ? res.json() : []))
       .then(renderQuickNews)
       .catch(err => console.error('Failed to load quick news', err));
+
+    new Vue({
+      el: '#app',
+      data: {
+        isLoggedIn: false,
+        sessionInfo: null,
+        isAdmin: false,
+      },
+      mounted() {
+        this.checkLoginState();
+      },
+      methods: {
+        async checkLoginState() {
+          try {
+            const response = await fetch('/auth/session-info');
+            if (!response.ok) throw new Error('Failed to fetch session info');
+            const data = await response.json();
+            this.isLoggedIn = data.isLoggedIn;
+            this.sessionInfo = data;
+            this.isAdmin = data.isAdmin;
+          } catch (error) {
+            console.error('Error fetching session info:', error);
+            this.sessionInfo = 'No session information available';
+          }
+        },
+        logout() {
+          fetch('/auth/logout')
+            .then(response => {
+              if (response.ok) {
+                localStorage.removeItem('token');
+                this.isLoggedIn = false;
+                this.isAdmin = false;
+                window.location.href = '/Login.html';
+              } else {
+                throw new Error('Logout failed');
+              }
+            })
+            .catch(error => {
+              console.error('Error during logout:', error);
+            });
+        },
+      },
+    });
   </script>
-  <script src="/javascripts/Footer.js"></script>
-  <script src="/javascripts/SessionManager.js"></script>
 </body>
 </html>

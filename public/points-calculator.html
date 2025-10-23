@@ -5,28 +5,47 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Points Calculator</title>
   <link rel="stylesheet" href="/stylesheets/Global.css" />
+  <link rel="stylesheet" href="/stylesheets/Footer.css" />
   <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
 </head>
 <body>
-  <div id="app">
+  <div id="app" class="page-shell">
     <nav class="navbar">
-      <a class="brand" href="/index.html">AUSWO</a>
+      <a class="brand" href="/index.html">
+        AUSWO
+        <span class="brand-tag">Migration Hub</span>
+      </a>
       <div class="nav-links" v-if="sessionInfo !== null">
-        <a href="/points-calculator.html">Points Calculator</a>
+        <a href="/index.html">Home</a>
         <a href="/Dashboard.html">Dashboard</a>
+        <a href="/Immigration.html">Immigration</a>
         <a href="/Profile.html">Profile</a>
+        <a href="/preferences.html">Preferences</a>
+        <a href="/contact.html">Contact</a>
+        <a href="/points-calculator.html">Points Calculator</a>
         <a href="/account.html">Account</a>
+        <a href="/AdminPage.html">Admin</a>
         <a href="/Login.html" v-if="!isLoggedIn">Log In</a>
         <a href="/auth/logout" v-if="isLoggedIn" @click.prevent="logout">Log Out</a>
       </div>
     </nav>
-    <main class="page-container">
-      <h1>Points Calculator</h1>
-      <section id="calc" v-pre>
-        <div id="status" style="margin:8px 0;color:#666;"></div>
-        <div id="step-visa" style="display:block;"></div>
-        <div id="step-categories" style="display:none;"></div>
-        <div id="step-summary" style="display:none;"></div>
+    <main class="page-content">
+      <section class="page-container section">
+        <div class="section-header">
+          <div>
+            <span class="tag">Calculator</span>
+            <h1 class="section-title">Points calculator</h1>
+            <p class="section-subtitle">
+              Choose your visa stream, answer each category, and we will keep your latest invitation score on file.
+            </p>
+          </div>
+        </div>
+        <div id="calc" class="surface" v-pre>
+          <div id="status" class="muted"></div>
+          <div id="step-visa"></div>
+          <div id="step-categories" style="display:none;"></div>
+          <div id="step-summary" style="display:none;"></div>
+        </div>
       </section>
     </main>
   </div>
@@ -55,15 +74,20 @@
 
     function renderVisaStep(container, visas, onNext) {
       const html = `
-        <h2>Select a Visa</h2>
-        <div style="margin:8px 0 16px 0;">
-          ${visas.map((v, i) => `
-            <label style="display:block;margin:4px 0;">
-              <input type="radio" name="visa" value="${i}"> ${v.name}
-            </label>
-          `).join('')}
+        <h2>Select a visa</h2>
+        <div class="option-list">
+          ${visas
+            .map(
+              (v, i) => `
+                <label class="option-item">
+                  <input type="radio" name="visa" value="${i}">
+                  <span>${v.name}</span>
+                </label>
+              `,
+            )
+            .join('')}
         </div>
-        <button id="visa-next">Next</button>
+        <button id="visa-next" class="btn btn-primary">Next</button>
       `;
       container.innerHTML = html;
       container.querySelector('#visa-next').addEventListener('click', () => {
@@ -79,24 +103,32 @@
       let i = 0;
       const selections = new Array(panels.length).fill(null); // store selected option index per panel
       const nav = document.createElement('div');
+      nav.className = 'form-footer';
       const panelWrap = document.createElement('div');
+      panelWrap.className = 'calculator-panel';
       const nextBtn = document.createElement('button');
       const backBtn = document.createElement('button');
       nextBtn.textContent = 'Next';
       backBtn.textContent = 'Back';
-      backBtn.style.marginRight = '8px';
+      nextBtn.className = 'btn btn-primary';
+      backBtn.className = 'btn btn-outline';
 
       function renderPanel() {
         const cat = panels[i];
         panelWrap.innerHTML = `
           <h2>${cat.name}</h2>
-          ${cat.description ? `<p style="color:#666;margin-top:6px;">${cat.description}</p>` : ''}
-          <div>
-            ${cat.options.map((opt, oi) => `
-              <label style="display:block;margin:4px 0;">
-                <input type="radio" name="cat_${i}" value="${oi}"> ${opt.label} (${opt.points} pts)
-              </label>
-            `).join('')}
+          ${cat.description ? `<p class="muted">${cat.description}</p>` : ''}
+          <div class="option-list">
+            ${cat.options
+              .map(
+                (opt, oi) => `
+                  <label class="option-item">
+                    <input type="radio" name="cat_${i}" value="${oi}">
+                    <span>${opt.label} <strong>(${opt.points} pts)</strong></span>
+                  </label>
+                `,
+              )
+              .join('')}
           </div>
         `;
         // re-apply prior selection if navigating back
@@ -179,7 +211,7 @@
                 <p>Visa: ${visaLabel}</p>
                 <p>Total points: <strong>${total}</strong></p>
                 <p>Saved to your account.</p>
-                <a href="/account.html">Go to Account</a>
+                <a class="btn btn-primary" href="/account.html">Go to account</a>
               `;
             } catch (e) {
               alert(e.message || 'Failed to save result.');
@@ -212,6 +244,7 @@
 
     scheduleCalculatorStart();
   </script>
+  <script src="/javascripts/Footer.js"></script>
   <script src="/javascripts/SessionManager.js"></script>
 </body>
 </html>

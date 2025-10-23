@@ -1,62 +1,78 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Profile</title>
-    <link rel="stylesheet" href="/stylesheets/Global.css">
-    <link rel="stylesheet" href="/stylesheets/Profile.css">
-    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AUSWO · Profile</title>
+  <link rel="stylesheet" href="/stylesheets/Global.css">
+  <link rel="stylesheet" href="/stylesheets/Profile.css">
+  <link rel="stylesheet" href="/stylesheets/Footer.css">
+  <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
 </head>
 <body>
-    <div id="app">
-        <nav class="navbar">
-            <a class="brand" href="/index.html">AUSWO</a>
-            <div class="nav-links" v-if="sessionInfo !== null">
-                <a href="/points-calculator.html">Points Calculator</a>
-                <a href="/Dashboard.html">Dashboard</a>
-                <a href="/Profile.html">Profile</a>
-                <a href="/account.html">Account</a>
-                <a href="/Login.html" v-if="!isLoggedIn">Log In</a>
-                <a href="/auth/logout" v-if="isLoggedIn" @click.prevent="logout">Log Out</a>
+  <div id="app" class="page-shell">
+    <nav class="navbar">
+      <a class="brand" href="/index.html">
+        AUSWO
+        <span class="brand-tag">Migration Hub</span>
+      </a>
+      <div class="nav-links" v-if="sessionInfo !== null">
+        <a href="/index.html">Home</a>
+        <a href="/Dashboard.html">Dashboard</a>
+        <a href="/Immigration.html">Immigration</a>
+        <a href="/Profile.html">Profile</a>
+        <a href="/preferences.html">Preferences</a>
+        <a href="/contact.html">Contact</a>
+        <a href="/points-calculator.html">Points Calculator</a>
+        <a href="/account.html">Account</a>
+        <a href="/AdminPage.html">Admin</a>
+        <a href="/Login.html" v-if="!isLoggedIn">Log In</a>
+        <a href="/auth/logout" v-if="isLoggedIn" @click.prevent="logout">Log Out</a>
+      </div>
+    </nav>
+
+    <main class="page-content">
+      <section class="page-container section">
+        <div class="section-header">
+          <div>
+            <span class="tag">Profile</span>
+            <h1 class="section-title">Welcome back</h1>
+            <p class="section-subtitle">
+              Review and keep your details current so we can guide you with the best migration recommendations.
+            </p>
+          </div>
+        </div>
+
+        <div class="grid-two">
+          <div class="card profile-card">
+            <div class="profile-info" id="basic-info">
+              <h2 id="userName">Loading...</h2>
+              <p id="userEmail" class="muted"></p>
+              <p id="userUsername" class="muted"></p>
+              <p id="userPhone" class="muted"></p>
             </div>
-        </nav>
 
-        <main class="page-container">
-            <h1>User Profile</h1>
-            <header class="header">
-                <div class="info-area">
-                    <div class="basic-info" id="basic-info">
-                        <h3 id="userName">Loading...</h3>
-                        <p id="userEmail"></p>
-                        <p id="userUsername"></p>
-                        <p id="userPhone"></p>
-                    </div>
+            <div class="profile-actions">
+              <button class="btn btn-primary" type="button" onclick="editProfile()">Edit profile</button>
+              <a class="btn btn-outline" href="/points-calculator.html">Points calculator</a>
+            </div>
+          </div>
 
-                    <button class="button" onclick="editProfile()">Edit</button>
-                    <a href="../points-calculator.html"><button class="button">Points Calculator</button></a>
-                </div>
+          <div class="surface-soft" id="main-content">
+            Welcome to your new profile page!
+          </div>
+        </div>
 
-                <div class="dropdown">
-                    <button onclick="toggleDropdown()">☰</button>
-                    <div id="dropdownMenu" class="dropdown-content">
-                        <a href="#">Settings</a>
-                        <a href="#">Logout</a>
-                    </div>
-                </div>
-            </header>
+        <section id="account-points" class="surface profile-points">
+          <h2 class="card-title">Visa summary</h2>
+          <div id="points-content">Loading...</div>
+        </section>
+      </section>
+    </main>
+  </div>
 
-            <section class="content-area" id="main-content">
-                Welcome to your New Profile Page!
-            </section>
-
-            <section id="account-points" style="margin-top:16px;">
-                <div id="points-content">Loading...</div>
-            </section>
-        </main>
-    </div>
-    <script src="/javascripts/Profile.js"></script>
-    <script src="/javascripts/SessionManager.js"></script>
+  <script src="/javascripts/Profile.js"></script>
+  <script src="/javascripts/Footer.js"></script>
+  <script src="/javascripts/SessionManager.js"></script>
 </body>
 </html>

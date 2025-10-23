@@ -1,36 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <title>Dashboard</title>
-    <link rel="stylesheet" href="/stylesheets/Global.css">
-    <link rel="stylesheet" href="/stylesheets/Dashboard.css">
-    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AUSWO · Dashboard</title>
+  <link rel="stylesheet" href="/stylesheets/Global.css">
+  <link rel="stylesheet" href="/stylesheets/Footer.css">
+  <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
 </head>
-
 <body>
-    <div id="app">
+    <div id="app" class="page-shell">
         <nav class="navbar">
-            <a class="brand" href="/index.html">AUSWO</a>
-            <div class="nav-links" v-if="sessionInfo !== null">
-                <a href="/points-calculator.html">Points Calculator</a>
-                <a href="/Dashboard.html">Dashboard</a>
-                <a href="/Profile.html">Profile</a>
-                <a href="/account.html">Account</a>
-                <a href="/Login.html" v-if="!isLoggedIn">Log In</a>
-                <a href="/auth/logout" v-if="isLoggedIn" @click.prevent="logout">Log Out</a>
-            </div>
+        <a class="brand" href="/index.html">
+            AUSWO
+            <span class="brand-tag">Migration Hub</span>
+        </a>
+        <div class="nav-links" v-if="sessionInfo !== null">
+            <a href="/index.html">Home</a>
+            <a href="/Dashboard.html">Dashboard</a>
+            <a href="/Immigration.html">Immigration</a>
+            <a href="/Profile.html">Profile</a>
+            <a href="/preferences.html">Preferences</a>
+            <a href="/contact.html">Contact</a>
+            <a href="/points-calculator.html">Points Calculator</a>
+            <a href="/account.html">Account</a>
+            <a href="/AdminPage.html">Admin</a>
+            <a href="/Login.html" v-if="!isLoggedIn">Log In</a>
+            <a href="/auth/logout" v-if="isLoggedIn" @click.prevent="logout">Log Out</a>
+        </div>
         </nav>
 
-        <main class="dashboard-container">
-            <h1>Dashboard</h1>
-            <div id="dashboard-content" class="dashboard-content">
+        <main class="page-content">
+        <section class="page-container section">
+            <div class="section-header">
+            <div>
+                <span class="tag">Overview</span>
+                <h1 class="section-title">Your AUSWO dashboard</h1>
+                <p class="section-subtitle">
+                A curated collection of shortcuts, alerts, and services tailored to your migration journey.
+                </p>
             </div>
+            </div>
+            <div id="dashboard-content" class="content-grid two"></div>
+        </section>
         </main>
     </div>
-    
-    <script src="/javascripts/Dashboard.js"></script>
+
+    <script src="/javascripts/dashboard.js"></script>
+    <script src="/javascripts/Footer.js"></script>
     <script src="/javascripts/SessionManager.js"></script>
 </body>
 </html>

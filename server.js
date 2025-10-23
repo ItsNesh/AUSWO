@@ -320,6 +320,12 @@ const friendlyRedirects = {
   '/Login': './public/Login.html',
   '/signup': './public/Signup.html',
   '/Signup': './public/Signup.html',
+  '/contact': './public/contact.html',
+  '/Contact': './public/contact.html',
+  '/preferences': './public/preferences.html',
+  '/Preferences': './public/preferences.html',
+  '/admin': '/AdminPage.html',
+  '/Admin': '/AdminPage.html',
   '/home': '/index.html',
   '/index': '/index.html',
   '/': '/index.html',
@@ -328,6 +334,10 @@ const friendlyRedirects = {
 Object.entries(friendlyRedirects).forEach(([from, to]) => {
   app.get(from, (req, res) => res.redirect(to));
   app.get(from + '/', (req, res) => res.redirect(to));
+});
+
+app.get('/AdminPage.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'private', 'AdminPage.html'));
 });
 
 // Extensionless redirects for root pages, eg. /account -> /account.html

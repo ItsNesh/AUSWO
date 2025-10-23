@@ -1,6 +1,8 @@
 var express = require('express');
 var router = express.Router();
 
-// Dashboard routes can be added here if needed
+router.get('/Immigration', (req, res) => {
+    res.sendFile('Immigration.html', {root: './public'});
+});
 
 module.exports = router;
