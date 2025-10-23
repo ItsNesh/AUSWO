@@ -11,11 +11,11 @@ VALUES
 ('Admin', '{"can_post_news": true, "can_manage_users": true}'),
 ('User', '{"can_post_news": false, "can_manage_users": false}');
 
--- INSERT INTO UserRoles (userID, roleID)
--- VALUES
--- (1, 1),  -- Alice -> Admin
--- (2, 2),  -- Bob -> User
--- (3, 2);  -- Charlie -> User
+INSERT INTO UserRoles (userID, roleID)
+VALUES
+(1, 1),  -- Alice -> Admin
+(2, 2),  -- Bob -> User
+(3, 2);  -- Charlie -> User
 
 INSERT INTO QuickNews (title, body, authorID)
 VALUES
