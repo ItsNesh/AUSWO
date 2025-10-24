@@ -4,6 +4,7 @@ new Vue({
         isLoggedIn: false,
         sessionInfo: null,
         isAdmin: false,
+        success: '',
         errors: {
             general: ''
         }
@@ -57,7 +58,13 @@ new Vue({
                     return;
                 }
 
-                alert('Message sent successfully!');
+                this.success = result.message; // "Message sent successfully"
+
+                setTimeout(() => {
+                    this.success = '';
+                }, 5000);
+
+                this.errors.general = '';      // clear errors if any
                 document.getElementById('contact-form').reset();
             } catch (error) {
                 console.error('Error sending message:', error);

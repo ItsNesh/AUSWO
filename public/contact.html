@@ -81,6 +81,9 @@
               <div class="form-footer">
                 <button type="submit" class="btn btn-primary">Submit</button>
               </div>
+              <div v-if="success" class="success-message">
+                {{ success }}
+              </div>
               <p class="helper-text">We will reply within 24 hours. Urgent enquiries? Call the number below.</p>
             </form>
           </div>
