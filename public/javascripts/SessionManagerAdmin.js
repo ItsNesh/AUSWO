@@ -5,12 +5,14 @@ new Vue({
         sessionInfo: null,
         isAdmin: false,
         users: [],
+        contacts: [],
         loading: true,
         error: null
     },
     mounted() {
         this.checkLoginState();
         this.fetchUsers();
+        this.fetchContactMessages();
     },
     methods: {
         async checkLoginState() {
@@ -82,6 +84,48 @@ new Vue({
             } catch (error) {
                 console.error('Error removing user:', error);
                 alert('Failed to remove user. Please try again.');
+            }
+        },
+        async fetchContactMessages() {
+            try {
+                const response = await fetch('/admin/contact-messages');
+
+                if (response.status === 403) {
+                    this.error = 'Access denied. You do not have permission to view this page.';
+                    this.isAdmin = false;
+                    return;
+                }
+            
+                if (!response.ok) throw new Error('Failed to fetch contact messages');
+
+                const data = await response.json();
+                this.contacts = data.messages;
+            } catch (error) {
+                console.error('Error fetching contact messages:', error);
+                this.error = 'An error occurred while fetching contact messages. Please refresh the page or try again later.';
+            }
+        },
+        async removeContactMessage(contact) {
+            if (!confirm(`Are you sure you want to remove this message from ${contact.firstName} ${contact.lastName}?`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/admin/contact-messages/${contact.id}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.status === 403) {
+                    alert('Access denied. You do not have permission to perform this action.');
+                    return;
+                }
+                if (!response.ok) throw new Error('Failed to remove contact message');
+
+                this.contacts = this.contacts.filter(c => c.id !== contact.id);
+                alert('Contact message removed successfully');
+            } catch (error) {
+                console.error('Error removing contact message:', error);
+                alert('Failed to remove contact message. Please try again.');
             }
         },
         logout() {

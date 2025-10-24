@@ -60,3 +60,7 @@ INSERT INTO ScrapedOccupations (JobTitle, CorporateName, PositionType, Location,
 ('Hotel Receptionist', 'Sunrise Hotels', 'Full-time', 'Gold Coast, QLD', 'Manage front desk, bookings, and customer inquiries. Experience preferred.'),
 ('Warehouse Operator', 'LogiTech', 'Full-time', 'Melbourne, VIC', 'Manage inventory, loading, and shipping operations in a warehouse.');
 
+INSERT INTO ContactMessages (userID, topic, messageBody) VALUES
+(3, 'Technical Issue', 'I am experiencing issues with something. Please help.');
+
+

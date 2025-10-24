@@ -99,22 +99,27 @@
             <table class="data-table" id="contact-table">
               <thead>
                 <tr>
-                  <th>Message ID</th>
+                  <th>Ticket ID</th>
+                  <th>User ID</th>
                   <th>Full Name</th>
                   <th>Email</th>
                   <th>Enquiry Topic</th>
-                  <th>Date Sent</th>
                   <th>Message</th>
+                  <th>Date Sent</th>
                 </tr>
               </thead>
               <tbody id="contact-tbody">
                 <tr v-for="contact in contacts" :key="contact.id">
                   <td>{{ contact.id }}</td>
-                  <td>{{ contact.fullName }}</td>
+                  <td>{{ contact.userID }}</td>
+                  <td>{{ contact.firstName }} {{ contact.lastName }}</td>
                   <td>{{ contact.email }}</td>
-                  <td>{{ contact.enquiryTopic }}</td>
-                  <td>{{ contact.dateSent }}</td>
-                  <td>{{ contact.message }}</td>
+                  <td>{{ contact.topic }}</td>
+                  <td>{{ contact.messageBody }}</td>
+                  <td>{{ new Date(contact.dateSent).toLocaleString() }}</td>
+                  <td>
+                    <button @click="removeContactMessage(message)" class="btn-delete">Remove</button>
+                  </td>
                 </tr>
               </tbody>
             </table>

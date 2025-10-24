@@ -26,7 +26,6 @@ router.get('/all', requireAdmin, async (req, res) => {
     }
 });
 
-
 // Remove user
 router.delete('/:id', requireAdmin, async (req, res) => {
     const { id } = req.params;
@@ -55,6 +54,43 @@ router.delete('/:id', requireAdmin, async (req, res) => {
         res.status(500).send({ error: 'Internal server error' });
     } finally {
         connection.release();
+    }
+});
+
+// Fetch Contact Messages
+router.get('/contact-messages', requireAdmin, async (req, res) => {
+    try {
+        const [messages] = await pool.query(
+            `SELECT
+                cm.messageID as id,
+                cm.topic as topic,
+                cm.messageBody as messageBody,
+                cm.dateSent as dateSent,
+                u.userID as userID,
+                u.firstName as firstName,
+                u.lastName as lastName,
+                u.email as email
+            FROM ContactMessages cm
+            LEFT JOIN Users u ON cm.userID = u.userID
+            ORDER BY cm.dateSent ASC
+        `);
+        res.json({ messages });
+    } catch (error) {
+        console.error('Error fetching contact messages:', error);
+        res.status(500).send({ error: 'Internal server error' });
+    }
+});
+
+// Remove Contact Message
+router.delete('/contact-messages/:id', requireAdmin, async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        await pool.query('DELETE FROM ContactMessages WHERE messageID = ?', [id]);
+        res.sendStatus(200);
+    } catch (error) {
+        console.error('Error removing contact message:', error);
+        res.status(500).send({ error: 'Internal server error' });
     }
 });
 
