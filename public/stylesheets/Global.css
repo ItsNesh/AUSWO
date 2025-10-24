@@ -791,6 +791,10 @@ textarea:focus {
   .hero-actions {
     width: 100%;
   }
+
+  .radio-label span {
+        font-size: 13px;
+  }
 }
 
 /* Access Denied for Admin Page */
@@ -825,4 +829,35 @@ textarea:focus {
 .error-message p {
     color: #dc3545;
     margin: 0;
+}
+
+/* Occupation List Page Specific */
+.radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.radio-label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 6px;
+  transition: background-color 0.2s;
+}
+
+.radio-label:hover {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+.radio-label input[type="radio"] {
+  margin-right: 10px;
+  cursor: pointer;
+  width: 18px;
+  height: 18px;
+}
+
+.radio-label span {
+  font-size: 14px;
 }
