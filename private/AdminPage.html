@@ -106,6 +106,7 @@
                   <th>Enquiry Topic</th>
                   <th>Message</th>
                   <th>Date Sent</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody id="contact-tbody">
@@ -118,7 +119,7 @@
                   <td>{{ contact.messageBody }}</td>
                   <td>{{ new Date(contact.dateSent).toLocaleString() }}</td>
                   <td>
-                    <button @click="removeContactMessage(message)" class="btn-delete">Remove</button>
+                    <button @click="removeContactMessage(contact)" class="btn-delete">Remove</button>
                   </td>
                 </tr>
               </tbody>
