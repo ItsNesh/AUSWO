@@ -544,7 +544,8 @@ textarea:focus {
 
 .option-item {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
+  justify-content: space-between;
   gap: 12px;
   padding: 12px 14px;
   border: 1px solid var(--color-border);
@@ -560,8 +561,10 @@ textarea:focus {
   box-shadow: 0 4px 12px rgba(0, 180, 216, 0.2);
 }
 
-.option-item input {
+.option-item input[type="radio"] {
   margin-top: 4px;
+  width: auto;
+  flex-shrink: 0;
 }
 
 .calculator-panel {

@@ -93,6 +93,33 @@
         </div>
       </section>
 
+      <section v-if="!loading" class="page-container section">
+        <div class="surface">
+          <div class="table-wrap">
+            <table class="data-table" id="contact-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Full Name</th>
+                  <th>Email</th>
+                  <th>Enquiry Topic</th>
+                  <th>Message</th>
+                </tr>
+              </thead>
+              <tbody id="contact-tbody">
+                <tr v-for="contact in contacts" :key="contact.id">
+                  <td>{{ contact.id }}</td>
+                  <td>{{ contact.fullName }}</td>
+                  <td>{{ contact.email }}</td>
+                  <td>{{ contact.enquiryTopic }}</td>
+                  <td>{{ contact.message }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
       <section class="page-container section">
         <form class="card" id="preferences-form">
           <h2 class="card-title">Post Quick News</h2>

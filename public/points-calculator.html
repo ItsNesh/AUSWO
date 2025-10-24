@@ -80,8 +80,8 @@
             .map(
               (v, i) => `
                 <label class="option-item">
-                  <input type="radio" name="visa" value="${i}">
                   <span>${v.name}</span>
+                  <input type="radio" name="visa" value="${i}">
                 </label>
               `,
             )
@@ -123,8 +123,8 @@
               .map(
                 (opt, oi) => `
                   <label class="option-item">
-                    <input type="radio" name="cat_${i}" value="${oi}">
                     <span>${opt.label} <strong>(${opt.points} pts)</strong></span>
+                    <input type="radio" name="cat_${i}" value="${oi}">
                   </label>
                 `,
               )

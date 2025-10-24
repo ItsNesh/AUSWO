@@ -367,8 +367,6 @@ app.get('/api/occupations/:listType', async (req, res) => {
 
 // Redirects
 const friendlyRedirects = {
-  '/immigration': './public/Immigration.html',
-  '/Immigration': './public/Immigration.html',
   '/profile': './public/Profile.html',
   '/Profile': './public/Profile.html',
   '/login': './public/Login.html',
@@ -377,8 +375,6 @@ const friendlyRedirects = {
   '/Signup': './public/Signup.html',
   '/contact': './public/contact.html',
   '/Contact': './public/contact.html',
-  '/preferences': './public/preferences.html',
-  '/Preferences': './public/preferences.html',
   '/home': '/index.html',
   '/index': '/index.html',
   '/': '/index.html',
