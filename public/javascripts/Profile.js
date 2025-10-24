@@ -32,22 +32,22 @@ function editProfile() {
     content.innerHTML = `
         <h2>Edit Profile</h2>
         <div id="profile-error" class="general-error" style="display: none;"></div>
-        <label>Name:
-            <input type="text" id="editName" value="${escapeHTML(currentName)}" oninput="clearFieldError('editName')" onblur="validateField('editName')" required>
-            <span class="field-error" id="editName-error"></span>
-        </label><br><br>
-        <label>Username:
-            <input type="text" id="editUsername" value="${escapeHTML(currentUserName)}" oninput="clearFieldError('editUsername')" onblur="validateField('editUsername')" required minlength="3" maxlength="30" pattern="^\\w+$">
-            <span class="field-error" id="editUsername-error"></span>
-        </label><br><br>
-        <label>Email:
-            <input type="email" id="editEmail" value="${escapeHTML(currentEmail)}" oninput="clearFieldError('editEmail')" onblur="validateField('editEmail')" required>
-            <span class="field-error" id="editEmail-error"></span>
-        </label><br><br>
-        <label>Phone:
-            <input type="tel" id="editPhone" value="${escapeHTML(currentPhone)}" oninput="clearFieldError('editPhone')" onblur="validateField('editPhone')" required>
-            <span class="field-error" id="editPhone-error"></span>
-        </label><br><br>
+        <label>Name:</label><br>
+        <input type="text" id="editName" value="${escapeHTML(currentName)}" oninput="clearFieldError('editName')" onblur="validateField('editName')" required>
+        <span class="field-error" id="editName-error"></span>
+        <br><br>
+        <label>Username:</label><br>
+        <input type="text" id="editUsername" value="${escapeHTML(currentUserName)}" oninput="clearFieldError('editUsername')" onblur="validateField('editUsername')" required minlength="3" maxlength="30" pattern="^\\w+$">
+        <span class="field-error" id="editUsername-error"></span>
+        <br><br>
+        <label>Email:</label><br>
+        <input type="email" id="editEmail" value="${escapeHTML(currentEmail)}" oninput="clearFieldError('editEmail')" onblur="validateField('editEmail')" required>
+        <span class="field-error" id="editEmail-error"></span>
+        <br><br>
+        <label>Phone:</label><br>
+        <input type="tel" id="editPhone" value="${escapeHTML(currentPhone)}" oninput="clearFieldError('editPhone')" onblur="validateField('editPhone')" required>
+        <span class="field-error" id="editPhone-error"></span>
+        <br><br>
         <button class="button" onclick="saveProfile()">Save</button>
         <button class="button" style="margin-left:8px;" onclick="cancelEdit()">Cancel</button>
     `;
