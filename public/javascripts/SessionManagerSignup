@@ -114,7 +114,7 @@ new Vue({
                 })
                 .catch(error => {
                     console.error('Error logging out:', error);
-                    });
+                });
         }
     }
 });
