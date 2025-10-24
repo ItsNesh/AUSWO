@@ -22,7 +22,6 @@
         <a href="/migration-news.html">News</a>
         <a href="/jobs.html">Jobs</a>
         <a href="/contact.html">Contact</a>
-        <a href="/preferences.html">Preferences</a>
         <a href="/AdminPage.html" v-if="isAdmin">Admin</a>
         <a href="/Login.html" v-if="!isLoggedIn">Log In</a>
         <a href="/auth/logout" v-if="isLoggedIn" @click.prevent="logout">Log Out</a>
@@ -94,27 +93,40 @@
       </section>
 
       <section v-if="!loading" class="page-container section">
+        <div class="section-header">
+          <div>
+            <span class="tag">Admin</span>
+            <h1 class="section-title">Contact messages</h1>
+            <p class="section-subtitle">Review and manage all contact messages submitted by users through the AUSWO contact form.</p>
+          </div>
+        </div>
         <div class="surface">
           <div class="table-wrap">
             <table class="data-table" id="contact-table">
               <thead>
                 <tr>
-                  <th>Message ID</th>
+                  <th>Ticket ID</th>
+                  <th>User ID</th>
                   <th>Full Name</th>
                   <th>Email</th>
                   <th>Enquiry Topic</th>
-                  <th>Date Sent</th>
                   <th>Message</th>
+                  <th>Date Sent</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody id="contact-tbody">
                 <tr v-for="contact in contacts" :key="contact.id">
                   <td>{{ contact.id }}</td>
-                  <td>{{ contact.fullName }}</td>
+                  <td>{{ contact.userID }}</td>
+                  <td>{{ contact.firstName }} {{ contact.lastName }}</td>
                   <td>{{ contact.email }}</td>
-                  <td>{{ contact.enquiryTopic }}</td>
-                  <td>{{ contact.dateSent }}</td>
-                  <td>{{ contact.message }}</td>
+                  <td>{{ contact.topic }}</td>
+                  <td>{{ contact.messageBody }}</td>
+                  <td>{{ new Date(contact.dateSent).toLocaleString() }}</td>
+                  <td>
+                    <button @click="removeContactMessage(contact)" class="btn-delete">Remove</button>
+                  </td>
                 </tr>
               </tbody>
             </table>

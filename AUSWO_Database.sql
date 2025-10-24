@@ -81,4 +81,17 @@ CREATE TABLE IF NOT EXISTS ScrapedOccupations (
     DateScraped DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Contact Messages Table
+CREATE TABLE IF NOT EXISTS ContactMessages (
+    messageID INT PRIMARY KEY AUTO_INCREMENT,
+    userID INT NULL,
+    topic VARCHAR(50),
+    messageBody TEXT,
+    dateSent DATETIME DEFAULT CURRENT_TIMESTAMP,
+    guestfirstName VARCHAR(50) NULL,
+    guestlastName VARCHAR(50) NULL,
+    guestEmail VARCHAR(100) NULL,
+    FOREIGN KEY (userID) REFERENCES Users(userID)
+);
+
 

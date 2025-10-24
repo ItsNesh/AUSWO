@@ -864,3 +864,24 @@ textarea:focus {
 .radio-label span {
   font-size: 14px;
 }
+
+/* Contact Page */
+.success-message {
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  background-color: #d4edda;  /* light green */
+  border: 1px solid #c3e6cb; /* darker green border */
+  color: #155724;             /* dark green text */
+  border-radius: 0.25rem;
+}
+
+.general-error {
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid #f5c6cb;
+  margin-bottom: 1rem;
+  font-size: 14px;
+  white-space: pre-line;
+}
