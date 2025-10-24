@@ -99,10 +99,11 @@
             <table class="data-table" id="contact-table">
               <thead>
                 <tr>
-                  <th>ID</th>
+                  <th>Message ID</th>
                   <th>Full Name</th>
                   <th>Email</th>
                   <th>Enquiry Topic</th>
+                  <th>Date Sent</th>
                   <th>Message</th>
                 </tr>
               </thead>
@@ -112,6 +113,7 @@
                   <td>{{ contact.fullName }}</td>
                   <td>{{ contact.email }}</td>
                   <td>{{ contact.enquiryTopic }}</td>
+                  <td>{{ contact.dateSent }}</td>
                   <td>{{ contact.message }}</td>
                 </tr>
               </tbody>
