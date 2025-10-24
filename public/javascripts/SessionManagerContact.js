@@ -23,8 +23,8 @@ new Vue({
             this.errors.general = '';
 
             const payload = {
-                topic: document.getElementById('content-topic').value,
-                messageBody: document.getElementById('content-message').value
+                topic: document.getElementById('contact-topic').value,
+                messageBody: document.getElementById('contact-message').value
             };
 
             // If user is not logged in, include guest details
