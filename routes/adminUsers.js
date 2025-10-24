@@ -67,9 +67,9 @@ router.get('/contact-messages', requireAdmin, async (req, res) => {
                 cm.messageBody as messageBody,
                 cm.dateSent as dateSent,
                 u.userID as userID,
-                u.firstName as firstName,
-                u.lastName as lastName,
-                u.email as email
+                COALESCE(u.firstName, cm.guestfirstName) as firstName,
+                COALESCE(u.lastName, cm.guestlastName) as lastName,
+                COALESCE(u.email, cm.guestEmail) as email
             FROM ContactMessages cm
             LEFT JOIN Users u ON cm.userID = u.userID
             ORDER BY cm.dateSent ASC

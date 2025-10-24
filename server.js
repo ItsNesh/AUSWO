@@ -23,6 +23,7 @@ const cookieParser = require('cookie-parser');
 const passport = require('passport');
 const session = require('express-session');
 const { body, validationResult } = require('express-validator');
+var rateLimit = require('express-rate-limit');
 
 // Database Setup
 const pool = require('./db');
@@ -360,6 +361,55 @@ app.get('/api/occupations/:listType', async (req, res) => {
   } catch (err) {
     console.error('Error fetching occupations:', err);
     res.status(500).json({ error: 'Failed to fetch occupations' });
+  }
+});
+
+// Rate limiter for contact message submissions
+const messageLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // limit each IP to 5 requests per windowMs
+  message: { error: 'Too many messages sent from this IP, please try again later.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// Submit Contact Message
+app.post('/api/contact', messageLimiter, [
+  // Validation middleware
+  body('topic').trim().notEmpty().withMessage('Choose a Topic.').isLength({ max: 50 }).escape(),
+  body('messageBody').trim().notEmpty().withMessage('Message body cannot be empty.').isLength({ min: 1, max: 2000 }).withMessage('Message must be between 1 and 2000 characters.').escape(),
+  body('guestfirstName').optional({ checkFalsy: true }).trim().isLength({ min: 1, max: 50 }).withMessage('First name must be between 1 and 50 characters').matches(/^[a-zA-Z\s'-]+$/).withMessage('First name can only contain letters, spaces, hyphens, and apostrophes').escape(),
+  body('guestlastName').optional({ checkFalsy: true }).trim().isLength({ min: 1, max: 50 }).withMessage('Last name must be between 1 and 50 characters').matches(/^[a-zA-Z\s'-]+$/).withMessage('Last name can only contain letters, spaces, hyphens, and apostrophes').escape(),
+  body('guestEmail').optional({ checkFalsy: true }).trim().isEmail().withMessage('Email address is invalid').normalizeEmail()
+], async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    console.error('Validation errors:', errors.array());
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  const { topic, messageBody, guestfirstName, guestlastName, guestEmail } = req.body;
+  const userID = req.session.userId || null;
+
+  try {
+    // If no userID, ensure guest details are provided
+    if (!userID) {
+      if (!guestfirstName || !guestlastName || !guestEmail) {
+        return res.status(400).json({ error: 'Guest details are required for guests.' });
+      }
+    }
+
+    await pool.query(
+      `INSERT INTO ContactMessages 
+        (userID, topic, messageBody, guestfirstName, guestlastName, guestEmail) 
+       VALUES (?, ?, ?, ?, ?, ?)`,
+      [userID, topic, messageBody, guestfirstName || null, guestlastName || null, guestEmail || null]
+    );
+
+    res.status(201).json({ success: true, message: 'Message sent successfully' });
+  } catch (error) {
+    console.error('Error saving contact message:', error);
+    res.status(500).json({ error: 'Failed to send message' });
   }
 });
 
