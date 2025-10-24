@@ -45,7 +45,7 @@ function editProfile() {
         <input type="tel" id="editPhone" value="${escapeHTML(currentPhone)}" oninput="clearFieldError('editPhone')" onblur="validateField('editPhone')" required>
         <span class="field-error" id="editPhone-error"></span>
         <button class="button" onclick="saveProfile()">Save</button>
-        <button class="button" style="margin-left:8px;" onclick="cancelEdit()">Cancel</button>
+        <button class="button" onclick="cancelEdit()">Cancel</button>
     `;
 }
 
