@@ -2,7 +2,7 @@ function createNewsCards(articles) {
   return articles
     .map(
       article => `
-        <article class="news-card">
+        <article class="news-card" onclick="window.location.href='/article.html?id=${article.id}'">
           <span class="news-card-tag">${article.tag ?? 'News'}</span>
           <h3>${article.title ?? 'Migration update'}</h3>
           <p>${article.description ?? ''}</p>

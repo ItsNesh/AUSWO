@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Article · AUSWO</title>
+  <link rel="stylesheet" href="/stylesheets/Global.css">
+  <link rel="stylesheet" href="/stylesheets/Footer.css">
+  <link rel="stylesheet" href="/stylesheets/Article.css">
+  <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+</head>
+<body>
+  <div id="app" class="page-shell">
+    <nav class="navbar">
+      <a class="brand" href="/index.html">
+        AUSWO
+        <span class="brand-tag">Migration Hub</span>
+      </a>
+      <div class="nav-links" v-if="sessionInfo !== null">
+        <a href="/index.html">Home</a>
+        <a href="/Profile.html">Profile</a>
+        <a href="/points-calculator.html">Points Calculator</a>
+        <a href="/migration-news.html">News</a>
+        <a href="/jobs.html">Jobs</a>
+        <a href="/contact.html">Contact</a>
+        <a href="/AdminPage.html" v-if="isAdmin">Admin</a>
+        <a href="/Login.html" v-if="!isLoggedIn">Log In</a>
+        <a href="/auth/logout" v-if="isLoggedIn" @click.prevent="logout">Log Out</a>
+      </div>
+    </nav>
+
+    <main class="page-content">
+      <div class="article-container">
+        <div class="article-back">
+          <a href="/migration-news.html">← Back to News</a>
+        </div>
+        <article id="article-content">
+          <div class="article-loading">Loading article...</div>
+        </article>
+      </div>
+    </main>
+  </div>
+
+  <script src="/javascripts/Footer.js"></script>
+  <script src="/javascripts/Article.js"></script>
+  <script src="/javascripts/SessionManager.js"></script>
+</body>
+</html>
