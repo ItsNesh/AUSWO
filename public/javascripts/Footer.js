@@ -36,10 +36,9 @@ const footerHTML = `
     <div class="footer-section">
       <h3>Connect</h3>
       <div class="footer-social">
-        <a href="https://www.linkedin.com" target="_blank" rel="noopener" class="social-link">LinkedIn</a>
-        <a href="https://www.youtube.com" target="_blank" rel="noopener" class="social-link">YouTube</a>
-        <a href="https://www.facebook.com" target="_blank" rel="noopener" class="social-link">Facebook</a>
-        <a href="https://www.instagram.com" target="_blank" rel="noopener" class="social-link">Instagram</a>
+        <a href="https://www.linkedin.com/company/auswo/about/" target="_blank" rel="noopener" class="social-link">LinkedIn</a>
+        <a href="https://www.facebook.com/p/AUSWO-Guiding-Your-Path-to-Australia-61576034790464/" target="_blank" rel="noopener" class="social-link">Facebook</a>
+        <a href="https://www.instagram.com/auswo_australia/?fbclid=IwY2xjawNu2ApleHRuA2FlbQIxMABicmlkETE3cW1OeXZXN3JxSkxUZVFvAR7NJKE4bR4NmprVrNYPLVg0Ac1lDVDI65zz7W7d43m-Hm08v7Y_MHrHdGazsw_aem_lPvc3D6NsYkNDnM_QcYVQw#" target="_blank" rel="noopener" class="social-link">Instagram</a>
       </div>
     </div>
 
@@ -47,7 +46,6 @@ const footerHTML = `
       <p>&copy; 2025 AUSWO. All rights reserved.</p>
       <div class="footer-legal">
         <a href="/contact.html">Support</a>
-        <a href="/preferences.html">Manage alerts</a>
         <a href="/contact.html">Request a callback</a>
       </div>
     </div>

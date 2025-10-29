@@ -41,7 +41,7 @@ async function renderNewsPage() {
       </p>
       <div class="hero-actions">
         <a class="btn btn-primary" href="/quick-news.html">Daily quick news</a>
-        <a class="btn btn-secondary" href="/contact.html">Join an advisor session</a>
+        <a class="btn btn-secondary" href="/contact.html">Talk to our team</a>
       </div>
     </div>
     <div class="section">
