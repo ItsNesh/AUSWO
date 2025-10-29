@@ -16,7 +16,6 @@ const footerHTML = `
       <ul class="footer-links">
         <li><a href="/index.html">Home</a></li>
         <li><a href="/points-calculator.html">Points calculator</a></li>
-        <li><a href="/preferences.html">Preferences hub</a></li>
         <li><a href="/contact.html">Contact</a></li>
         <li><a href="/Login.html">Sign in</a></li>
       </ul>
