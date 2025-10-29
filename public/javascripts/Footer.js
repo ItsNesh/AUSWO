@@ -24,12 +24,12 @@ const footerHTML = `
     <div class="footer-section">
       <h3>Resources</h3>
       <ul class="footer-links">
-        <li><a href="/visa-options.html">Visa options</a></li>
+        <li><a href="/visa-options.html">Visa Options</a></li>
+        <li><a href="/student-resources.html">Student Resources</a></li>
         <li><a href="/popular-pathways.html">Popular Pathways</a></li>
-        <li><a href="/occupation-list.html">Occupation list</a></li>
-        <li><a href="/student-resources.html">Student resources</a></li>
-        <li><a href="/migration-news.html">Migration news</a></li>
-        <li><a href="/quick-news.html">Quick news</a></li>
+        <li><a href="/occupation-list.html">Occupation List</a></li>
+        <li><a href="/migration-news.html">Migration News</a></li>
+        <li><a href="/quick-news.html">Quick News</a></li>
       </ul>
     </div>
 
