@@ -41,6 +41,7 @@
 .news-card:hover {
   transform: translateY(-4px);
   box-shadow: var(--shadow-md);
+  cursor: pointer;
 }
 
 .news-card .news-card-tag {

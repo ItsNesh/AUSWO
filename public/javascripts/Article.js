@@ -16,16 +16,16 @@ function renderArticle(article) {
       <div class="article-error">
         <h1>Article not found</h1>
         <p>The article you're looking for doesn't exist or has been removed.</p>
-        <a href="/migration-news.html" class="btn btn-primary">Return to News</a>
+        <a href="/migration-news.html" class="btn btn-article-primary">Return to News</a>
       </div>
     `;
   }
 
   return `
-    <div class="article-header">
+    <div class="article-page-header">
       <span class="article-tag">${article.tag ?? 'News'}</span>
       <h1 class="article-title">${article.title ?? 'Untitled Article'}</h1>
-      <div class="article-meta">
+      <div class="article-info">
         <span class="article-author"><strong>Author:</strong> ${article.author ?? 'AUSWO Editorial'}</span>
         <span class="article-divider">|</span>
         <span class="article-date"><strong>Published:</strong> ${article.date ?? ''}</span>
@@ -36,9 +36,9 @@ function renderArticle(article) {
     <div class="article-body">
       ${article.content ?? '<p>No content available.</p>'}
     </div>
-    <div class="article-footer">
-      <a href="/migration-news.html" class="btn btn-secondary">← Back to all articles</a>
-      <a href="/contact.html" class="btn btn-primary">Discuss with our team</a>
+    <div class="article-page-footer">
+      <a href="/migration-news.html" class="btn btn-article-secondary">← Back to News</a>
+      <a href="/contact.html" class="btn btn-article-primary">Discuss with our team</a>
     </div>
   `;
 }
@@ -55,7 +55,7 @@ async function loadArticlePage() {
       <div class="article-error">
         <h1>No article specified</h1>
         <p>Please select an article from the news page.</p>
-        <a href="/migration-news.html" class="btn btn-primary">View all articles</a>
+        <a href="/migration-news.html" class="btn btn-article-primary">View all articles</a>
       </div>
     `;
     return;
