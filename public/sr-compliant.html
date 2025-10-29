@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AUSWO · Staying Compliant During Your Studies</title>
+  <link rel="stylesheet" href="/stylesheets/Global.css">
+  <link rel="stylesheet" href="/stylesheets/Footer.css">
+  <link rel="stylesheet" href="/stylesheets/Article.css">
+  <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+</head>
+<body>
+  <div id="app" class="page-shell">
+    <nav class="navbar">
+      <a class="brand" href="/index.html">
+        AUSWO
+        <span class="brand-tag">Migration Hub</span>
+      </a>
+      <div class="nav-links" v-if="sessionInfo !== null">
+        <a href="/index.html">Home</a>
+        <a href="/Profile.html">Profile</a>
+        <a href="/points-calculator.html">Points Calculator</a>
+        <a href="/migration-news.html">News</a>
+        <a href="/jobs.html">Jobs</a>
+        <a href="/contact.html">Contact</a>
+        <a href="/AdminPage.html" v-if="isAdmin">Admin</a>
+        <a href="/Login.html" v-if="!isLoggedIn">Log In</a>
+        <a href="/auth/logout" v-if="isLoggedIn" @click.prevent="logout">Log Out</a>
+      </div>
+    </nav>
+
+    <main class="page-content">
+      <div class="article-container">
+        <div class="article-back">
+          <a href="/student-resources.html">← Back to Student Resources</a>
+        </div>
+        <article id="article-content">
+          <div class="article-page-header">
+            <span class="article-tag">Compliance</span>
+            <h1 class="article-title">Staying Compliant During Your Studies: Student Visa Obligations and Compliance Tips</h1>
+            <div class="article-info">
+              <span class="article-date"><strong>Last Updated:</strong> October 2025</span>
+            </div>
+          </div>
+          
+          <div class="article-body">
+            <p>Maintaining compliance with your Student Visa conditions is crucial for a successful study experience in Australia. Understanding and following these requirements will help you avoid visa cancellation and ensure you can continue your studies without interruption. This guide provides comprehensive information about your obligations and practical tips for staying compliant throughout your time in Australia.</p>
+
+            <h2>Understanding Your Visa Conditions</h2>
+            <p>Your Student Visa grant letter includes specific conditions that you must follow while in Australia. These conditions are legally binding, and breaching them can result in visa cancellation and removal from Australia. It's essential to read and understand all conditions attached to your visa, as they outline your rights and responsibilities as an international student.</p>
+
+            <h2>Maintaining Course Attendance and Progress</h2>
+            
+            <h3>The 80% Attendance Rule</h3>
+            <p>One of the most important requirements is maintaining satisfactory course attendance. You must attend at least 80% of your scheduled course contact hours. This includes lectures, tutorials, practical sessions, and any other required classes. Your educational institution monitors your attendance closely and is required to report any attendance issues to the Department of Home Affairs.</p>
+
+            <p>There are legitimate reasons for missing classes, such as serious illness, compassionate circumstances, or participation in approved university activities. If you need to miss classes for any reason, inform your institution as soon as possible and provide appropriate documentation such as medical certificates. Keep copies of all documentation for your records.</p>
+
+            <h3>Academic Progress Requirements</h3>
+            <p>Beyond attendance, you must achieve satisfactory academic progress in your course. This typically means passing at least 50% of your enrolled units each study period. Your institution will monitor your academic performance and may place you on an intervention strategy if you're not making satisfactory progress.</p>
+
+            <p>If you fail multiple subjects or don't meet your course progression requirements, your institution must report this to the Department of Home Affairs. This can lead to visa cancellation unless you can demonstrate compelling circumstances or exceptional reasons for your poor performance.</p>
+
+            <h2>Work Limitation Compliance</h2>
+            <p>Understanding and following your work rights is critical to maintaining visa compliance. As a Student Visa holder, you're permitted to work up to 48 hours per fortnight during your study periods. This limit begins from the date your course officially commences, not from when you arrive in Australia.</p>
+
+            <p>During scheduled course breaks, you can work unlimited hours. It's important to track your work hours carefully and ensure you don't exceed the fortnightly limit during study periods. A fortnight is calculated as a 14-day period starting on a Monday. Both paid and unpaid work count toward this limit, including volunteer positions and internships.</p>
+
+            <p>Keep detailed records of your work hours, including timesheets and pay slips. If you work for multiple employers, ensure the combined hours don't exceed 48 hours per fortnight. Exceeding your work limitations is a serious breach that can result in immediate visa cancellation.</p>
+
+            <h2>Maintaining Health Insurance</h2>
+            <p>You must maintain adequate Overseas Student Health Cover for the entire duration of your stay in Australia. Your OSHC must cover you from the day you arrive in Australia until the day your visa expires. Letting your health insurance lapse, even for a short period, is considered a breach of your visa conditions.</p>
+
+            <p>Set reminders to renew your OSHC before it expires, and keep your policy documents readily accessible. If you change your course or extend your studies, ensure your health insurance is updated to cover the new duration. Your educational institution can assist with extending or renewing your OSHC policy.</p>
+
+            <h2>Address Notification Requirements</h2>
+            <p>You must notify your educational institution of your residential address within seven days of arriving in Australia and inform them of any change of address within seven days of moving. This requirement ensures your institution can contact you regarding important matters and is able to provide you with necessary information.</p>
+
+            <p>Many institutions have online portals where you can easily update your address details. Keep a record of when you've updated your address, and ensure your contact details are always current. If you travel during holidays or return to your home country temporarily, inform your institution of your plans and how you can be contacted.</p>
+
+            <h2>Enrollment Continuity</h2>
+            <p>You must remain enrolled in your registered course and not change courses or institutions without proper approval. If you wish to change courses or transfer to another institution, there are specific procedures you must follow. Changing courses or institutions without following proper procedures can result in visa cancellation.</p>
+
+            <p>Before making any changes to your enrollment, speak with your institution's international student office. They can advise you on the correct process and any implications for your visa. Generally, you cannot transfer to another institution within the first six months of your principal course without a valid reason and release letter from your current institution.</p>
+
+            <h2>Reporting Requirements for Your Institution</h2>
+            <p>Your educational institution has mandatory reporting obligations to the Department of Home Affairs through the Provider Registration and International Student Management System (PRISMS). They must report various matters including non-commencement of studies, unsatisfactory attendance or academic progress, course completion, deferment, suspension, or cancellation of enrollment.</p>
+
+            <p>Understanding that your institution must report these matters helps you appreciate the importance of maintaining compliance. If your institution reports a breach, you may receive a notice from the Department of Home Affairs requiring you to explain the circumstances or face visa cancellation.</p>
+
+            <h2>What Happens If You Breach Your Visa Conditions</h2>
+            <p>If you breach your visa conditions, you may receive a Section 20 notice from the Department of Home Affairs. This notice explains the alleged breach and gives you 28 days to respond and explain your circumstances. It's crucial to respond to this notice with detailed explanations and supporting evidence.</p>
+
+            <p>If the Department is not satisfied with your response, your visa may be cancelled. In some cases, you might be given another opportunity to demonstrate compliance, particularly if you can show compassionate or compelling circumstances that led to the breach.</p>
+
+            <h2>Compassionate and Compelling Circumstances</h2>
+            <p>Certain situations may excuse non-compliance with your visa conditions. Compassionate or compelling circumstances generally refer to situations beyond your control that have an impact on your course progress or ability to meet visa requirements. These might include serious illness or injury, bereavement, major political upheaval or natural disaster in your home country, or traumatic experience such as involvement in or witnessing a serious accident.</p>
+
+            <p>If you experience such circumstances, immediately inform your institution and provide appropriate documentation. Medical certificates, death certificates, psychological reports, or police reports may be required depending on the situation. Seek support from your institution's international student services and consider obtaining professional migration advice.</p>
+
+            <h2>Practical Tips for Staying Compliant</h2>
+            
+            <h3>Stay Organized</h3>
+            <p>Keep a folder with all important documents including your visa grant letter, CoE, passport copies, OSHC policy, academic transcripts, and attendance records. Maintain digital copies of everything in cloud storage for easy access. Set up calendar reminders for important dates such as OSHC renewal, visa expiry, and course enrollment deadlines.</p>
+
+            <h3>Communicate Proactively</h3>
+            <p>If you're experiencing difficulties with your studies or personal circumstances that might affect your compliance, speak with your institution immediately. Most institutions have support services to help international students, including academic advisors, counselors, and international student coordinators. Early communication often leads to better outcomes and can prevent compliance issues from escalating.</p>
+
+            <h3>Understand Your Course Requirements</h3>
+            <p>Thoroughly read your course handbook and understand what's expected of you in terms of attendance, assessment deadlines, and academic standards. Know what constitutes a study period versus a scheduled break for work purposes. Clarify any uncertainties with your course coordinator or international student office.</p>
+
+            <h3>Monitor Your Own Compliance</h3>
+            <p>Keep your own records of attendance, work hours, and academic results. Don't rely solely on your institution or employer to track this information. Regularly check your attendance records through your institution's online portal and address any discrepancies immediately. Track your work hours in a spreadsheet or app to ensure you don't accidentally exceed your limitations.</p>
+
+            <h3>Seek Help When Needed</h3>
+            <p>Don't struggle alone if you're having difficulties. Use your institution's support services including academic support centers for help with coursework, counseling services for personal or mental health issues, and international student advisors for visa and compliance questions. Many institutions also offer peer support programs and student mentoring.</p>
+
+            <h2>Academic Intervention Strategies</h2>
+            <p>If your institution identifies that you're at risk of not meeting course progress requirements, they may implement an intervention strategy. This might include academic counseling, mandatory tutoring, reduced course load, or additional study support. Engaging positively with intervention strategies demonstrates your commitment to your studies and can prevent more serious consequences.</p>
+
+            <h2>Preparing for Compliance Monitoring</h2>
+            <p>Your institution may conduct regular compliance checks or interviews with students who are at risk of breaching their visa conditions. Be honest and transparent during these discussions, and be prepared to explain any challenges you're facing and how you plan to address them. Bring documentation to support your case and show that you're taking your obligations seriously.</p>
+
+            <h2>Understanding Your Rights</h2>
+            <p>While you have obligations as a Student Visa holder, you also have rights. You have the right to accurate information about your course and visa obligations, access to support services, fair treatment and freedom from discrimination, and the right to appeal certain decisions made by your institution or the Department of Home Affairs.</p>
+
+            <p>If you believe you've been treated unfairly or your institution hasn't followed proper procedures, you can lodge a complaint through your institution's internal complaints process or seek external review through the Overseas Students Ombudsman.</p>
+
+            <h2>Planning for Success</h2>
+            <p>Successful compliance starts with good planning and organization. Create a study schedule that balances academic work, employment, and personal time. Build in buffer time for unexpected situations and avoid committing to work hours that are close to your fortnightly limit. Develop good relationships with your teachers and classmates, as they can provide valuable support and assistance when needed.</p>
+
+            <p>Remember that completing your course successfully is your primary goal, and maintaining visa compliance is essential to achieving that goal. Stay informed, stay organized, and seek help early if you encounter difficulties. Your time as an international student in Australia can be immensely rewarding when you understand and fulfill your obligations while taking advantage of the opportunities available to you.</p>
+          </div>
+
+          <div class="article-page-footer">
+            <a href="/student-resources.html" class="btn btn-article-secondary">← Back to Student Resources</a>
+            <a href="/contact.html" class="btn btn-article-primary">Discuss with our team</a>
+          </div>
+        </article>
+      </div>
+    </main>
+  </div>
+
+  <script src="/javascripts/Footer.js"></script>
+  <script src="/javascripts/SessionManager.js"></script>
+</body>
+</html>

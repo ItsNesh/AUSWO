@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AUSWO · Skilled Nominated Visa (Subclass 190)</title>
+  <link rel="stylesheet" href="/stylesheets/Global.css">
+  <link rel="stylesheet" href="/stylesheets/Footer.css">
+  <link rel="stylesheet" href="/stylesheets/Article.css">
+  <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+</head>
+<body>
+  <div id="app" class="page-shell">
+    <nav class="navbar">
+      <a class="brand" href="/index.html">
+        AUSWO
+        <span class="brand-tag">Migration Hub</span>
+      </a>
+      <div class="nav-links" v-if="sessionInfo !== null">
+        <a href="/index.html">Home</a>
+        <a href="/Profile.html">Profile</a>
+        <a href="/points-calculator.html">Points Calculator</a>
+        <a href="/migration-news.html">News</a>
+        <a href="/jobs.html">Jobs</a>
+        <a href="/contact.html">Contact</a>
+        <a href="/AdminPage.html" v-if="isAdmin">Admin</a>
+        <a href="/Login.html" v-if="!isLoggedIn">Log In</a>
+        <a href="/auth/logout" v-if="isLoggedIn" @click.prevent="logout">Log Out</a>
+      </div>
+    </nav>
+
+    <main class="page-content">
+      <div class="article-container">
+        <div class="article-back">
+          <a href="/visa-options.html">← Back to Visa Options</a>
+        </div>
+        <article id="article-content">
+          <div class="article-page-header">
+            <span class="article-tag">Skilled Migration</span>
+            <h1 class="article-title">Skilled Nominated Visa (Subclass 190): A Pathway to PR Through State Nomination</h1>
+            <div class="article-info">
+              <span class="article-date"><strong>Last Updated:</strong> October 2025</span>
+            </div>
+          </div>
+          
+          <div class="article-body">
+            <p>The Skilled Nominated Visa (Subclass 190) is a permanent residency visa for skilled workers who are nominated by an Australian state or territory government. This visa offers a slightly easier pathway to permanent residency compared to the Subclass 189, as state nomination provides an additional 5 points toward your points score.</p>
+
+            <h2>Key Differences from Subclass 189</h2>
+            <p>While similar to the Subclass 189, the key difference is that you need state or territory nomination to apply. In return for this nomination, you receive an extra 5 points and commit to living and working in the nominating state or territory for at least two years. This requirement provides a more accessible pathway for applicants who might not score high enough for the Subclass 189 visa.</p>
+
+            <h2>Benefits of the Visa</h2>
+            <p>The Subclass 190 grants permanent residency from day one, allowing you to live, work, and study in Australia indefinitely. You can include your family members in the application, access Medicare, and apply for Australian citizenship after meeting residency requirements. You can also sponsor eligible relatives for permanent residence and travel freely to and from Australia for five years.</p>
+
+            <h2>Basic Eligibility Requirements</h2>
+            <p>You must be under 45 years of age when you receive your invitation to apply. Your occupation needs to be on the relevant skilled occupation list for your chosen state or territory. A positive skills assessment for your nominated occupation is required, along with a minimum of 65 points including the 5 bonus points from state nomination. Competent English language ability and state or territory nomination are essential, and you must receive an invitation to apply through SkillSelect.</p>
+
+            <h2>State and Territory Nomination</h2>
+            <p>Each Australian state and territory has its own nomination program with specific requirements and priority occupations. States may require previous work experience in the state, job offers from local employers, or qualifications from their institutions. Some states focus on occupations in high demand in their region, while others may prioritize applicants already living and working in their state on temporary visas.</p>
+
+            <p>Popular nominating states include New South Wales with a focus on Sydney and regional areas, Victoria prioritizing Melbourne and regional Victoria, Queensland offering opportunities in Brisbane and regional Queensland, South Australia with strong support for various skilled occupations, Western Australia focusing on Perth and regional areas, and Tasmania, Australian Capital Territory, and Northern Territory each having specific occupation lists and requirements.</p>
+
+            <h2>The Application Process</h2>
+            <p>First, obtain your skills assessment for your nominated occupation and achieve the required English language test scores. Research which states or territories nominate your occupation and review their specific requirements. Submit an Expression of Interest through SkillSelect indicating your preferred states. If a state is interested, they'll invite you to apply for state nomination, which involves a separate application with additional requirements and fees. Once you receive state nomination approval, you'll receive an invitation to apply for the visa and have 60 days to submit your complete visa application.</p>
+
+            <h2>Points Calculation</h2>
+            <p>Points are awarded based on the same criteria as the Subclass 189, covering age, English proficiency, skilled employment, educational qualifications, and partner skills. The crucial difference is the automatic 5 bonus points you receive for state nomination, which can make the difference between receiving an invitation or not.</p>
+
+            <h2>State Nomination Requirements</h2>
+            <p>Each state has unique requirements beyond the basic visa eligibility. Common requirements include proof of genuine intention to live and work in the nominating state, relevant work experience in your nominated occupation, and sometimes specific connections to the state through previous residence, study, or employment. Some states require a job offer or job search commitment, while others assess your ability to contribute to the local economy.</p>
+
+            <h2>Processing Times and Costs</h2>
+            <p>State nomination processing typically takes 6 to 12 weeks, though this varies by state. Visa processing after receiving an invitation takes approximately 8 to 12 months. Costs include the state nomination application fee, which varies by state, the visa application charge for the main applicant and additional charges for family members, plus costs for skills assessment, English tests, health examinations, and police certificates.</p>
+
+            <h2>Living and Working Obligations</h2>
+            <p>Once your visa is granted, you must live and work in the nominating state or territory for at least two years. This is a condition of your visa, and you should demonstrate genuine commitment to settling in that state. While you have permanent residency and can technically move after two years, it's important to honor the commitment you made when accepting the state nomination.</p>
+
+            <h2>After Your Visa is Granted</h2>
+            <p>After the initial two-year period in your nominating state, you're free to live and work anywhere in Australia. You can apply for citizenship after meeting the standard residency requirements. The travel facility on your visa is valid for five years, after which you'll need a Resident Return Visa for international travel.</p>
+
+            <h2>Comparing Your Options</h2>
+            <p>The Subclass 190 is ideal if your points score is close to but not quite at competitive levels for the Subclass 189, if your occupation is in demand in a particular state, or if you're open to living in a specific state for at least two years. It often results in faster processing and invitation rounds compared to the Subclass 189 due to the additional points and state priority.</p>
+
+            <h2>Tips for Success</h2>
+            <p>Research thoroughly which states nominate your occupation and their specific requirements. Consider states beyond the major cities, as regional states often have more opportunities and faster processing. Ensure you can demonstrate genuine commitment to living in the nominating state through evidence such as job research, accommodation planning, or family connections. Keep your SkillSelect EOI updated and be ready to respond quickly when invited to apply for state nomination, as there are often deadlines. Consider improving your points score through better English tests or additional qualifications while waiting for nomination.</p>
+          </div>
+
+          <div class="article-page-footer">
+            <a href="/visa-options.html" class="btn btn-article-secondary">← Back to Visa Options</a>
+            <a href="/contact.html" class="btn btn-article-primary">Discuss with our team</a>
+          </div>
+        </article>
+      </div>
+    </main>
+  </div>
+
+  <script src="/javascripts/Footer.js"></script>
+  <script src="/javascripts/SessionManager.js"></script>
+</body>
+</html>

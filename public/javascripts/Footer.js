@@ -25,6 +25,7 @@ const footerHTML = `
       <h3>Resources</h3>
       <ul class="footer-links">
         <li><a href="/visa-options.html">Visa options</a></li>
+        <li><a href="/popular-pathways.html">Popular Pathways</a></li>
         <li><a href="/occupation-list.html">Occupation list</a></li>
         <li><a href="/student-resources.html">Student resources</a></li>
         <li><a href="/migration-news.html">Migration news</a></li>

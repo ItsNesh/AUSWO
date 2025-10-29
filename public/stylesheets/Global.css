@@ -885,3 +885,7 @@ textarea:focus {
   font-size: 14px;
   white-space: pre-line;
 }
+
+#card {
+  cursor: pointer;
+}

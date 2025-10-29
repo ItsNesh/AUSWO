@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AUSWO · Popular Pathways</title>
+  <link rel="stylesheet" href="/stylesheets/Global.css">
+  <link rel="stylesheet" href="/stylesheets/Footer.css">
+  <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+</head>
+<body>
+  <div id="app" class="page-shell">
+    <nav class="navbar">
+      <a class="brand" href="/index.html">
+        AUSWO
+        <span class="brand-tag">Migration Hub</span>
+      </a>
+      <div class="nav-links" v-if="sessionInfo !== null">
+        <a href="/index.html">Home</a>
+        <a href="/Profile.html">Profile</a>
+        <a href="/points-calculator.html">Points Calculator</a>
+        <a href="/migration-news.html">News</a>
+        <a href="/jobs.html">Jobs</a>
+        <a href="/contact.html">Contact</a>
+        <a href="/AdminPage.html" v-if="isAdmin">Admin</a>
+        <a href="/Login.html" v-if="!isLoggedIn">Log In</a>
+        <a href="/auth/logout" v-if="isLoggedIn" @click.prevent="logout">Log Out</a>
+      </div>
+    </nav>
+
+    <main class="page-content">
+      <section class="page-container section">
+        <div class="section-header">
+          <div>
+            <span class="tag">Popular Pathways</span>
+            <h1 class="section-title">Popular Pathways</h1>
+            <p class="section-subtitle">
+              Explore the most requested Australian visas. We group key requirements and helpful notes to kick-start your planning.
+            </p>
+          </div>
+        </div>
+        <div class="content-grid two">
+          <article class="card">
+            <div class="pill">Skilled</div>
+            <h2 class="card-title">Subclass 189 · Skilled Independent</h2>
+            <p class="card-subtitle">For highly skilled professionals without employer or state sponsorship.</p>
+            <ul class="list-plain">
+              <li>Minimum 65 points to submit an Expression of Interest.</li>
+              <li>Occupation must be on the medium and long-term skills list.</li>
+              <li>No sponsorship required; full permanent residency.</li>
+            </ul>
+            <br>
+            <a class="btn btn-outline" href="/points-calculator.html">Check eligibility</a>
+          </article>
+          <article class="card">
+            <div class="pill">State Nomination</div>
+            <h2 class="card-title">Subclass 190 · Skilled Nominated</h2>
+            <p class="card-subtitle">Permanent residency for applicants nominated by an Australian state or territory.</p>
+            <ul class="list-plain">
+              <li>Occupation must be on the relevant state list.</li>
+              <li>Commitment to live and work in the sponsoring state.</li>
+              <li>65+ points, including state nomination bonus.</li>
+            </ul>
+            <br>
+            <a class="btn btn-outline" href="/points-calculator.html">Check eligibility</a>
+          </article>
+          <article class="card">
+            <div class="pill">Regional</div>
+            <h2 class="card-title">Subclass 491 · Skilled Work Regional</h2>
+            <p class="card-subtitle">A provisional visa for skilled migrants willing to live in regional Australia.</p>
+            <ul class="list-plain">
+              <li>Requires nomination by a state or eligible family sponsor.</li>
+              <li>Five-year visa with PR pathway via subclass 191.</li>
+              <li>Extra points for living and working regionally.</li>
+            </ul>
+            <br>
+            <a class="btn btn-outline" href="/points-calculator.html">Check eligibility</a>
+          </article>
+          <article class="card">
+            <div class="pill">Graduate</div>
+            <h2 class="card-title">Subclass 485 · Temporary Graduate</h2>
+            <p class="card-subtitle">Allows recent graduates to live, study, and work after finishing their studies.</p>
+            <ul class="list-plain">
+              <li>Must have completed an eligible qualification in the last 6 months.</li>
+              <li>Skills assessment not required for graduate work stream.</li>
+              <li>Great stepping stone towards permanent residency.</li>
+            </ul>
+            <br>
+            <a class="btn btn-outline" href="/points-calculator.html">Check eligibility</a>
+          </article>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="/javascripts/Footer.js"></script>
+  <script src="/javascripts/SessionManager.js"></script>  
+</body>
+</html>
